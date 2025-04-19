@@ -1,0 +1,148 @@
+<header>
+    <div class="col-12 announcement_bar text-white text-center text_inter">🎆 New Year Special! Buy One, Get One Free +
+        Free Shipping on All Orders – Celebrate 2025 with Big Savings! 🎉</div>
+    <div class="col-12 header_top text-center text_hind position-relative">
+        <div class="section py-4">
+            <div class="container d-flex align-items-center justify-content-between">
+                <div class="col-md-5 text-start search_action">
+                    <a href="" class="text-uppercase fw-bold d-sm-block d-none"><i
+                            class="fa-regular fa-envelope me-2"></i> info@midhafurniture.com</a>
+                    <div class="collapse show" id="search_collapse">
+                        <form class="d-flex mt-2 w-75" aria-labelledby="form-title">
+                            <!-- Form Title (for accessibility) -->
+                            <h2 id="form-title" class="visually-hidden">Search product Form</h2>
+
+                            <!-- Input field with aria-label for better accessibility -->
+                            <input type="text" class="form-control text-dark border-end-0"
+                                placeholder="What can we help you find" id="input-text" aria-label="Text input field"
+                                aria-required="true" aria-describedby="input-text-description">
+
+                            <!-- Submit button with aria-label for better accessibility -->
+                            <button class="btn text-white" type="submit" aria-label="Submit the form"><svg
+                                    fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 26">
+                                    <path
+                                        d="m25.753 24.586-6.712-6.606c1.757-1.91 2.837-4.436 2.837-7.215C21.879 4.819 16.98 0 10.939 0 4.899 0 0 4.82 0 10.765S4.897 21.53 10.939 21.53a11 11 0 0 0 6.885-2.404l6.739 6.631a.85.85 0 0 0 1.19 0 .82.82 0 0 0 0-1.172M10.94 19.874c-5.112 0-9.256-4.078-9.256-9.11 0-5.03 4.144-9.108 9.256-9.108s9.256 4.078 9.256 9.109-4.144 9.109-9.256 9.109"
+                                        fill="#fff" />
+                                </svg></button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-md-2 position-relative">
+                    <a href="./"><img src="{{ asset('frontend/images/midhas_logo.png') }}" alt="midhas_logo"
+                            class="img-fluid w-100"></a>
+                    <a class="btn btn-search_toggle collapsed d-sm-none d-block position-absolute top-50 end-0 translate-middle-y"
+                        data-bs-toggle="collapse" href="#search_collapse" role="button" aria-expanded="false"
+                        aria-controls="search_collapse"> <i class="fa-solid fa-magnifying-glass"></i> </a>
+                </div>
+                <div class="col-md-5 right_side_action">
+                    <div class="d-flex text-center justify-content-end align-items-center">
+                        <div class="login">
+                            <a href="login.php"><i class="fa-solid fa-user d-block"></i><span
+                                    class="d-block">Login</span></a>
+                        </div>
+                        <div class="wishlist ms-4">
+                            <i class="fa-solid fa-heart d-block"></i><span class="d-block">Wishlist</span>
+                        </div>
+                        <div class="cart ms-4">
+                            <a href="cart.php"><i class="fa-solid fa-basket-shopping"></i><span class="d-block">My
+                                    Cart</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 header_main text-center text_hind">
+        <div class="section py-0">
+            <div class="container">
+                <nav class="navbar navbar-expand-lg py-0 text_hind fw-bold text-uppercase">
+                    <div class="container-fluid p-0">
+                        <!-- Navbar Brand -->
+                        <a class="navbar-brand d-none" href="#">Navbar</a>
+
+                        <!-- Navbar Toggle for small screens -->
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+                            aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+
+                        <!-- Navbar Links -->
+                        <div class="collapse navbar-collapse p-0" id="navbarNav">
+                            <ul class="navbar-nav justify-content-between w-100">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="listing.php">Bedroom</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="listing.php">Living Room</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="listing.php">Storage</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="listing.php">Dining</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="listing.php">Hallway</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="listing.php">Garden</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="listing.php">Office</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="listing.php">Ready Assembled</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text_orange" href="listing.php">New Arrivals</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-danger" href="listing.php">* Sale *</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Coming Soon!</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 header_bottom text-center text_hind">
+        <div class="container d-flex text-uppercase fw-bold">
+            <div class="col">
+                <a href=""><img src="{{ asset('frontend/images/truck.svg') }}" alt=""
+                        class="img-fluid">Free Delivery on orders over £150</a>
+            </div>
+            <div class="col d-sm-inline-block d-none">
+                <a href=""><img src="{{ asset('frontend/images/star.svg') }}" alt=""
+                        class="img-fluid">CHECK OUT OUR REVIEWS</a>
+            </div>
+            <div class="col">
+                <a href=""><img src="{{ asset('frontend/images/gift.svg') }}" alt=""
+                        class="img-fluid">LOYALTY SCHEME - JOIN TODAY!</a>
+            </div>
+        </div>
+    </div>
+
+    <div
+        class="view_cart-mobile d-sm-none d-block position-fixed d-flex align-items-center justify-content-between px-4 shadow">
+        <a href="">
+            <i class="fa-solid fa-home"></i>
+        </a>
+        <a href="">
+            <i class="fa-solid fa-heart"></i>
+        </a>
+        <a href="login.php">
+            <i class="fa-solid fa-user"></i>
+        </a>
+        <a href="" class="position-relative d-block">
+            <span
+                class="indicator position-absolute rounded-circle d-flex align-items-center justify-content-center">2</span>
+            <i class="fa-solid fa-basket-shopping"></i>
+        </a>
+    </div>
+</header>

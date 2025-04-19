@@ -1,0 +1,10 @@
+@extends('frontend.layouts.applayout')
+@section('main-content')
+@include('frontend.sections.banners');
+@include('frontend.sections.arrivals');
+@include('frontend.sections.shop-byroom');
+@include('frontend.sections.best-sellers');
+@include('frontend.sections.brands');
+@include('frontend.sections.offers');
+@include('frontend.sections.blogs')
+@endsection
