@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\Facade;
+
 return [
 
     /*
@@ -104,7 +106,10 @@ return [
             explode(',', env('APP_PREVIOUS_KEYS', ''))
         ),
     ],
-
+    
+    'aliases' => Facade::defaultAliases()->merge([
+        'Midhas' => App\Facades\Midhas::class,
+    ])->toArray(),
     /*
     |--------------------------------------------------------------------------
     | Maintenance Mode Driver

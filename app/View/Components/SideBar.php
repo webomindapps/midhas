@@ -19,6 +19,26 @@ class SideBar extends Component
             'isSubMenu' => false,
             'name' => 'dashboard',
         ],
+        [
+            'title' => 'Category',
+            'icon' => 'fal fa-clipboard-list',
+            'route' => 'admin.categories.index',
+            'isSubMenu' => false,
+            'name' => 'category',
+        ],
+        [
+            'title' => 'Masters',
+            'icon' => 'fal fa-sitemap',
+            'isSubMenu' => true,
+            'name' => 'masters',
+            'subMenus' => [
+                [
+                    'title' => 'Brands',
+                    'icon' => 'bx bx-chevron-right',
+                    'route' => 'admin.masters.brands.index',
+                ],
+            ],
+        ],
     ];
 
     /**
