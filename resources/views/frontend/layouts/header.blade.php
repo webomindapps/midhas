@@ -70,40 +70,63 @@
                         <!-- Navbar Links -->
                         <div class="collapse navbar-collapse p-0" id="navbarNav">
                             <ul class="navbar-nav justify-content-between w-100">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="listing.php">Bedroom</a>
+                                @foreach ($categories as $category)
+                                    <li class="nav-item has_megamenu">
+                                        <a class="nav-link" href="listing.php">{{ $category->name }}</a>
+
+                                        @if ($category->children->count())
+                                            <div class="megamenu_wrapper">
+                                                <div class="col sub_menu d-flex">
+                                                    @php
+                                                        $subCategoryChunks = $category->children->chunk(3);
+                                                    @endphp
+
+                                                    @foreach ($subCategoryChunks as $chunk)
+                                                        <div class="col-md-2">
+                                                            @foreach ($chunk as $subCategory)
+                                                                <ul class="menu_list">
+                                                                    <li class="drop-down__title">
+                                                                        <span>{{ $subCategory->name }}</span></li>
+                                                                    @foreach ($subCategory->children as $child)
+                                                                        <li><a href="#">{{ $child->name }}</a>
+                                                                        </li>
+                                                                    @endforeach
+                                                                    <li><a href="#">All
+                                                                            <span>{{ $subCategory->name }}</span></a>
+                                                                    </li>
+                                                                </ul>
+                                                            @endforeach
+                                                        </div>
+                                                    @endforeach
+
+                                                    <div class="col-md-8">
+                                                        <div class="d-flex image_nav_links">
+                                                            <a href="#"><img
+                                                                    src="https://www.bigfurniturewarehouse.com/images/modules/promo_units/1726752394-26306500.png"
+                                                                    alt="" class="img-fluid"></a>
+                                                            <a href="#"><img
+                                                                    src="https://www.bigfurniturewarehouse.com/images/modules/promo_units/1726752657-06734000.png"
+                                                                    alt="" class="img-fluid"></a>
+                                                            <a href="#"><img
+                                                                    src="https://www.bigfurniturewarehouse.com/images/modules/promo_units/1726752672-06318800.png"
+                                                                    alt="" class="img-fluid"></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        @endif
+                                    </li>
+                                @endforeach
+
+                                {{-- Static links --}}
+                                <li class="nav-item"><a class="nav-link text_orange" href="listing.php">New Arrivals</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="listing.php">Living Room</a>
+                                <li class="nav-item"><a class="nav-link text-danger" href="listing.php">* Sale *</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="listing.php">Storage</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="listing.php">Dining</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="listing.php">Hallway</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="listing.php">Garden</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="listing.php">Office</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="listing.php">Ready Assembled</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text_orange" href="listing.php">New Arrivals</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-danger" href="listing.php">* Sale *</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">Coming Soon!</a>
-                                </li>
+                                <li class="nav-item"><a class="nav-link" href="#">Coming Soon!</a></li>
                             </ul>
+
                         </div>
                     </div>
                 </nav>
