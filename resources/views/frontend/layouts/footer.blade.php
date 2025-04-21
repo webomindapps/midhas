@@ -47,23 +47,12 @@
                             <div class="col-lg-4">
                                 <h2 class="text-uppercase">Popular Categories</h2>
                                 <ul class="list_styled">
-                                    <li><a href="">Bedroom</a>
-                                    <li>
-                                    <li><a href="">Chest of Drawers</a>
-                                    <li>
-                                    <li><a href="">Shoe Cabinets</a>
-                                    <li>
-                                    <li><a href="">TV Stands</a>
-                                    <li>
-                                    <li><a href="">Wardrobes</a>
-                                    <li>
-                                    <li><a href="">Coffee Tables</a>
-                                    <li>
-                                    <li><a href="">Ready Assembled</a>
-                                    <li>
-                                    <li><a href="">Garden Furniture</a>
-                                    <li>
+                                    @foreach ($categories as $category)
+                                        <li><a href="">{{ $category->name }}</a></li>
+                                    @endforeach
+
                                 </ul>
+
                             </div>
                         </div>
                     </div>

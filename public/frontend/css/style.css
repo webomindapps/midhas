@@ -141,7 +141,7 @@ header form button[type="submit"]:hover { background: #000; }
 .top_footer { background: var(--orange); padding: 30px; }
 .top_footer h2, .top_footer i { font-size: 24px; line-height: 1; }
 .top_footer i { margin-top: 5px; }
-.main_footer { padding: 58px;115px; }
+.main_footer { padding: 58px; 115px; }
 footer h2 { font-weight: 500; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; margin-bottom: 6px; }
 footer li a { font-weight: 300; font-size: 18px; line-height: 1.8; letter-spacing: 0.02em; }
 footer ul.list_styled:not(.d-flex) li a:hover { color: var(--orange); }
@@ -335,6 +335,26 @@ section.section.login_form { padding-bottom: 90px; }
 .cart_products .l-t-label { padding: 10px 5px; font-size: 14px;}
 
 /*End LoginPage*/
+
+
+/*Megamenu design*/
+
+/*.has_megamenu { position: relative; }*/
+.has_megamenu .megamenu_wrapper { position: absolute; width: 100%; z-index: 9; background: #f2f2f2; padding: 20px; text-align: left; display: none; left: 0 }
+.has_megamenu:hover .megamenu_wrapper { display: block; }
+.megamenu_wrapper ul.menu_list {list-style: none;padding-left: 0; }
+.megamenu_wrapper ul.menu_list:not(:last-child) {margin-bottom: 25px; }
+.megamenu_wrapper ul.menu_list li a {text-transform: none; font-weight: 400;}
+.megamenu_wrapper ul.menu_list li:not(:last-child) {margin-bottom: 5px; }
+.megamenu_wrapper .image_nav_links { gap: 20px; }
+
+@media (max-width: 768px) {
+    .navbar-nav .nav-link { text-align: left; }
+    .has_megamenu .megamenu_wrapper { padding: 12px; max-height: 300px;  overflow: auto; background: #fbfbfb; }
+    .col.sub_menu.d-flex {flex-wrap: wrap; gap: 30px; }
+    .megamenu_wrapper .image_nav_links { gap: 12px; }
+}
+/*End Megamenu design*/
 
 @media (min-width: 1200px) {
     .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
