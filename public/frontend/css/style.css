@@ -129,7 +129,7 @@ header form button[type="submit"]:hover { background: #000; }
 .blog_box a:hover { color: var(--orange); }
 
 
-.offers_CTA { background: url(images/offer-big.jpg) no-repeat center / cover; min-height: 420px; }
+.offers_CTA { background: url('/frontend/images/offer-big.jpg') no-repeat center / cover; min-height: 420px; }
 .offers_CTA h2 { font-size: 132px; font-weight: 200; }
 .offers_CTA .dark_btn { width: 12em; margin: 20px; display: inline-block; }
 

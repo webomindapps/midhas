@@ -11,8 +11,9 @@ class ShopController extends Controller
 {
     public function index()
     {
-        $categories = Category::with('children.children') 
+        $categories = Category::with('children.children','image') 
             ->where('status', 1)
+            ->orderBy('position','asc')
             ->whereNull('parent_id') 
             ->get();
 
