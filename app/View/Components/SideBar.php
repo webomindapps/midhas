@@ -50,6 +50,11 @@ class SideBar extends Component
                     'icon' => 'bx bx-chevron-right',
                     'route' => 'admin.cms.banners.index',
                 ],
+                [
+                    'title' => 'Pages',
+                    'icon' => 'bx bx-chevron-right',
+                    'route' => 'admin.cms.pages.index',
+                ],
             ],
         ],
     ];

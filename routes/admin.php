@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\BannerController;
@@ -28,6 +29,8 @@ Route::middleware('auth:admin')->group(function () {
         Route::resources([
             'banners' => BannerController::class,
         ]);
-        
+        Route::resources([
+            'pages' => PageController::class,
+        ]);
     });
 });

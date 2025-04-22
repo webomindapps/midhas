@@ -102,7 +102,7 @@ class BannerController extends Controller
             }
 
             foreach ($request->file('banner_image_path') as $file) {
-                $url = Midhas::upload($file, $this->folder); 
+                $url = Midhas::upload($file, $this->folder);
                 $banner->images()->create(['banner_url' => $url]);
             }
         }
@@ -130,7 +130,7 @@ class BannerController extends Controller
         }
         return response()->json(['success' => true, 'message' => 'Bulk operation is completed']);
     }
-    public function deleteDirect($id)
+    public function delete($id)
     {
         $banner = Banner::findOrFail($id);
 

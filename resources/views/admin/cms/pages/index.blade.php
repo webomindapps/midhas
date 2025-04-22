@@ -1,4 +1,4 @@
-<x-page-content title="Banners" isCreate="{{ true }}" createLink="{{ route('admin.cms.banners.create') }}">
+<x-page-content title="Pages" isCreate="{{ true }}" createLink="{{ route('admin.cms.pages.create') }}">
     <x-slot:breadcrumb>
         {{-- <x-admin.export-btn>
             <li>
@@ -10,13 +10,13 @@
         </x-admin.export-btn> --}}
     </x-slot:breadcrumb>
 
+
     @php
 
         $columns = [
             ['label' => 'Sl No', 'column' => 'id', 'sort' => true],
-            ['label' => 'Category', 'column' => 'name', 'sort' => true],
+            ['label' => 'Title', 'column' => 'title', 'sort' => true],
             ['label' => 'Position', 'column' => 'position', 'sort' => true],
-            ['label' => 'Type', 'column' => 'type', 'sort' => true],
             ['label' => 'Status', 'column' => 'status', 'sort' => true],
             ['label' => 'Actions', 'column' => 'action', 'sort' => false],
         ];
@@ -43,8 +43,8 @@
         ];
     @endphp
 
-    <x-table :columns="$columns" :data="$banners" checkAll="{{ true }}" :bulk="route('admin.cms.banners.destroy', ['banner' => 'bulk'])" :route="route('admin.cms.banners.index')">
-        @foreach ($banners as $key => $item)
+    <x-table :columns="$columns" :data="$pages" checkAll="{{ true }}" :bulk="route('admin.cms.pages.destroy', ['page' => 'bulk'])" :route="route('admin.cms.pages.index')">
+        @foreach ($pages as $key => $item)
             @php
 
                 $actions = [
@@ -62,8 +62,8 @@
                     ],
                     [
                         'code' => 'edit',
-                        'route' => route('admin.cms.banners.edit', $item->id),
-                    ]
+                        'route' => route('admin.cms.pages.edit', $item->id),
+                    ],
                 ];
             @endphp
             <tr>
@@ -71,9 +71,8 @@
                     <input type="checkbox" name="selected_items[]" class="single-item-check" value="{{ $item->id }}">
                 </td>
                 <td>{{ $key + 1 }}</td>
-                <td>{{ $item->category->name ?? '-'}}</td>
+                <td>{{ $item->title ?? '-' }}</td>
                 <td>{{ $item->position }}</td>
-                <td>{{ $item->type }}</td>
                 <td>
                     @if ($item->status)
                         <span class="badge rounded-pill sactive">Active</span>

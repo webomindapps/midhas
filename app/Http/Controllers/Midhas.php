@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pages;
 use App\Models\Category;
 
 class Midhas extends Controller
@@ -120,7 +121,7 @@ class Midhas extends Controller
         $categories = Category::where('status', true)
             ->whereNull('parent_id')
             ->get(['id', 'name']);
-    
+
         return $categories->map(function ($category) {
             return [
                 'label' => $category->name,
@@ -137,5 +138,8 @@ class Midhas extends Controller
 
         ];
     }
-    
+    public function pages()
+    {
+        return Pages::orderBy('position', 'asc')->get();
+    }
 }
