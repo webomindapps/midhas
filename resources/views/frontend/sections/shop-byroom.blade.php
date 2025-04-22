@@ -9,7 +9,7 @@
                         <div class="sbr_box">
                             <a href="listing.php">
                                 <div class="img-wrapper position-relative">
-                                    <img src="{{ asset($category->image->url) }}" alt="" class="img-fluid">
+                                    <img src="{{ asset($category->image->url ?? '') }}" alt="" class="img-fluid">
                                     <a href="listing.php" class="dark_btn text-white"> Shop now</a>
                                 </div>
                                 <h3 class="text_inter text-uppercase fw-normal mt-4">Shop <span

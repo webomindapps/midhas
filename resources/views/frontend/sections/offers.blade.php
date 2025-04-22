@@ -2,14 +2,17 @@
     <div class="container text-center">
         <div class="col-12">
             <div class="row gx-sm-5 gx-0 gy-3">
-                <div class="col-md-4">
-                    <img src="{{ asset('frontend/images/offer-1.jpg') }}" alt="" class="w-100 img-fluid">
-                </div>
-                <div class="col-md-4">
-                    <img src="{{ asset('frontend/images/offer-2.jpg') }}" alt="" class="w-100 img-fluid">
-                </div>
-                <div class="col-md-4">
-                    <img src="{{ asset('frontend/images/offer-3.jpg') }}" alt="" class="w-100 img-fluid">
+                <div class="row gx-sm-5 gx-0 gy-3">
+                    @foreach ($banners as $banner)
+                        @if ($banner->type == 3)
+                            @foreach ($banner->images as $image)
+                                <div class="col-md-4">
+                                    <img src="{{ asset('storage/' . $image->banner_url ?? '') }}" alt="Banner"
+                                        class="w-100 img-fluid">
+                                </div>
+                            @endforeach
+                        @endif
+                    @endforeach
                 </div>
             </div>
         </div>

@@ -6,7 +6,7 @@
             <div class="lg_slide d-flex">
                 @for ($i = 0; $i < 3; $i++)
                     @foreach ($brands as $brand)
-                        <img src="{{ asset($brand->image->url) }}" alt="" class="img-fluid">
+                        <img src="{{ asset($brand->image->url ?? '') }}" alt="" class="img-fluid">
                     @endforeach
                 @endfor
             </div>
