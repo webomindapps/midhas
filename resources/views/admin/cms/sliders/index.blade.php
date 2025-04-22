@@ -1,4 +1,4 @@
-<x-page-content title="Banners" isCreate="{{ true }}" createLink="{{ route('admin.cms.banners.create') }}">
+<x-page-content title="Sliders" isCreate="{{ true }}" createLink="{{ route('admin.cms.sliders.create') }}">
     <x-slot:breadcrumb>
         {{-- <x-admin.export-btn>
             <li>
@@ -14,9 +14,9 @@
 
         $columns = [
             ['label' => 'Sl No', 'column' => 'id', 'sort' => true],
+            ['label' => 'Slider', 'column' => 'slider_image', 'sort' => false],
             ['label' => 'Category', 'column' => 'name', 'sort' => false],
             ['label' => 'Position', 'column' => 'position', 'sort' => true],
-            ['label' => 'Type', 'column' => 'type', 'sort' => true],
             ['label' => 'Status', 'column' => 'status', 'sort' => true],
             ['label' => 'Actions', 'column' => 'action', 'sort' => false],
         ];
@@ -43,8 +43,8 @@
         ];
     @endphp
 
-    <x-table :columns="$columns" :data="$banners" checkAll="{{ true }}" :bulk="route('admin.cms.banners.destroy', ['banner' => 'bulk'])" :route="route('admin.cms.banners.index')">
-        @foreach ($banners as $key => $item)
+    <x-table :columns="$columns" :data="$sliders" checkAll="{{ true }}" :bulk="route('admin.cms.sliders.destroy', ['slider' => 'bulk'])" :route="route('admin.cms.sliders.index')">
+        @foreach ($sliders as $key => $item)
             @php
 
                 $actions = [
@@ -62,8 +62,8 @@
                     ],
                     [
                         'code' => 'edit',
-                        'route' => route('admin.cms.banners.edit', $item->id),
-                    ]
+                        'route' => route('admin.cms.sliders.edit', $item->id),
+                    ],
                 ];
             @endphp
             <tr>
@@ -71,9 +71,16 @@
                     <input type="checkbox" name="selected_items[]" class="single-item-check" value="{{ $item->id }}">
                 </td>
                 <td>{{ $key + 1 }}</td>
-                <td>{{ $item->category->name ?? '-'}}</td>
+                <td>
+                    @if ($item->slider_image)
+                        <img src="{{ asset('storage/' . $item->slider_image) }}" width="70" height="70">
+                    @else
+                        N/A
+                    @endif
+                </td>
+                <td>{{ $item->category->name ?? '-' }}</td>
                 <td>{{ $item->position }}</td>
-                <td>{{ $item->type }}</td>
+
                 <td>
                     @if ($item->status)
                         <span class="badge rounded-pill sactive">Active</span>

@@ -103,11 +103,11 @@ class PageController extends Controller
      */
     public function destroy(string $id)
     {
-        // dd($id);
+        
         $type = request()->type;
         $selectedItems = request()->selectedIds;
         $status = request()->status;
-// dd($status);
+
         foreach ($selectedItems as $item) {
             $pages = $this->pages->find($item);
             if ($type == 1) {

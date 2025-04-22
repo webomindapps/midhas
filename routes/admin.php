@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 
@@ -31,6 +32,9 @@ Route::middleware('auth:admin')->group(function () {
         ]);
         Route::resources([
             'pages' => PageController::class,
+        ]);
+        Route::resources([
+            'sliders' => SliderController::class,
         ]);
     });
 });

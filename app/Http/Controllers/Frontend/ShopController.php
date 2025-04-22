@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Models\Brand;
 use App\Models\Pages;
 use App\Models\Banner;
+use App\Models\Sliders;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -21,8 +22,9 @@ class ShopController extends Controller
 
         $brands = Brand::with('image')->where('status', 1)->get();
         $banners = Banner::with('images')->where('status', 1)->orderBy('position', 'asc')->get();
+        $sliders = Sliders::where('status', 1)->get();
 
-        return view('frontend.pages.index', compact('categories', 'brands', 'banners'));
+        return view('frontend.pages.index', compact('categories', 'brands', 'banners','sliders'));
     }
     public function pageDetails($page)
     {
