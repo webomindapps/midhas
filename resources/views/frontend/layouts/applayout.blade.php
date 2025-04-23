@@ -35,8 +35,27 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.8.4/swiper-bundle.min.js"></script>
 
     @stack('scripts')
-
     <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggles = document.querySelectorAll(".toggle-password");
+    
+            toggles.forEach(function (toggle) {
+                toggle.addEventListener("click", function () {
+                    const input = document.getElementById(this.getAttribute("data-target"));
+                    const isPassword = input.getAttribute("type") === "password";
+    
+                    input.setAttribute("type", isPassword ? "text" : "password");
+    
+                    // Toggle icon class
+                    this.classList.toggle("fa-eye");
+                    this.classList.toggle("fa-eye-slash");
+                });
+            });
+        });
+    </script>
+    
+    <script>
+        
         $(function() {
             $('.color_selector').each(function(index, element) {
                 $(element).find('span').click(function() {

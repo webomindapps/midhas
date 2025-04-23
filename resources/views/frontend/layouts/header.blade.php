@@ -37,7 +37,7 @@
                 <div class="col-md-5 right_side_action">
                     <div class="d-flex text-center justify-content-end align-items-center">
                         <div class="login">
-                            <a href="login.php"><i class="fa-solid fa-user d-block"></i><span
+                            <a href="{{route('customer.login')}}"><i class="fa-solid fa-user d-block"></i><span
                                     class="d-block">Login</span></a>
                         </div>
                         <div class="wishlist ms-4">
