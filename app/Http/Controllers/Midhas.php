@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pages;
 use App\Models\Category;
 
 class Midhas extends Controller
@@ -24,7 +25,7 @@ class Midhas extends Controller
         if ($id) {
             return $model->seo ? $model->seo()->update($data) : $model->seo()->create($data);
         }
-        return  $model->seo()->create($data);
+        return $model->seo()->create($data);
     }
 
     public function getCategories($type = null, $dropdown = true, $id = null)
@@ -86,32 +87,59 @@ class Midhas extends Controller
                 break;
 
             case "edit":
-                $view  = '<li><a class="dropdown-item" href="' . $route . '">
+                $view = '<li><a class="dropdown-item" href="' . $route . '">
                             <i class="fas fa-pencil"></i>
                             Edit
                         </a></li>';
                 break;
             case "view":
-                $view  = '<li><a class="dropdown-item" href="' . $route . '">
+                $view = '<li><a class="dropdown-item" href="' . $route . '">
                             <i class="far fa-eye"></i>
                             View
                         </a></li>';
                 break;
 
             case "more_info":
-                $view  = '<li><a class="dropdown-item" href="' . $route . '">
+                $view = '<li><a class="dropdown-item" href="' . $route . '">
                                 <i class="fa fa-info-circle"></i>
                                 More Info
                             </a></li>';
                 break;
 
             default:
-                $view  = '<li><a class="dropdown-item ' . $code . '" data-item="' . $item . '" data-type="info" data-id="' . $item->id . '">
+                $view = '<li><a class="dropdown-item ' . $code . '" data-item="' . $item . '" data-type="info" data-id="' . $item->id . '">
                             <i class="fa fa-info-circle"></i>
                             More Info
                         </a></li>';
         }
 
         return $view;
+    }
+
+    public function getAllCategories()
+    {
+        $categories = Category::where('status', true)
+            ->whereNull('parent_id')
+            ->get(['id', 'name']);
+
+        return $categories->map(function ($category) {
+            return [
+                'label' => $category->name,
+                'value' => $category->id,
+            ];
+        })->toArray();
+    }
+    public function getType()
+    {
+        return [
+            ['label' => 'One', 'value' => 1],
+            ['label' => 'Two', 'value' => 2],
+            ['label' => 'Three', 'value' => 3],
+
+        ];
+    }
+    public function pages()
+    {
+        return Pages::orderBy('position', 'asc')->get();
     }
 }

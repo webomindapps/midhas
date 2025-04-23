@@ -24,3 +24,5 @@ Route::post('forget-password', [PasswordResetController::class, 'forgetMail']);
 
 Route::get('customer/{token}/password-reset', [PasswordResetController::class, 'resetView'])->name('customer.reset.view');
 Route::post('customer/password-reset', [PasswordResetController::class, 'resetPassword'])->name('customer.password.reset');
+Route::get('page/{page}', [ShopController::class, 'pageDetails'])->name('page.view');
+
