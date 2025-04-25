@@ -86,7 +86,8 @@
                                                             @foreach ($chunk as $subCategory)
                                                                 <ul class="menu_list">
                                                                     <li class="drop-down__title">
-                                                                        <span>{{ $subCategory->name }}</span></li>
+                                                                        <span>{{ $subCategory->name }}</span>
+                                                                    </li>
                                                                     @foreach ($subCategory->children as $child)
                                                                         <li><a href="#">{{ $child->name }}</a>
                                                                         </li>
@@ -101,15 +102,18 @@
 
                                                     <div class="col-md-8">
                                                         <div class="d-flex image_nav_links">
-                                                            <a href="#"><img
-                                                                    src="https://www.bigfurniturewarehouse.com/images/modules/promo_units/1726752394-26306500.png"
-                                                                    alt="" class="img-fluid"></a>
-                                                            <a href="#"><img
-                                                                    src="https://www.bigfurniturewarehouse.com/images/modules/promo_units/1726752657-06734000.png"
-                                                                    alt="" class="img-fluid"></a>
-                                                            <a href="#"><img
-                                                                    src="https://www.bigfurniturewarehouse.com/images/modules/promo_units/1726752672-06318800.png"
-                                                                    alt="" class="img-fluid"></a>
+                                                            <a href="#">
+                                                                <img src="https://www.bigfurniturewarehouse.com/images/modules/promo_units/1726752394-26306500.png"
+                                                                    alt="" class="img-fluid">
+                                                            </a>
+                                                            <a href="#">
+                                                                <img src="https://www.bigfurniturewarehouse.com/images/modules/promo_units/1726752657-06734000.png"
+                                                                    alt="" class="img-fluid">
+                                                            </a>
+                                                            <a href="#">
+                                                                <img src="https://www.bigfurniturewarehouse.com/images/modules/promo_units/1726752672-06318800.png"
+                                                                    alt="" class="img-fluid">
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -120,11 +124,15 @@
                                 @endforeach
 
                                 {{-- Static links --}}
-                                <li class="nav-item"><a class="nav-link text_orange" href="listing.php">New Arrivals</a>
+                                <li class="nav-item">
+                                    <a class="nav-link text_orange" href="listing.php">New Arrivals</a>
                                 </li>
-                                <li class="nav-item"><a class="nav-link text-danger" href="listing.php">* Sale *</a>
+                                <li class="nav-item">
+                                    <a class="nav-link text-danger" href="listing.php">* Sale *</a>
                                 </li>
-                                <li class="nav-item"><a class="nav-link" href="#">Coming Soon!</a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#">Coming Soon!</a>
+                                </li>
                             </ul>
 
                         </div>
