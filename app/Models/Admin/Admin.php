@@ -2,7 +2,9 @@
 
 namespace App\Models\Admin;
 
+use App\Models\Store;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -35,4 +37,9 @@ class Admin extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function details(): HasOne
+    {
+        return $this->hasOne(Store::class);
+    }
 }

@@ -14,6 +14,7 @@
 
         $columns = [
             ['label' => 'Sl No', 'column' => 'id', 'sort' => true],
+            ['label' => 'logo', 'column' => 'logo', 'sort' => false],
             ['label' => 'Name', 'column' => 'name', 'sort' => true],
             ['label' => 'Position', 'column' => 'position', 'sort' => true],
             ['label' => 'Status', 'column' => 'status', 'sort' => true],
@@ -70,6 +71,10 @@
                     <input type="checkbox" name="selected_items[]" class="single-item-check" value="{{ $item->id }}">
                 </td>
                 <td>{{ $key + 1 }}</td>
+                <td>
+                    <img src="{{ $item->image?->url }}" height="80" width="80" alt="{{ $item->name }}"
+                        class="img-fluid rounded-circle" />
+                </td>
                 <td>{{ $item->name }}</td>
                 <td>{{ $item->position }}</td>
                 <td>
