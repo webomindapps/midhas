@@ -6,6 +6,7 @@ use App\Facades\Midhas;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use App\Models\Product\Product;
+use App\Models\Product\ProductManual;
 use App\Models\Product\ProductPrice;
 use App\Models\Product\ProductStock;
 use App\Models\Product\ProductVariant;
@@ -26,7 +27,7 @@ class ProductController extends Controller
     public function index()
     {
         $type = request()->type;
-        $searchColumns = ['id', 'name', 'sku', 'upc_code', 'status'];
+        $searchColumns = ['id', 'title', 'sku', 'upc_code', 'status'];
         $search = request()->search;
         $order = request()->orderedColumn;
         $orderBy = request()->orderBy;
@@ -52,13 +53,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        // $type = request()->type;
-        $type = 'simple';
-
-        // if ($type != 'simple') {
-        //     return view('admin.products.package.create', compact('type'));
-        // }
-        return view('admin.products.create', compact('type'));
+        return view('admin.products.create');
     }
 
     /**
@@ -67,7 +62,6 @@ class ProductController extends Controller
     public function store(ProductRequest $request)
     {
         DB::beginTransaction();
-        $type = $request->type;
         try {
 
             $data = $request->all();
@@ -76,42 +70,23 @@ class ProductController extends Controller
             if ($request->hasFile('thumbnail')) {
                 $data['thumbnail'] =  Midhas::upload($request->thumbnail, $this->folder . '/thumbnails/');
             }
-
-            if ($request->hasFile('quick_guide')) {
-                $data['quick_guide'] =  Midhas::upload($request->quick_guide, $this->folder . '/quick_guides/');
-            }
-
-            if ($request->hasFile('e_manual')) {
-                $data['e_manual'] =  Midhas::upload($request->e_manual, $this->folder . '/e_manuals/');
-            }
-
-            if ($request->hasFile('user_manual')) {
-                $data['user_manual'] =  Midhas::upload($request->user_manual, $this->folder . '/user_manuals/');
-            }
             $data['stock_balance'] = $request->total_stock ?? 0;
             $data['is_taxable'] = isset($request->is_taxable) ? true : false;
 
-            switch ($type) {
-                case 'package':
-                    $data['sku'] = Str::slug($data['sku'], '-');
-                    $product = $this->product->create($data);
-                    // $this->addPackages($product, $request);
-                    break;
-                default:
-                    $product = $this->product->create($data);
-                    $this->addCategories($product, $request);
-                    $this->addPrices($product, $request);
-                    $this->addSettings($product, $request);
-                    $this->uploadImages($product, $request);
-                    $this->addStocks($product, $request);
-                    $this->addVariants($product, $request);
-                    $this->addSpecifications($product, $request);
-                    break;
-            }
+            $product = $this->product->create($data);
+            $this->addCategories($product, $request);
+            $this->addPrices($product, $request);
+            $this->addSettings($product, $request);
+            $this->uploadImages($product, $request);
+            $this->addStocks($product, $request);
+            $this->addVariants($product, $request);
+            $this->addSpecifications($product, $request);
+            $this->addManuals($product, $request);
+
             //add seo contest
             Midhas::addSeo($product, request()->only(['meta_title', 'meta_description', 'meta_keywords']));
             DB::commit();
-            return to_route('admin.products.index', ['type' => $type])->with('success', 'Product added successfully');
+            return to_route('admin.products.index')->with('success', 'Product added successfully');
         } catch (Exception $e) {
             DB::rollBack();
             dd($e);
@@ -131,8 +106,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        $type =  'simple';
-        return view('admin.products.edit', compact('product', 'type'));
+        return view('admin.products.edit', compact('product'));
     }
 
     /**
@@ -140,7 +114,6 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request, string $id)
     {
-        $type = $request->type;
         DB::beginTransaction();
 
         try {
@@ -157,52 +130,25 @@ class ProductController extends Controller
                 $data['thumbnail'] = $product->getRawOriginal('thumbnail');
             }
 
-            if ($request->hasFile('quick_guide')) {
-                $data['quick_guide'] =  Midhas::upload($request->quick_guide, $this->folder . '/quick_guides/');
-            } else {
-                $data['quick_guide'] = $product->quick_guide;
-            }
-
-            if ($request->hasFile('e_manual')) {
-                $data['e_manual'] =  Midhas::upload($request->e_manual, $this->folder . '/e_manuals/');
-            } else {
-                $data['e_manual'] = $product->e_manual;
-            }
-
-            if ($request->hasFile('user_manual')) {
-                $data['user_manual'] =  Midhas::upload($request->user_manual, $this->folder . '/user_manuals/');
-            } else {
-                $data['user_manual'] = $product->user_manual;
-            }
-
             $data['stock_balance'] = $request->total_stock ?? 0;
             $data['is_taxable'] = isset($request->is_taxable) ? true : false;
 
-            switch ($type) {
-                case 'package':
-                    $data['sku'] = Str::slug($data['sku'], '-');
-                    $product->update($data);
-                    // $this->addPackages($product, $request);
-                    break;
-                default:
-                    $product->update($data);
-                    $this->addCategories($product, $request);
-                    $this->addPrices($product, $request);
-                    $this->addSettings($product, $request);
-                    $this->uploadImages($product, $request);
-                    $this->addStocks($product, $request);
-                    $this->addVariants($product, $request);
-                    $this->addSpecifications($product, $request);
-                    // ProductUpdatedEvent::dispatch($product);
-                    break;
-            }
+            $product->update($data);
+            $this->addCategories($product, $request);
+            $this->addPrices($product, $request);
+            $this->addSettings($product, $request);
+            $this->uploadImages($product, $request);
+            $this->addStocks($product, $request);
+            $this->addVariants($product, $request);
+            $this->addSpecifications($product, $request);
+            $this->addManuals($product, $request);
 
             //add seo contest
             Midhas::addSeo($product, request()->only(['meta_title', 'meta_description', 'meta_keywords']), $product->seo?->id);
 
             DB::commit();
 
-            return to_route('admin.products.index', ['type' => $type])->with('success', 'Product added successfully');
+            return to_route('admin.products.index')->with('success', 'Product added successfully');
         } catch (Exception $e) {
             DB::rollBack();
             dd($e);
@@ -422,50 +368,57 @@ class ProductController extends Controller
         }
     }
 
+    public function addManuals($product, $request): void
+    {
+        $names = $request->manual_label;            // array
+        $files = $request->file('manual_files');    // uploaded files
+        $links = $request->manual_file_link;        // array
+        $ids = $request->manual_ids;                // array of IDs
+        $deleted_ids = json_decode($request->deleted_manual_ids);
 
+        // 1. Delete manuals by ID
+        if ($deleted_ids && is_array($deleted_ids)) {
+            ProductManual::whereIn('id', $deleted_ids)->delete();
+        }
 
-    // public function addManuals($product, $request): void
-    // {
-    //     //manuals
-    //     $ids = $request->manuals_multiple_item_ids;
-    //     $names = $request->manual_name;
-    //     $upload_file = $request->manual_file_name;
-    //     $links = $request->manual_file_link;
+        // 2. Process incoming manuals
+        foreach ($names as $index => $name) {
+            if (!$name) continue;
 
-    //     if ($names && count($names) > 0) {
-    //         foreach ($names as $key => $name) {
+            $id = $ids[$index] ?? null;
+            $file = $files[$index] ?? null;
+            $link = $links[$index] ?? null;
+            $filePath = null;
 
-    //             $id = $ids && isset($ids[$key]) && !is_null($ids[$key]);
+            // Upload file if available
+            if ($file) {
+                $filePath = Midhas::upload($file, $this->folder . $product->id . "/manuals/");
+            }
 
-    //             if ($names[$key] != '') {
-    //                 if ($upload_file && isset($upload_file[$key])) {
-    //                     $url = Midhas::upload($upload_file[$key], $this->folder . $product->id . "/manuals/");
-    //                 } else {
-    //                     $url = null;
-    //                 }
+            if ($id) {
+                // Update existing manual
+                $manual = ProductManual::find($id);
+                if (!$manual) continue;
 
-    //                 //check if ids exists
-    //                 if ($id) {
-    //                     $manual = ProductManual::find($ids[$key]);
-    //                     if (is_null($url) && $id) {
-    //                         $url = $manual->uploaded_file;
-    //                     }
-    //                     $manual->update([
-    //                         'name' => $names[$key],
-    //                         'uploaded_file' => $url,
-    //                         'file_link' => $links[$key]
-    //                     ]);
-    //                 } else {
-    //                     $product->manuals()->create([
-    //                         'name' => $names[$key],
-    //                         'uploaded_file' => $url,
-    //                         'file_link' => $links[$key]
-    //                     ]);
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
+                if (!$filePath && $manual->uploaded_file) {
+                    $filePath = $manual->uploaded_file; // Keep existing file
+                }
+
+                $manual->update([
+                    'name' => $name,
+                    'uploaded_file' => $filePath,
+                    'file_link' => $link,
+                ]);
+            } else {
+                // Create new manual
+                $product->manuals()->create([
+                    'name' => $name,
+                    'uploaded_file' => $filePath,
+                    'file_link' => $link,
+                ]);
+            }
+        }
+    }
 
     public function updatePrice(Request $request)
     {

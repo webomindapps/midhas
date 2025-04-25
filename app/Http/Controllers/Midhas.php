@@ -101,6 +101,12 @@ class Midhas extends Controller
                             View
                         </a></li>';
                 break;
+            case "inventory":
+                $view = '<li><a class="dropdown-item" href="' . $route . '">
+                            <i class="fas fa-inventory"></i>
+                            Inventory
+                        </a></li>';
+                break;
 
             case "more_info":
                 $view = '<li><a class="dropdown-item" href="' . $route . '">

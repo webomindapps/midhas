@@ -70,9 +70,9 @@
                         name="variant_files[]"
                         :required="!variantItems[index].id"
                     />
-                    <p class="text-center mt-2">
+                    <p class="text-center my-0">
                         <a
-                            v-if="variantItems[index].file"
+                            v-if="variantItems[index].file" class="mt-2"
                             :href="`${assetUrl}storage/${variantItems[index].file}`"
                             target="_blank"
                             >View</a

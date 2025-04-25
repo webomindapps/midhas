@@ -13,17 +13,8 @@
                     Search:
                     <input type="search" id="searchBox" class="" placeholder="">
                 </label>
-                {{-- <div class="search-bar">
-                    <input type="search" name="" id="searchBox" placeholder="Search here">
-                    <i class="bx bx-search"></i>
-                </div> --}}
             </form>
         </div>
-        {{-- <div class="col-lg-2">
-            <button type="button" class="clearSearch-btn" id="clearFilters">Clear Search</button>
-        </div> --}}
-
-
     </div>
     <div class="row custom_table">
         <div class="col-lg-12">

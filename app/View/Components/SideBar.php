@@ -34,6 +34,13 @@ class SideBar extends Component
             'name' => 'products',
         ],
         [
+            'title' => 'Stores',
+            'icon' => 'fal fa-store',
+            'route' => 'admin.stores.index',
+            'isSubMenu' => false,
+            'name' => 'stores',
+        ],
+        [
             'title' => 'Masters',
             'icon' => 'fal fa-sitemap',
             'isSubMenu' => true,
@@ -52,11 +59,6 @@ class SideBar extends Component
             ],
         ],
         [
-            'title' => 'Stores',
-            'icon' => 'fal fa-store',
-            'route' => 'admin.stores.index',
-            'isSubMenu' => false,
-            'name' => 'stores',
             'title' => 'CMS',
             'icon' => 'fal fa-sitemap',
             'isSubMenu' => true,

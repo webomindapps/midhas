@@ -21,8 +21,6 @@
                 @csrf
                 @method('PUT')
 
-                <input type="hidden" name="type" value="{{ $type }}">
-
                 <div class="row mb-4">
                     <x-forms.input label="Product Title" type="text" name="title" id="title" :required="true"
                         size="col-lg-3 mt-4" value="{!! $product->title !!}" class="slug" />
@@ -92,8 +90,7 @@
 
                     <x-accordion.item id="stock" title="Stock">
                         <div class="row" id="admin-app-two">
-                            <product-stock :stores="{{ Midhas::getStore() }}" :stock="{{ $product->total_stock }}"
-                                :existing="{{ $product->stocks }}" />
+                            <product-stock :stores="{{ Midhas::getStore() }}" :stock="{{ $product->total_stock }}" :existing="{{ $product->stocks }}" />
                         </div>
                     </x-accordion.item>
 
@@ -135,7 +132,8 @@
                             </x-tabs.content>
 
                             <x-tabs.content id="manuals">
-                                <div class="row" id="admin-app-assembly-manuals">
+                                <div class="row" id="admin-app-manuals">
+                                    <multiple-item :existing="{{ json_encode($product->manuals) }}" />
                                 </div>
                             </x-tabs.content>
                         </x-tabs.section>

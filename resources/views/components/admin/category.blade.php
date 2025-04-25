@@ -3,7 +3,7 @@
 <div class="row g-5">
 
     @foreach ($categories as $category)
-        <div class="col-lg-6">
+        <div class="col-lg-6 mb-1">
             <div class="parent-cat border">
                 <div class="category-list">
                     <div class="input-check">

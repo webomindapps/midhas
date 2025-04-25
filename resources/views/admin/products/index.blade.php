@@ -13,7 +13,6 @@
     @php
 
     $columns = [
-        ['label' => 'Sl No', 'column' => 'id', 'sort' => true],
         ['label' => 'Name', 'column' => 'title', 'sort' => true],
         ['label' => 'SKU', 'column' => 'sku', 'sort' => true],
         ['label' => 'Brand', 'column' => 'brand', 'sort' => false],
@@ -47,10 +46,9 @@
     ];
 @endphp
 
-<x-table :columns="$columns" :data="$products" checkAll="{{ false }}" :bulk="route('admin.products.index')" :route="route('admin.products.index')">
+<x-table :columns="$columns" :data="$products" checkAll="{{ true }}" :bulk="route('admin.products.destroy', ['product' => 'bulk'])" :route="route('admin.products.index')">
     @foreach ($products as $key => $item)
         @php
-
             $actions = [
                 [
                     'code' => 'active',
@@ -69,13 +67,15 @@
                     'route' => route('admin.products.edit', $item->id),
                 ],
                 [
-                    'code' => 'view',
-                    'route' => route('admin.products.show', $item->id),
+                    'code' => 'inventory',
+                    'route' => route('admin.products.edit', $item->id).'#heading-stock',
                 ],
             ];
         @endphp
         <tr>
-            <td>{{ $key + 1 }}</td>
+            <td>
+                <input type="checkbox" name="selected_items[]" class="single-item-check" value="{{ $item->id }}">
+            </td>
             <td>{{ $item->title }}</td>
             <td>{{ $item->sku }}</td>
             <td>{{ $item->brand?->name }}</td>

@@ -45,14 +45,14 @@
                         </div>
                     </x-accordion.item>
 
-                    <x-accordion.item id="employee" title="Employees">
+                    {{-- <x-accordion.item id="employee" title="Employees">
                         <div class="row">
                             <div class="col-lg-12" id="admin-app-one">
                                 <multiple-item :headings="{{ json_encode(getMultipleItemMenu('employees')) }}"
                                     :existing="{{ json_encode($store->employees) }}" name="stores" />
                             </div>
                         </div>
-                    </x-accordion.item>
+                    </x-accordion.item> --}}
 
                     <x-accordion.item id="media-gallery" title="Media Gallery">
                         <div class="row">

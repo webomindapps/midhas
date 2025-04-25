@@ -9,7 +9,7 @@ import MultipleItem from "./admin/MultipleItem.vue";
 const root = defineComponent({})
 
 
-const multipleApps = ['one', 'two','assembly-manuals','variants']
+const multipleApps = ['one', 'two','manuals','variants']
 
 multipleApps.map((item) => {
     let appName = item;

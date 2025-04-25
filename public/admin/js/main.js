@@ -108,51 +108,7 @@ $(document).on('change', '.category', function () {
             categorySelected.splice(index, 1)
         }
     }
-    getSpecifications();
 })
-
-const getSpecifications = () => {
-    if (categorySelected.length > 0) {
-        $.ajax({
-            url: endpoint + '/admin/getSpecification',
-            type: 'get',
-            data: {
-                ids: categorySelected,
-                product_id,
-            },
-            success: function (data) {
-                loadSpecification(data)
-            }
-        })
-    }
-    else {
-        $('#specifications-contents').html("")
-    }
-
-}
-
-const loadSpecification = (items) => {
-    var data = '';
-
-    items.map((item) => {
-        data += `
-            <tr>
-                <td>
-                    <label for="">${item.name}</label>
-                </td>
-                <td>
-                    <input type="hidden" name="specification_id[]" value="${item.id}"  />
-                    <input type="hidden" name="specification_name[]" value="${item.name}"  />
-                    <input type="text" name="specification_value[]" value="${item.value}">
-                </td>
-            </tr>
-        `;
-    })
-
-    $('#specifications-contents').html("")
-    $('#specifications-contents').append(data)
-
-}
 
 
 

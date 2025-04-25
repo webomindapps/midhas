@@ -1,124 +1,123 @@
 <template>
-    <div class="col-lg-12">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th v-for="(heading, index) in headings" :key="index">
-                        {{ heading.title }}
-                    </th>
-                    <th>
-                        <a class="manual-add" @click="addRow">
-                            <i class="fal fa-plus"></i>
-                        </a>
-                    </th>
-                </tr>
-            </thead>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Label</th>
+                <th>File</th>
+                <th>File Link</th>
+                <th>
+                    <a class="manual-add" @click="addRow">
+                        <i class="fal fa-plus"></i>
+                    </a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Hidden field for deleted manual IDs -->
             <input
                 type="hidden"
-                :name="`${props.name}_deleted_item_ids`"
-                :value="JSON.stringify(deletedItemsIds)"
+                name="deleted_manual_ids"
+                :value="JSON.stringify(deletedManuals)"
             />
-            <tbody>
-                <tr v-for="(state, index) in states" :key="index">
+            <tr v-for="(manual, index) in manualItems" :key="index">
+                <!-- Hidden input to pass manual IDs to the backend -->
+                <input type="hidden" name="manual_ids[]" :value="manual.id || ''" />
+
+                <td>
                     <input
-                        type="hidden"
-                        :name="`${props.name}_multiple_item_ids[]`"
-                        v-model="states[index]['id']"
+                        type="text"
+                        name="manual_label[]"
+                        v-model="manual.label"
+                        required
                     />
-                    <td v-for="(heading, ind) in headings" :key="ind">
-                        <div class="d-flex">
-                            <input
-                                :type="heading.type"
-                                :name="`${heading.name}[]`"
-                                v-model="states[index][heading.name]"
-                                style="margin-right: 5px"
-                            />
-                            <template
-                                v-if="
-                                    heading.type == 'file' &&
-                                    checkIfFileExist(index, heading)
-                                "
-                            >
-                                <div>
-                                    <a
-                                        target="_blank"
-                                        :href="
-                                            URL +
-                                            '/storage/' +
-                                            props.existing[index][
-                                                heading.db_col
-                                            ]
-                                        "
-                                        >View</a
-                                    >
-                                </div>
-                            </template>
-                        </div>
-                    </td>
-                    <td>
-                        <a class="manual-add" @click="deleteRow(index)">
-                            <i class="fal fa-trash"></i>
+                </td>
+                <td>
+                    <input
+                        type="file"
+                        name="manual_files[]"
+                        :required="!manual.id"
+                        @change="handleFileChange($event, index)"
+                    />
+                    <p class="text-center my-0">
+                        <a
+                            v-if="manual.id && manual.file"
+                            :href="`${assetUrl}storage/${manual.file}`"
+                            target="_blank"
+                        >
+                            View
                         </a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+                    </p>
+                </td>
+                <td>
+                    <input
+                        type="url"
+                        name="manual_file_link[]"
+                        v-model="manual.fileLink"
+                        placeholder="Enter file link"
+                    />
+                </td>
+                <td>
+                    <a class="manual-add" @click="deleteRow(index)">
+                        <i class="fal fa-trash"></i>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, reactive } from "vue";
 
-const props = defineProps(["headings", "existing", "name"]);
-
-let URL = window._url;
-
-const states = ref([]);
-const deletedItemsIds = ref([]);
-
-onMounted(() => {
-    if (props.existing) {
-        props.existing.map((ext) => {
-            let object = {};
-            object["id"] = ext.id;
-            props.headings.map((item) => {
-                if (item.type == "file") {
-                    object[item.name] = "";
-                } else {
-                    object[item.name] = ext[item.db_col];
-                }
-            });
-            states.value.push(object);
-        });
-    }
+const props = defineProps({
+  existing: {
+    type: Array,
+    required: true,
+  },
 });
 
-const addRow = () => {
-    let object = {};
-    object["id"] = null;
-    props.headings.map((item) => {
-        object[item.name] = "";
+const assetUrl = window._asset;
+const manualItems = reactive([]);
+const deletedManuals = reactive([]);
+
+// Load existing manuals
+onMounted(() => {
+  (props.existing || []).forEach((item) => {
+    manualItems.push({
+      id: item.id,
+      label: item.name,
+      file: item.uploaded_file,
+      fileLink: item.file_link || '',
     });
-    states.value.push(object);
+  });
+});
+
+// Add new row
+const addRow = () => {
+  manualItems.push({
+    id: null,
+    label: '',
+    file: null,
+    fileLink: '',
+  });
 };
 
+// Handle file change
+const handleFileChange = (event, index) => {
+  const file = event.target.files[0];
+  if (file) {
+    manualItems[index].file = file.name;
+  }
+};
+
+// Delete row
 const deleteRow = (index) => {
-    if (confirm("Are you sure you want to delete this?")) {
-        if (states.value[index]["id"]) {
-            deletedItemsIds.value.push(states.value[index]["id"]);
-        }
-        states.value.splice(index, 1);
+  if (confirm("Are you sure you want to delete this?")) {
+    const id = manualItems[index].id;
+    if (id) {
+      deletedManuals.push(id);
     }
-};
-
-const checkIfFileExist = (index, heading) => {
-    if (
-        props.existing &&
-        props.existing[index] &&
-        props.existing[index][heading.db_col]
-    ) {
-        return true;
-    }
-    return false;
+    manualItems.splice(index, 1);
+  }
 };
 </script>

@@ -118,7 +118,8 @@
                             </x-tabs.content>
 
                             <x-tabs.content id="manuals">
-                                <div class="row" id="admin-app-assembly-manuals">
+                                <div class="row" id="admin-app-manuals">
+                                    <multiple-item />
                                 </div>
                             </x-tabs.content>
                         </x-tabs.section>

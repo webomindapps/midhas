@@ -13,7 +13,14 @@ return new class extends Migration
     {
         Schema::create('product_manuals', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('product_id'); // Foreign key for product
+            $table->string('name'); // Manual label
+            $table->string('uploaded_file')->nullable(); // File path or URL for the uploaded file
+            $table->string('file_link')->nullable(); // External link to the manual (optional)
             $table->timestamps();
+
+            // Optionally, add a foreign key constraint if you want to link it to the products table
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
         });
     }
 
