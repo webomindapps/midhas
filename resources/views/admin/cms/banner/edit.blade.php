@@ -22,20 +22,19 @@
                     <x-forms.input label="Upload Image" type="file" name="banner_image_path[]" id="banner_image_path"
                         :required="false" size="col-lg-4 mt-4" imageValue="{{ $banner->banner_image_path }}"
                         class="image-file" :image="true" multiple />
-                    @if ($banner->images->isNotEmpty())
+                        @if ($banner->images->isNotEmpty())
                         <div class="mt-3">
                             <div class="row">
                                 @foreach ($banner->images as $image)
-                                    <div class="col-lg-2 mt-2">
-                                        <img src="{{ asset('storage/' . $image->banner_url) }}" alt="Banner Image"
-                                            class="img-thumbnail" style="width: 100px; height: auto;">
-                                        {{-- <a href="{{ route('admin.cms.banner.removeImage', ['banner' => $banner->id, 'image' => $image->id]) }}"
-                                            class="btn btn-danger btn-sm mt-2">Remove</a> --}}
+                                    <div class="col-lg-1">
+                                        <img src="{{ asset('storage/' . ltrim($image->banner_url, '/')) }}" alt="Banner Image"
+                                             class="img-thumbnail shadow-sm" style="width: 100px; border-radius: 8px;">
                                     </div>
                                 @endforeach
                             </div>
                         </div>
                     @endif
+                    
                 </div>
                 <button type="submit" class="submit-btn submitBtn">Submit</button>
             </form>
