@@ -34,38 +34,34 @@
             document.addEventListener('DOMContentLoaded', function() {
                 const type = document.getElementById('type');
                 const imageInput = document.getElementById('banner_image_path');
-
-                function validateImageCount() {
-                    const selectedType = parseInt(type.value);
-                    const selectedFiles = imageInput.files.length;
-
-                    if (selectedFiles > selectedType) {
-                        alert(`You can upload a maximum of ${selectedType} image(s) for this banner type.`);
-                        imageInput.value = '';
-                    }
-                }
-
-                imageInput.addEventListener('change', validateImageCount);
-            });
-        </script>
-        <script>
-            document.getElementById('banner_image_path').addEventListener('change', function(event) {
                 const container = document.getElementById('image-preview-container');
-                container.innerHTML = ''; 
 
-                Array.from(event.target.files).forEach(file => {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.style.width = '100px';
-                        img.style.height = 'auto';
-                        img.style.margin = '10px';
-                        img.style.borderRadius = '8px';
-                        img.style.border = '1px solid #ccc';
-                        container.appendChild(img);
-                    };
-                    reader.readAsDataURL(file);
+                imageInput.addEventListener('change', function(event) {
+                    const selectedType = parseInt(type.value);
+                    const selectedFiles = event.target.files;
+
+                    container.innerHTML = ''; 
+                    if (selectedFiles.length > selectedType) {
+                        alert(`You can upload a maximum of ${selectedType} image(s) for this banner type.`);
+                        imageInput.value = ''; 
+                        return; 
+                    }
+
+                    
+                    Array.from(selectedFiles).forEach(file => {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.style.width = '100px';
+                            img.style.height = 'auto';
+                            img.style.margin = '10px';
+                            img.style.borderRadius = '8px';
+                            img.style.border = '1px solid #ccc';
+                            container.appendChild(img);
+                        };
+                        reader.readAsDataURL(file);
+                    });
                 });
             });
         </script>
