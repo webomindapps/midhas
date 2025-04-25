@@ -16,13 +16,14 @@
                                         class="fw-bold">{{ $category->name }}</span></h3>
                             </a>
                         </div>
-                    @endforeach
-                @endif
+                    </div>
+                @endforeach
             </div>
         </div>
     </div>
 </section>
-<section class="section offers_CTA d-flex align-items-center justify-content-center" style="background: url('{{ asset('frontend/images/offer-big.jpg') }}') no-repeat center center; background-size: cover;">
+<section class="section offers_CTA d-flex align-items-center justify-content-center"
+    style="background: url('{{ asset('frontend/images/offer-big.jpg') }}') no-repeat center center; background-size: cover;">
     <div class="col-lg-6 text-center">
         <h2 class="text_inter text-white text-uppercase">Modern Furniture</h2>
         <a href="#" class="dark_btn text-white "> Shop now</a>
