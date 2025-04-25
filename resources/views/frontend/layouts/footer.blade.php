@@ -21,14 +21,9 @@
                             <div class="col-lg-4">
                                 <h2 class="text-uppercase">MIDHA’S FURNITURE GALLERY</h2>
                                 <ul class="list_styled">
-                                    <li><a href="">About Us</a></li>
-                                    <li><a href="">Contact Us</a></li>
-                                    <li><a href="">New Arrivals</a></li>
-                                    <li><a href="">Delivery</a></li>
-                                    <li><a href="">Returns</a></li>
-                                    <li><a href="">Sitemap</a></li>
-                                    <li><a href="">Cookie Policy</a></li>
-                                    <li><a href="">Terms & Conditions</a></li>
+                                    @foreach (Midhas::pages() as $page)
+                                        <li><a href="{{ route('page.view', $page->slug) }}">{{ $page->title }}</a></li>
+                                    @endforeach
                                 </ul>
                             </div>
                             <div class="col-lg-3">
@@ -47,23 +42,12 @@
                             <div class="col-lg-4">
                                 <h2 class="text-uppercase">Popular Categories</h2>
                                 <ul class="list_styled">
-                                    <li><a href="">Bedroom</a>
-                                    <li>
-                                    <li><a href="">Chest of Drawers</a>
-                                    <li>
-                                    <li><a href="">Shoe Cabinets</a>
-                                    <li>
-                                    <li><a href="">TV Stands</a>
-                                    <li>
-                                    <li><a href="">Wardrobes</a>
-                                    <li>
-                                    <li><a href="">Coffee Tables</a>
-                                    <li>
-                                    <li><a href="">Ready Assembled</a>
-                                    <li>
-                                    <li><a href="">Garden Furniture</a>
-                                    <li>
+                                    @foreach ($categories as $category)
+                                        <li><a href="">{{ $category->name }}</a></li>
+                                    @endforeach
+
                                 </ul>
+
                             </div>
                         </div>
                     </div>

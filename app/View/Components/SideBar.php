@@ -57,6 +57,27 @@ class SideBar extends Component
             'route' => 'admin.stores.index',
             'isSubMenu' => false,
             'name' => 'stores',
+            'title' => 'CMS',
+            'icon' => 'fal fa-sitemap',
+            'isSubMenu' => true,
+            'name' => 'cms',
+            'subMenus' => [
+                [
+                    'title' => 'Banners',
+                    'icon' => 'bx bx-chevron-right',
+                    'route' => 'admin.cms.banners.index',
+                ],
+                [
+                    'title' => 'Pages',
+                    'icon' => 'bx bx-chevron-right',
+                    'route' => 'admin.cms.pages.index',
+                ],
+                [
+                    'title' => 'Sliders',
+                    'icon' => 'bx bx-chevron-right',
+                    'route' => 'admin.cms.sliders.index',
+                ],
+            ],
         ],
     ];
 

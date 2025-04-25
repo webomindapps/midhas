@@ -1,10 +1,13 @@
 <?php
 
 use App\Http\Controllers\Admin\AjaxController;
+use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\BrandController;
+use App\Http\Controllers\Admin\LoginController;
+use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\SpecificationController;
 use App\Http\Controllers\Admin\StoreController;
@@ -28,6 +31,17 @@ Route::middleware('auth:admin')->group(function () {
         Route::resources([
             'brands' => BrandController::class,
             'specifications' => SpecificationController::class,
+        ]);
+    });
+    Route::group(['prefix' => 'cms', 'as' => 'cms.'], function () {
+        Route::resources([
+            'banners' => BannerController::class,
+        ]);
+        Route::resources([
+            'pages' => PageController::class,
+        ]);
+        Route::resources([
+            'sliders' => SliderController::class,
         ]);
     });
 });

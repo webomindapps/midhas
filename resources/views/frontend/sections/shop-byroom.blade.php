@@ -16,8 +16,8 @@
                                         class="fw-bold">{{ $category->name }}</span></h3>
                             </a>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                @endif
             </div>
         </div>
     </div>
