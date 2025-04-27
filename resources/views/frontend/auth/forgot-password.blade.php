@@ -24,7 +24,7 @@
                                 <p class="text-center">Enter Email  to Reset Password</p>
                                 <div class="form_wrapper pt-3">
                                     <form class="d-block mb-4" aria-labelledby="form-title"
-                                        action="{{ route('customer.forget') }}" method="POST">
+                                        action="{{ route('password.email') }}" method="POST">
                                         @csrf
                                         <!-- Form Title (for accessibility) -->
                                         {{-- <h2 id="form-title" class="visually-hidden">Form for Account User Login</h2> --}}

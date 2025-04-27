@@ -15,8 +15,8 @@
                                 <div class="form_wrapper pt-3">
                                     <div class="form_wrapper pt-3">
                                         <form class="d-block mb-4" aria-labelledby="form-title"
-                                            action="{{ route('customer.password.reset') }}" method="POST">
-                                            <input type="hidden" name="reset_token" value="{{ $token }}">
+                                            action="{{ route('password.store') }}" method="POST">
+                                            <input type="hidden" name="token" value="{{ request()->route('token') }}">
                                             @csrf
                                             <p class="text-center">If you want to change your old password, reset it by
                                                 entering
@@ -41,13 +41,13 @@
                                                 <span style="font-size:12px;color:red;">{{ $message }}</span>
                                             @enderror
                                             <div class="form-floating mb-3">
-                                                <input type="password" name="confirm_password"
+                                                <input type="password" name="password_confirmation"
                                                     class="form-control input-password" id="floatingPassword"
                                                     placeholder="Password">
                                                 <label for="floatingPassword">Confirm Password</label>
                                                 <span class="login-pass toggle-password"><i class='bx bx-hide'></i></span>
                                             </div>
-                                            @error('confirm_password')
+                                            @error('password_confirmation')
                                                 <span style="font-size:12px;color:red;">{{ $message }}</span>
                                             @enderror
                                             <div class="col-auto text-center">

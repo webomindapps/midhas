@@ -65,7 +65,7 @@
                                         </div>
 
                                         <div class="text-end mb-3 pb-1">
-                                            <a href="{{ route('customer.forget') }}" class="text_orange">Forgot
+                                            <a href="{{ route('password.request') }}" class="text_orange">Forgot
                                                 password?</a>
                                         </div>
 
