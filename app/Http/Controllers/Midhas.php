@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
 use App\Models\Pages;
 use App\Models\Category;
+use App\Models\Store;
+use App\Models\Variant;
 
 class Midhas extends Controller
 {
@@ -98,6 +101,12 @@ class Midhas extends Controller
                             View
                         </a></li>';
                 break;
+            case "inventory":
+                $view = '<li><a class="dropdown-item" href="' . $route . '">
+                            <i class="fas fa-inventory"></i>
+                            Inventory
+                        </a></li>';
+                break;
 
             case "more_info":
                 $view = '<li><a class="dropdown-item" href="' . $route . '">
@@ -115,7 +124,65 @@ class Midhas extends Controller
 
         return $view;
     }
+    public function getBrands($dropdown = true)
+    {
+        $query = Brand::where('status', true);
 
+        if ($dropdown) {
+            return $query->get()->map(function ($query) {
+                return [
+                    'label' => $query->name,
+                    'value' => $query->id
+                ];
+            });
+        }
+
+        return $query->orderBy('position', 'asc')->get();
+    }
+    public function getOrderType()
+    {
+        return [
+            ['label' => 'Enquiry', 'value' => 1],
+            ['label' => 'Add To Cart', 'value' => 2],
+        ];
+    }
+    public function getVariants($dropdown = true)
+    {
+        $query = Variant::query();
+        if ($dropdown) {
+            return $query->get()->map(function ($query) {
+                return [
+                    'label' => $query->name,
+                    'value' => $query->id
+                ];
+            });
+        }
+        return $query->get();
+    }
+    public function getStore($dropdown = true)
+    {
+        $query = Store::where('status', true);
+
+        $query->orderBy('name', 'asc');
+        if ($dropdown) {
+            return $query->get()->map(function ($query) {
+                return [
+                    'label' => $query->name,
+                    'value' => $query->id
+                ];
+            });
+        }
+
+        return $query->get();
+    }
+    public function getCategoriesBasedOnProduct($product)
+    {
+        return $product
+            ->categories()
+            ->get()
+            ->pluck('id')
+            ->toArray();
+    }
     public function getAllCategories()
     {
         $categories = Category::where('status', true)

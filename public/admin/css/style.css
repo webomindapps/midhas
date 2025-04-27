@@ -765,7 +765,7 @@ textarea:focus {
 }
 
 .table tbody tr td input {
-  height: 29px;
+  /* height: 29px; */
   padding-left: 5px;
   font-size: 14px;
 }

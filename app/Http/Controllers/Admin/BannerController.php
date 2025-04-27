@@ -96,17 +96,18 @@ class BannerController extends Controller
 
         if ($request->hasFile('banner_image_path')) {
             foreach ($banner->images as $image) {
-                Storage::delete('public/' . $image->banner_url);
-
+                if (Storage::disk('public')->exists($image->banner_url)) {
+                    Storage::disk('public')->delete($image->banner_url);
+                }
                 $image->delete();
             }
 
             foreach ($request->file('banner_image_path') as $file) {
-                $url = Midhas::upload($file, $this->folder);
+                $url = Midhas::upload($file, $this->folder); // Should return relative path like 'banners/image.jpg'
                 $banner->images()->create(['banner_url' => $url]);
             }
-        }
 
+        }
 
         return to_route('admin.cms.banners.index')->with('success', 'Banner updated successfully');
     }

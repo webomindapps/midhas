@@ -6,7 +6,6 @@ use App\Facades\Midhas;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BrandRequest;
 use App\Models\Brand;
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class BrandController extends Controller

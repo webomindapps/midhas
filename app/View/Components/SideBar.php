@@ -27,6 +27,20 @@ class SideBar extends Component
             'name' => 'category',
         ],
         [
+            'title' => 'Products',
+            'icon' => 'fal fa-box-full',
+            'route' => 'admin.products.index',
+            'isSubMenu' => false,
+            'name' => 'products',
+        ],
+        [
+            'title' => 'Stores',
+            'icon' => 'fal fa-store',
+            'route' => 'admin.stores.index',
+            'isSubMenu' => false,
+            'name' => 'stores',
+        ],
+        [
             'title' => 'Masters',
             'icon' => 'fal fa-sitemap',
             'isSubMenu' => true,
@@ -36,6 +50,11 @@ class SideBar extends Component
                     'title' => 'Brands',
                     'icon' => 'bx bx-chevron-right',
                     'route' => 'admin.masters.brands.index',
+                ],
+                [
+                    'title' => 'Specification',
+                    'icon' => 'bx bx-chevron-right',
+                    'route' => 'admin.masters.specifications.index',
                 ],
             ],
         ],
