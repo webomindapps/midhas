@@ -9,6 +9,7 @@ use App\Models\Sliders;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Product\Product;
 
 class ShopController extends Controller
 {
@@ -23,8 +24,15 @@ class ShopController extends Controller
         $brands = Brand::with('image')->where('status', 1)->get();
         $banners = Banner::with('images')->where('status', 1)->orderBy('position', 'asc')->get();
         $sliders = Sliders::where('status', 1)->get();
+        $bestsellers = Product::with('images')->where('is_best_selling', 1)
+            ->where('status', 1)
+            ->get();
+        $isnew = Product::with('images')->where('is_new', 1)
+            ->where('status', 1)
+            ->get();
 
-        return view('frontend.pages.index', compact('categories', 'brands', 'banners','sliders'));
+
+        return view('frontend.pages.index', compact('categories', 'brands', 'banners', 'sliders', 'bestsellers', 'isnew'));
     }
     public function pageDetails($page)
     {
