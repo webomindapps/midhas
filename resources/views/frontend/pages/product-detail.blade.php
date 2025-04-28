@@ -8,9 +8,9 @@
                 </ul>
 
                 <!--
-                        <h2 class="text_inter text-uppercase">Living Room Furniture</h2>
-                        <p class="text_inter mb-0">Create a relaxing and inviting atmosphere with our stylish, affordable living room furniture selection. Whether you want to create a fun, entertaining space with sociable seating and the perfect TV stand for film nights or a relaxation retreat with lamp tables for soft lighting and for your cuppa, there’s something for everyone at Big Furniture Warehouse. Create a modern, clean aesthetic with white and grey lounge furniture or a more rustic feel with natural wood furniture and bring your vision to life.</p>
-             -->
+                                                        <h2 class="text_inter text-uppercase">Living Room Furniture</h2>
+                                                        <p class="text_inter mb-0">Create a relaxing and inviting atmosphere with our stylish, affordable living room furniture selection. Whether you want to create a fun, entertaining space with sociable seating and the perfect TV stand for film nights or a relaxation retreat with lamp tables for soft lighting and for your cuppa, there’s something for everyone at Big Furniture Warehouse. Create a modern, clean aesthetic with white and grey lounge furniture or a more rustic feel with natural wood furniture and bring your vision to life.</p>
+                                             -->
             </div>
         </section>
 
@@ -29,16 +29,13 @@
                                             <!-- Additional required wrapper -->
                                             <div class="swiper-wrapper">
                                                 <!-- Slides -->
-                                                <div class="swiper-slide"><img src="images/image-1.jpg" alt=""
-                                                        class="w-100 img-fluid"></div>
-                                                <div class="swiper-slide"><img src="images/image-2.jpg" alt=""
-                                                        class="w-100 img-fluid"></div>
-                                                <div class="swiper-slide"><img src="images/image-3.jpg" alt=""
-                                                        class="w-100 img-fluid"></div>
-                                                <div class="swiper-slide"><img src="images/image-4.jpg" alt=""
-                                                        class="w-100 img-fluid"></div>
-                                                <div class="swiper-slide"><img src="images/image-5.jpg" alt=""
-                                                        class="w-100 img-fluid"></div>
+                                                @foreach ($product->images as $image)
+                                                    <div class="swiper-slide">
+                                                        <img src="{{ asset($image->url) }}" alt=""
+                                                            class="w-100 img-fluid">
+                                                    </div>
+                                                @endforeach
+
                                             </div>
                                         </div>
                                         <!-- Add Arrows -->
@@ -52,21 +49,12 @@
                                         <!-- Additional required wrapper -->
                                         <div class="swiper-wrapper">
                                             <!-- Slides -->
-                                            <div class="swiper-slide">
-                                                <img src="images/image-1.jpg" alt="" class="w-100 img-fluid">
-                                            </div>
-                                            <div class="swiper-slide">
-                                                <img src="images/image-2.jpg" alt="" class="w-100 img-fluid">
-                                            </div>
-                                            <div class="swiper-slide">
-                                                <img src="images/image-3.jpg" alt="" class="w-100 img-fluid">
-                                            </div>
-                                            <div class="swiper-slide">
-                                                <img src="images/image-4.jpg" alt="" class="w-100 img-fluid">
-                                            </div>
-                                            <div class="swiper-slide">
-                                                <img src="images/image-5.jpg" alt="" class="w-100 img-fluid">
-                                            </div>
+                                            @foreach ($product->images as $image)
+                                                <div class="swiper-slide">
+                                                    <img src="{{ asset($image->url) }}" alt=""
+                                                        class="w-100 img-fluid">
+                                                </div>
+                                            @endforeach
                                         </div>
                                         <!-- Add Arrows -->
                                         <div class="swiper-button-next"></div>
@@ -118,11 +106,11 @@
                                 <div class="d-flex align-items-center detail-addtocart">
                                     <div class="number d-flex align-items-center ">
                                         <p class="d-inline mb-0 me-2 fw-bold">Qty</p>
-                                        <div class="input-group"><input type="button" value="-"
-                                                data-field="quantity" class="button-minus"> <input type="text"
-                                                step="1" max="" value="1" name="quantity"
-                                                class="quantity-field"> <input type="button" value="+"
-                                                data-field="quantity" class="button-plus"></div>
+                                        <div class="input-group"><input type="button" value="-" data-field="quantity"
+                                                class="button-minus"> <input type="text" step="1" max=""
+                                                value="1" name="quantity" class="quantity-field"> <input type="button"
+                                                value="+" data-field="quantity" class="button-plus">
+                                        </div>
                                     </div>
                                     <!--                                <div class="clearflix"></div>-->
                                     <div class="add-cart d-block text-center text-uppercase fw-bold">
@@ -289,106 +277,11 @@
 
                 <div class="col-12 mt-5 swiper-container M_products">
                     <div class="product_wrap swiper-wrapper">
-                        <div class="swiper-slide">
-                            <div class="product_box">
-                                <div class="prd_img"> <img src="images/prd-1.jpg" alt=""
-                                        class="w-100 img-fluid"></div>
-                                <div class="color_selector d-flex justify-content-center">
-                                    <span class="active" style="--color:#B3B3B3"></span>
-                                    <span class="" style="--color:#252831"></span>
-                                </div>
-                                <h3 class="prd_name text_hind fw-bold">Verona Fabric Ottoman Bench</h3>
-                                <span class="prd_price fw-bold d-block">$89.99</span>
-                                <div class="d-flex text_inter prd_actions">
-                                    <div class="col">
-                                        <a href="" class="buy d-block">Buy</a>
-                                    </div>
-                                    <div class="col">
-                                        <a href="" class="view d-block">View</a>
-                                    </div>
-                                </div>
+                        @foreach ($recentViewed as $recents)
+                            <div class="swiper-slide">
+                                <x-product-card :product="$recents" />
                             </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="product_box">
-                                <div class="prd_img"> <img src="images/prd-2.jpg" alt=""
-                                        class="w-100 img-fluid"></div>
-                                <div class="color_selector d-flex justify-content-center">
-                                    <span class="active" style="--color:#B3B3B3"></span>
-                                    <span class="" style="--color:#252831"></span>
-                                </div>
-                                <h3 class="prd_name text_hind fw-bold">Verona Fabric Ottoman Bench</h3>
-                                <span class="prd_price fw-bold d-block">$89.99</span>
-                                <div class="d-flex text_inter prd_actions">
-                                    <div class="col">
-                                        <a href="" class="buy d-block">Buy</a>
-                                    </div>
-                                    <div class="col">
-                                        <a href="" class="view d-block">View</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="product_box">
-                                <div class="prd_img"> <img src="images/prd-3.jpg" alt=""
-                                        class="w-100 img-fluid"></div>
-                                <div class="color_selector d-flex justify-content-center">
-                                    <span class="active" style="--color:#B3B3B3"></span>
-                                    <span class="" style="--color:#252831"></span>
-                                </div>
-                                <h3 class="prd_name text_hind fw-bold">Verona Fabric Ottoman Bench</h3>
-                                <span class="prd_price fw-bold d-block">$89.99</span>
-                                <div class="d-flex text_inter prd_actions">
-                                    <div class="col">
-                                        <a href="" class="buy d-block">Buy</a>
-                                    </div>
-                                    <div class="col">
-                                        <a href="" class="view d-block">View</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="product_box">
-                                <div class="prd_img"> <img src="images/prd-4.jpg" alt=""
-                                        class="w-100 img-fluid"></div>
-                                <div class="color_selector d-flex justify-content-center">
-                                    <span class="active" style="--color:#B3B3B3"></span>
-                                    <span class="" style="--color:#252831"></span>
-                                </div>
-                                <h3 class="prd_name text_hind fw-bold">Verona Fabric Ottoman Bench</h3>
-                                <span class="prd_price fw-bold d-block">$89.99</span>
-                                <div class="d-flex text_inter prd_actions">
-                                    <div class="col">
-                                        <a href="" class="buy d-block">Buy</a>
-                                    </div>
-                                    <div class="col">
-                                        <a href="" class="view d-block">View</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="swiper-slide">
-                            <div class="product_box">
-                                <div class="prd_img"> <img src="images/prd-3.jpg" alt=""
-                                        class="w-100 img-fluid"></div>
-                                <div class="color_selector d-flex justify-content-center">
-                                    <span class="active" style="--color:#B3B3B3"></span>
-                                    <span class="" style="--color:#252831"></span>
-                                </div>
-                                <h3 class="prd_name text_hind fw-bold">Verona Fabric Ottoman Bench</h3>
-                                <span class="prd_price fw-bold d-block">$89.99</span>
-                                <div class="d-flex text_inter prd_actions">
-                                    <div class="col">
-                                        <a href="" class="buy d-block">Buy</a>
-                                    </div>
-                                    <div class="col">
-                                        <a href="" class="view d-block">View</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
                     <!-- Custom Navigation buttons -->
                     <div class="product-swiper-button-next"><i class="fa-solid fa-arrow-right"></i></div>
@@ -397,4 +290,175 @@
             </div>
         </section>
     @endsection
+    @push('scripts')
+        <script>
+            $(function() {
+                $('.color_selector').each(function(index, element) {
+                    $(element).find('span').click(function() {
+                        $(element).find('span').removeClass('active');
+                        $(this).addClass('active');
+                    });
+                });
+
+                function checkDesktop() {
+                    return window.innerWidth < 990;
+                }
+                if (checkDesktop()) {
+                    $('#search_collapse').removeClass('show');
+                }
+
+                //        --------------------------------------------------------------
+                // Initialize Swiper
+                const swiper = new Swiper('.M_products', {
+                    loop: false, // Enable loop
+                    slidesPerView: 1, // Default slides per view
+                    spaceBetween: 10, // Space between slides
+
+                    // Breakpoints configuration
+                    breakpoints: {
+                        // When window width is >= 640px
+                        360: {
+                            slidesPerView: 2,
+                            spaceBetween: 0
+                        },
+                        // When window width is >= 768px
+                        768: {
+                            slidesPerView: 3,
+                            spaceBetween: 5
+                        },
+                        // When window width is >= 1024px
+                        1200: {
+                            slidesPerView: 4,
+                            spaceBetween: 5
+                        },
+                        // When window width is >= 1024px
+                        1440: {
+                            slidesPerView: 5,
+                            spaceBetween: 0
+                        }
+                    },
+
+                    // Custom navigation
+                    navigation: {
+                        nextEl: '.product-swiper-button-next', // Custom next button class
+                        prevEl: '.product-swiper-button-prev' // Custom previous button class
+                    }
+                });
+
+
+                // Disable navigation arrows when at the beginning or end
+                swiper.on('slideChange', function() {
+                    const prevButton = document.querySelector('.product-swiper-button-prev');
+                    const nextButton = document.querySelector('.product-swiper-button-next');
+
+                    // Disable "Previous" button if at the beginning
+                    if (swiper.isBeginning) {
+                        prevButton.classList.add('swiper-button-disabled');
+                    } else {
+                        prevButton.classList.remove('swiper-button-disabled');
+                    }
+
+                    // Disable "Next" button if at the end
+                    if (swiper.isEnd) {
+                        nextButton.classList.add('swiper-button-disabled');
+                    } else {
+                        nextButton.classList.remove('swiper-button-disabled');
+                    }
+                });
+
+                // Initialize the arrow states when the page loads
+                if (swiper.isBeginning) {
+                    document.querySelector('.product-swiper-button-prev').classList.add('swiper-button-disabled');
+                }
+
+                if (swiper.isEnd) {
+                    document.querySelector('.product-swiper-button-next').classList.add('swiper-button-disabled');
+                }
+                //        --------------------------------------------------------------
+
+                var galleryThumbs = new Swiper(".gallery-thumbs", {
+                    centeredSlides: true,
+                    centeredSlidesBounds: true,
+                    direction: "horizontal",
+                    spaceBetween: 15,
+                    slidesPerView: 3,
+                    navigation: {
+                        nextEl: ".swiper-Tbutton-next",
+                        prevEl: ".swiper-Tbutton-prev"
+                    },
+                    freeMode: false,
+                    watchSlidesVisibility: true,
+                    watchSlidesProgress: true,
+                    watchOverflow: true,
+                    breakpoints: {
+                        680: {
+                            direction: "vertical",
+                            slidesPerView: 3
+                        }
+                    }
+                });
+                var galleryTop = new Swiper(".gallery-top", {
+                    direction: "horizontal",
+                    spaceBetween: 10,
+                    navigation: {
+                        nextEl: ".swiper-button-next",
+                        prevEl: ".swiper-button-prev"
+                    },
+                    a11y: {
+                        prevSlideMessage: "Previous slide",
+                        nextSlideMessage: "Next slide",
+                    },
+                    keyboard: {
+                        enabled: true,
+                    },
+                    thumbs: {
+                        swiper: galleryThumbs
+                    }
+                });
+
+                galleryTop.on("slideChangeTransitionStart", function() {
+                    galleryThumbs.slideTo(galleryTop.activeIndex);
+                });
+                galleryThumbs.on("transitionStart", function() {
+                    galleryTop.slideTo(galleryThumbs.activeIndex);
+                });
+
+                //        --------------------------------------------------------------
+
+                $('.input-group').on('click', '.button-plus', function(e) {
+                    incrementValue(e);
+                });
+
+                $('.input-group').on('click', '.button-minus', function(e) {
+                    decrementValue(e);
+                });
+
+                function incrementValue(e) {
+                    e.preventDefault();
+                    var fieldName = $(e.target).data('field');
+                    var parent = $(e.target).closest('div');
+                    var currentVal = parseInt(parent.find('input[name=' + fieldName + ']').val(), 10);
+
+                    if (!isNaN(currentVal)) {
+                        parent.find('input[name=' + fieldName + ']').val(currentVal + 1);
+                    } else {
+                        parent.find('input[name=' + fieldName + ']').val(0);
+                    }
+                }
+
+                function decrementValue(e) {
+                    e.preventDefault();
+                    var fieldName = $(e.target).data('field');
+                    var parent = $(e.target).closest('div');
+                    var currentVal = parseInt(parent.find('input[name=' + fieldName + ']').val(), 10);
+
+                    if (!isNaN(currentVal) && currentVal > 0) {
+                        parent.find('input[name=' + fieldName + ']').val(currentVal - 1);
+                    } else {
+                        parent.find('input[name=' + fieldName + ']').val(0);
+                    }
+                }
+            });
+        </script>
+    @endpush
 </x-app-layout>

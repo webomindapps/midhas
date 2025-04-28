@@ -37,6 +37,20 @@
                     <div class="item empty"></div>
                 </div>
             </div>
+        </section>
+        <section class="section sellers bg-light">
+            <div class="container text-center">
+                <h2 class="sec_title text_inter text-uppercase fw-normal">Recently <span class="fw-bold">viewed items</span>
+                </h2>
+                <div class="col-12 mt-5">
+                    <div class="row product_wrap">
+                        @foreach ($recentlyViewed as $recents)
+                            <div class="col-3">
+                                <x-product-card :product="$recents" />
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
             </div>
         </section>
     @endsection

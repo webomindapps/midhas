@@ -110,8 +110,10 @@ class ShopController extends Controller
 
 
         if ($category || $brand || $is_new || $is_best_seller || $all) {
-            return view('frontend.pages.category-lists', compact('products', 'sub_categories', 'category'));
-        } else {
+            $recentIds = Session::get('recents', []);
+            $recentlyViewed = Product::whereIn('id', $recentIds)->get();
+            return view('frontend.pages.category-lists', compact('products', 'sub_categories', 'category', 'recentlyViewed'));
+        }else {
 
             if ($sku) {
                 $product = Product::where('slug', $slug)->where('sku', $sku)->first();
@@ -140,12 +142,12 @@ class ShopController extends Controller
                         $parent_categories = $category->ancestors()->pluck('id')->toArray();
                         $relatedProducts = $this->getProductsByCategory(array_merge([$category->id], $sub_categories, $parent_categories));
                         if ($relatedProducts->isEmpty()) {
-                            $relatedProducts = collect();
+                            $relatedProducts = collect(); 
                         }
                     } else {
                         $sub_categories = [];
                         $parent_categories = [];
-                        $relatedProducts = collect();
+                        $relatedProducts = collect(); 
                     }
                     $recentIds = Session::get('recents', []);
                     array_push($recentIds, $product->id);

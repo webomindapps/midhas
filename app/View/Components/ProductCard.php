@@ -15,7 +15,7 @@ class ProductCard extends Component
      */
     public function __construct()
     {
-        $this->products=Product::with('images')
+        $this->products=Product::with('images','variants')
         ->where('status',1)
         ->get();   
      }
