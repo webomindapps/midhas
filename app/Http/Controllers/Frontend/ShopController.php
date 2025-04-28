@@ -32,9 +32,17 @@ class ShopController extends Controller
         $isnew = Product::with('images')->where('is_new', 1)
             ->where('status', 1)
             ->get();
+        $now = Carbon::now();
 
+        $specialoffers = Product::with('images')
+            ->where('status', 1)
+            ->whereHas('prices', function ($query) use ($now) {
+                $query->where('start_date', '<=', $now)
+                    ->where('end_date', '>=', $now);
+            })
+            ->get();
 
-        return view('frontend.pages.index', compact('categories', 'brands', 'banners', 'sliders', 'bestsellers', 'isnew'));
+        return view('frontend.pages.index', compact('categories', 'brands', 'banners', 'sliders', 'bestsellers', 'isnew', 'specialoffers'));
     }
     public function pageDetails($page)
     {
@@ -113,7 +121,7 @@ class ShopController extends Controller
             $recentIds = Session::get('recents', []);
             $recentlyViewed = Product::whereIn('id', $recentIds)->get();
             return view('frontend.pages.category-lists', compact('products', 'sub_categories', 'category', 'recentlyViewed'));
-        }else {
+        } else {
 
             if ($sku) {
                 $product = Product::where('slug', $slug)->where('sku', $sku)->first();
@@ -142,12 +150,12 @@ class ShopController extends Controller
                         $parent_categories = $category->ancestors()->pluck('id')->toArray();
                         $relatedProducts = $this->getProductsByCategory(array_merge([$category->id], $sub_categories, $parent_categories));
                         if ($relatedProducts->isEmpty()) {
-                            $relatedProducts = collect(); 
+                            $relatedProducts = collect();
                         }
                     } else {
                         $sub_categories = [];
                         $parent_categories = [];
-                        $relatedProducts = collect(); 
+                        $relatedProducts = collect();
                     }
                     $recentIds = Session::get('recents', []);
                     array_push($recentIds, $product->id);

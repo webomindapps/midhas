@@ -6,11 +6,6 @@
                     <li><a href="">Home<i class="fa-solid fa-chevron-right"></i></a></li>
                     <li>{{ $product->title }}</li>
                 </ul>
-
-                <!--
-                                                        <h2 class="text_inter text-uppercase">Living Room Furniture</h2>
-                                                        <p class="text_inter mb-0">Create a relaxing and inviting atmosphere with our stylish, affordable living room furniture selection. Whether you want to create a fun, entertaining space with sociable seating and the perfect TV stand for film nights or a relaxation retreat with lamp tables for soft lighting and for your cuppa, there’s something for everyone at Big Furniture Warehouse. Create a modern, clean aesthetic with white and grey lounge furniture or a more rustic feel with natural wood furniture and bring your vision to life.</p>
-                                             -->
             </div>
         </section>
 
