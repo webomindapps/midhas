@@ -48,9 +48,8 @@ class Product extends Model
 
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class);
+        return $this->belongsToMany(Category::class, 'category_product')->withPivot('product_id');
     }
-
     public function parentCategory()
     {
         return $this->categories()->whereNull('parent_id')->first();
@@ -77,6 +76,7 @@ class Product extends Model
     {
         return $this->hasMany(ProductStock::class)->whereHas('store');
     }
+
 
     public function seo(): MorphOne
     {

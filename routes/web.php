@@ -18,11 +18,10 @@ Route::get('customer/email-verify', [LoginController::class, 'verify'])->name('c
 Route::post('customer/email-verify', [LoginController::class, 'sendVerifyMail']);
 Route::get('customer/email-verified', [LoginController::class, 'verifyEmail'])->name('customer.email.verified');
 
-// Route::get('/customer/forgot-password',[PasswordResetController::class,'Forgetpassword'])->name('customer.forget');
-// Route::post('/customer/forgot-password',[PasswordResetController::class,'forgetMail']);
+//product category
+Route::any('{any}', [ShopController::class, 'productByCategory'])->name('productByCategory');
 
-Route::get('customer/{token}/password-reset', [PasswordResetController::class, 'resetView'])->name('customer.password.reset');
-Route::post('customer/password-reset', [PasswordResetController::class, 'resetPassword'])->name('customer.password.reset');
+//pages
 Route::get('page/{page}', [ShopController::class, 'pageDetails'])->name('page.view');
 
 require __DIR__.'/auth.php';

@@ -37,7 +37,7 @@
                 <div class="col-md-5 right_side_action">
                     <div class="d-flex text-center justify-content-end align-items-center">
                         <div class="login">
-                            <a href="{{route('customer.login')}}"><i class="fa-solid fa-user d-block"></i><span
+                            <a href="{{ route('customer.login') }}"><i class="fa-solid fa-user d-block"></i><span
                                     class="d-block">Login</span></a>
                         </div>
                         <div class="wishlist ms-4">
@@ -89,7 +89,8 @@
                                                                         <span>{{ $subCategory->name }}</span>
                                                                     </li>
                                                                     @foreach ($subCategory->children as $child)
-                                                                        <li><a href="#">{{ $child->name }}</a>
+                                                                        <li><a
+                                                                                href="{{ route('productByCategory', $child->slug) }}">{{ $child->name }}</a>
                                                                         </li>
                                                                     @endforeach
                                                                     <li><a href="#">All
