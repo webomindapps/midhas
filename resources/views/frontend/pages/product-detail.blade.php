@@ -77,24 +77,33 @@
                                 <p class="mb-0 prod_price text-uppercase text_inter">From <span>${{ $product->msrp }}</span>
                                 </p>
                                 <div class="payment d-flex align-items-center"><img src="images/PayPal.webp" alt=""
-                                        class="img-fluid"> Pay in 3 interest payment of $ 18.33</div>
-                                <div class="stock d-flex align-items-center"><span class="text_orange">In Stock</span>
+                                        class="img-fluid"><strong> SKU:{{ $product->sku }}</strong></div>
+                                <div class="stock d-flex align-items-center"><span class="text_orange">
+                                        @if ($product->is_outof_stock == 1)
+                                            Out Of Stock
+                                        @else
+                                            InStock
+                                        @endif
+                                    </span>
                                     &nbsp;|&nbsp; <span>Usually dispatched within 24 hours</span></div>
                                 <div class="product_options mt-4 col-md-6 col-12">
-                                    <select class="form-select rounded-0" id="exampleSelect" aria-label="Select an option">
+                                    {{-- <select class="form-select rounded-0" id="exampleSelect" aria-label="Select an option">
                                         <option selected>Choose an option</option>
                                         <option value="1">Option 1</option>
                                         <option value="2">Option 2</option>
                                         <option value="3">Option 3</option>
                                         <option value="4">Option 4</option>
-                                    </select>
+                                    </select> --}}
 
                                     <p class="d-block w-100 mt-4">Pick a color: </p>
                                     <div class="color_selector d-flex justify-content-start">
-                                        <span class="active" style="--color:#B3B3B3"></span>
-                                        <span class="" style="--color:#252831"></span>
-                                        <span class="" style="--color:#7b6244"></span>
-                                        <span class="" style="--color:#2a5027"></span>
+                                        @foreach ($product->variants as $variant)
+                                            <span class="" style="--color:{{ $variant->value }}"></span>
+                                            {{-- <span class="" style="--color:#252831"></span> --}}
+                                            {{-- <span class="" style="--color:#7b6244"></span>
+                                        <span class="" style="--color:#2a5027"></span> --}}
+                                        @endforeach
+
                                     </div>
 
                                 </div>
@@ -162,103 +171,51 @@
                     <div class="tab-pane fade show active" id="pills-details" role="tabpanel"
                         aria-labelledby="pills-details-tab">
                         <ul>
-                            <li>Size = (W) 82cm (D) 34cm (H) 90cm</li>
-                            <li>Range of Colours Available</li>
-                            <li>Aluminium Handle</li>
-                            <li>Compact Design</li>
-                            <li>Space Saving Storage</li>
-                            <li>Flat Packed for Home Assembly</li>
+                            @foreach (explode("\n", $product->product_details) as $detail)
+                                @if (trim($detail) != '')
+                                    <li>{{ $detail }}</li>
+                                @endif
+                            @endforeach
                         </ul>
+
                     </div>
                     <div class="tab-pane fade" id="pills-specs" role="tabpanel" aria-labelledby="pills-specs-tab">
                         <div class="site-title text-center text-uppercase">Shoe Cabinet</div>
                         <table class="vertical-table">
                             <tbody>
-                                <tr>
-                                    <th>
-                                        Assembly Required
-                                    </th>
-                                    <td data-th="Assembly Required">Yes</td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        Dimensions
-                                    </th>
-                                    <td data-th="Dimensions">(W) 82cm (D) 34cm (H) 90cm</td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        Main Material
-                                    </th>
-                                    <td data-th="Main Material">MDF</td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        Number of Drawers
-                                    </th>
-                                    <td data-th="Number of Drawers">1</td>
-                                </tr>
-                                <tr>
-                                    <th>
-                                        Number of Doors
-                                    </th>
-                                    <td data-th="Number of Doors">2</td>
-                                </tr>
+                                @foreach ($product->specifications as $specs)
+                                    <tr>
+                                        <th>{{ $specs->specs->name }}</th>
+                                        <td data-th="assembly">{{ $specs->value }}</td>
+                                    </tr>
+                                @endforeach
+
                             </tbody>
                         </table>
                     </div>
                     <div class="tab-pane fade" id="pills-despcription" role="tabpanel"
                         aria-labelledby="pills-despcription-tab">
-                        <p>The Novara shoe storage cabinet is the ideal addition to any entryway, hallways and even your
-                            bedroom! Crafted using particle board and MDF, making the shoe cabinet durable and lightweight
-                            that’s easy to assemble and move around your home.&nbsp;</p>
-                        <p>Available in a range of colours, the Novara cabinet allows you to choose the perfect colour to
-                            complement your home décor, whether you prefer subtle neutrals or bold statements, it’s an
-                            affordable storage solution for those looking to tidy up their homes without breaking the bank.
-                            Whether you're a first-time buyer or updating your space on a budget, the Novara cabinet is
-                            excellent value for money.</p>
-                        <p>Say goodbye to cluttered floors and disorganised shoe piles, and enjoy a more tidy, organised
-                            space with this shoe storage cabinet.</p>
+                        <p>{{ $product->product_description }}</p>
                     </div>
                     <div class="tab-pane fade" id="pills-instructions" role="tabpanel"
                         aria-labelledby="pills-instructions-tab">
-                        <p class="text_inter mb-0">Create a relaxing and inviting atmosphere with our stylish, affordable
-                            living room furniture selection. Whether you want to create a fun, entertaining space with
-                            sociable seating and the perfect TV stand for film nights or a relaxation retreat with lamp
-                            tables for soft lighting and for your cuppa, there’s something for everyone at Big Furniture
-                            Warehouse. Create a modern, clean aesthetic with white and grey lounge furniture or a more
-                            rustic feel with natural wood furniture and bring your vision to life.</p>
+                        @foreach ($product->manuals as $manual)
+                            <a href="{{ asset('storage/'. $manual->uploaded_file) }}" target="_blank"
+                                contenteditable="false" style="cursor: pointer;">
+                                <img src="{{ asset('frontend/images/pdf-icon.webp') }}" border="0" alt="PDF"
+                                    style="height:15px; width:15px">
+                                {{ $manual->name }} </a>
+                        @endforeach
                     </div>
                     <div class="tab-pane fade" id="pills-payment" role="tabpanel" aria-labelledby="pills-payment-tab">
                         <p class=""><strong>Payment</strong></p>
-                        <p class="">We have plenty of payment options available to use! Including;</p>
                         <ul>
-                            <li>G Pay</li>
-                            <li>Apple Pay</li>
-                            <li>Credit/Debit Card</li>
-                            <li>Paypal</li>
-                            <li>Amazon Pay</li>
+                            @foreach (explode("\n", $product->payment_security) as $method)
+                                @if (trim($method))
+                                    <li>{{ trim($method) }}</li>
+                                @endif
+                            @endforeach
                         </ul>
-                        <p>We also have finance options if you would prefer to split your payments;</p>
-                        <ul>
-                            <li>Paypal Pay in 3</li>
-                            <li>Clearpay</li>
-                            <li>Klarna</li>
-                        </ul>
-                        <p><em>* Borrowing more than you can afford or paying late may negatively impact your financial
-                                status and ability to obtain credit. *</em></p>
-                        <p class=""><strong>Security</strong></p>
-                        <p class="">When you shop with us, be confident knowing that our payment provider, Stripe,
-                            has the most stringent level of certification available in the payments industry. To accomplish
-                            this, Stripe uses the best-in-class security tools and practices to maintain a high level of
-                            security.</p>
-                        <p class="">All card numbers are encrypted at rest with AES-256. Decryption keys are stored
-                            on separate machines. None of Stripe’s internal servers and daemons can obtain plain text card
-                            numbers but can request that cards are sent to a service provider on a static allow list.
-                            Stripe’s infrastructure for storing, decrypting, and transmitting card numbers runs in a
-                            separate hosting environment, and doesn’t share any credentials with Stripe’s primary services
-                            including our API and website.</p>
-
                     </div>
                 </div>
             </div>
@@ -272,9 +229,9 @@
 
                 <div class="col-12 mt-5 swiper-container M_products">
                     <div class="product_wrap swiper-wrapper">
-                        @foreach ($recentViewed as $recents)
+                        @foreach ($relatedProducts as $related)
                             <div class="swiper-slide">
-                                <x-product-card :product="$recents" />
+                                <x-product-card :product="$related" />
                             </div>
                         @endforeach
                     </div>

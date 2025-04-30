@@ -10,7 +10,7 @@
                             <a href="listing.php">
                                 <div class="img-wrapper position-relative">
                                     <img src="{{ asset($category->image?->url) }}" alt="" class="img-fluid">
-                                    <a href="listing.php" class="dark_btn text-white"> Shop now</a>
+                                    <a href="{{route('productByCategory',$category->slug)}}" class="dark_btn text-white"> Shop now</a>
                                 </div>
                                 <h3 class="text_inter text-uppercase fw-normal mt-4">Shop <span
                                         class="fw-bold">{{ $category->name }}</span></h3>
@@ -26,6 +26,6 @@
     style="background: url('{{ asset('frontend/images/offer-big.jpg') }}') no-repeat center center; background-size: cover;">
     <div class="col-lg-6 text-center">
         <h2 class="text_inter text-white text-uppercase">Modern Furniture</h2>
-        <a href="#" class="dark_btn text-white "> Shop now</a>
+        <a href="{{ route('productByCategory', $category->slug) }}" class="dark_btn text-white "> Shop now</a>
     </div>
 </section>
