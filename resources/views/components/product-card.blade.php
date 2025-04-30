@@ -21,7 +21,7 @@
         <a href="#" class="buy d-block">Buy</a>
     </div>
     <div class="col">
-        <a href="#" class="view d-block">View</a>
+        <a href="{{ route('productByCategory', $product->slug) }}" class="view d-block">View</a>
     </div>
 </div>
 </div>

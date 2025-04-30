@@ -72,7 +72,8 @@
                             <ul class="navbar-nav justify-content-between w-100">
                                 @foreach ($categories as $category)
                                     <li class="nav-item has_megamenu">
-                                        <a class="nav-link" href="listing.php">{{ $category->name }}</a>
+                                        <a class="nav-link"
+                                            href="{{ route('productByCategory', $category->slug) }}">{{ $category->name }}</a>
 
                                         @if ($category->children->count())
                                             <div class="megamenu_wrapper">
@@ -126,10 +127,10 @@
 
                                 {{-- Static links --}}
                                 <li class="nav-item">
-                                    <a class="nav-link text_orange" href="listing.php">New Arrivals</a>
+                                    <a class="nav-link text_orange" href="#">New Arrivals</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link text-danger" href="listing.php">* Sale *</a>
+                                    <a class="nav-link text-danger" href="#">* Sale *</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="#">Coming Soon!</a>
