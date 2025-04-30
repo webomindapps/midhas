@@ -101,15 +101,17 @@
                                 <div class="d-flex align-items-center detail-addtocart">
                                     <div class="number d-flex align-items-center ">
                                         <p class="d-inline mb-0 me-2 fw-bold">Qty</p>
-                                        <div class="input-group"><input type="button" value="-" data-field="quantity"
+                                        {{-- <div class="input-group">
+                                            <input type="button" value="-" data-field="quantity"
                                                 class="button-minus"> <input type="text" step="1" max=""
                                                 value="1" name="quantity" class="quantity-field"> <input type="button"
                                                 value="+" data-field="quantity" class="button-plus">
-                                        </div>
+                                        </div> --}}
+                                        <x-qty-input :id="$product->id" />
                                     </div>
                                     <!--                                <div class="clearflix"></div>-->
                                     <div class="add-cart d-block text-center text-uppercase fw-bold">
-                                        <a href="" class="d-block w-100"> Add to cart </a>
+                                        <a class="addToCart d-block w-100" data-id="{{ $product->id }}"> Add to cart </a>
                                     </div>
                                 </div>
                                 <a href="" class="add_wishlist d-block w-100 text-uppercase text-center"> <i
