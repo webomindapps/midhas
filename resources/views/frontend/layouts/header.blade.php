@@ -14,17 +14,23 @@
 
                             <!-- Input field with aria-label for better accessibility -->
                             <input type="text" class="form-control text-dark border-end-0"
-                                placeholder="What can we help you find" id="input-text" aria-label="Text input field"
-                                aria-required="true" aria-describedby="input-text-description">
+                                placeholder="What can we help you find" aria-label="Text input field"
+                                aria-required="true" aria-describedby="input-text-description" id="search-input">
 
                             <!-- Submit button with aria-label for better accessibility -->
-                            <button class="btn text-white" type="submit" aria-label="Submit the form"><svg
-                                    fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 26">
+                            <button class="btn text-white" type="submit" aria-label="Submit the form">
+                                <svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 26">
                                     <path
                                         d="m25.753 24.586-6.712-6.606c1.757-1.91 2.837-4.436 2.837-7.215C21.879 4.819 16.98 0 10.939 0 4.899 0 0 4.82 0 10.765S4.897 21.53 10.939 21.53a11 11 0 0 0 6.885-2.404l6.739 6.631a.85.85 0 0 0 1.19 0 .82.82 0 0 0 0-1.172M10.94 19.874c-5.112 0-9.256-4.078-9.256-9.11 0-5.03 4.144-9.108 9.256-9.108s9.256 4.078 9.256 9.109-4.144 9.109-9.256 9.109"
                                         fill="#fff" />
-                                </svg></button>
+                                </svg>
+                            </button>
                         </form>
+                        <div class="search-results" style="display: none;">
+                            <ul class="list-styled" id="searched-item-List">
+                                {{-- dynamic searched items --}}
+                            </ul>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-2 position-relative">

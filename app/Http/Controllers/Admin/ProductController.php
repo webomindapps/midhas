@@ -382,40 +382,42 @@ class ProductController extends Controller
         }
 
         // 2. Process incoming manuals
-        foreach ($names as $index => $name) {
-            if (!$name) continue;
-
-            $id = $ids[$index] ?? null;
-            $file = $files[$index] ?? null;
-            $link = $links[$index] ?? null;
-            $filePath = null;
-
-            // Upload file if available
-            if ($file) {
-                $filePath = Midhas::upload($file, $this->folder . $product->id . "/manuals/");
-            }
-
-            if ($id) {
-                // Update existing manual
-                $manual = ProductManual::find($id);
-                if (!$manual) continue;
-
-                if (!$filePath && $manual->uploaded_file) {
-                    $filePath = $manual->uploaded_file; // Keep existing file
+        if($names && count($names) > 0) {
+            foreach ($names as $index => $name) {
+                if (!$name) continue;
+    
+                $id = $ids[$index] ?? null;
+                $file = $files[$index] ?? null;
+                $link = $links[$index] ?? null;
+                $filePath = null;
+    
+                // Upload file if available
+                if ($file) {
+                    $filePath = Midhas::upload($file, $this->folder . $product->id . "/manuals/");
                 }
-
-                $manual->update([
-                    'name' => $name,
-                    'uploaded_file' => $filePath,
-                    'file_link' => $link,
-                ]);
-            } else {
-                // Create new manual
-                $product->manuals()->create([
-                    'name' => $name,
-                    'uploaded_file' => $filePath,
-                    'file_link' => $link,
-                ]);
+    
+                if ($id) {
+                    // Update existing manual
+                    $manual = ProductManual::find($id);
+                    if (!$manual) continue;
+    
+                    if (!$filePath && $manual->uploaded_file) {
+                        $filePath = $manual->uploaded_file; // Keep existing file
+                    }
+    
+                    $manual->update([
+                        'name' => $name,
+                        'uploaded_file' => $filePath,
+                        'file_link' => $link,
+                    ]);
+                } else {
+                    // Create new manual
+                    $product->manuals()->create([
+                        'name' => $name,
+                        'uploaded_file' => $filePath,
+                        'file_link' => $link,
+                    ]);
+                }
             }
         }
     }

@@ -7,13 +7,8 @@
                     <li><a href="{{ route('productByCategory', $category->slug) }}">{{ $category->name }}</a></li>
                 </ul>
 
-                <h2 class="text_inter text-uppercase">{{ $category->name }}</h2>
-                <p class="text_inter mb-0">Create a relaxing and inviting atmosphere with our stylish, affordable living room
-                    furniture selection. Whether you want to create a fun, entertaining space with sociable seating and the
-                    perfect TV stand for film nights or a relaxation retreat with lamp tables for soft lighting and for your
-                    cuppa, there’s something for everyone at Big Furniture Warehouse. Create a modern, clean aesthetic with
-                    white and grey lounge furniture or a more rustic feel with natural wood furniture and bring your vision
-                    to life.</p>
+                {{-- <h2 class="text_inter text-uppercase">{{ $category->name }}</h2>
+                <p class="text_inter mb-0">{{ $category->seo?->meta_ddescription }}</p> --}}
             </div>
         </section>
         <section class="section listing_wrapper w-100">

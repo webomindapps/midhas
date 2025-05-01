@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ShopController::class, 'index'])->name('home');
+Route::post('serarch-products', [ShopController::class, 'searchProduct'])->name('search.products');
 
 //Guest login
 Route::get('/customer-login',[LoginController::class,'index'])->name('customer.login');
