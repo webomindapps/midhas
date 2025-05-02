@@ -31,20 +31,20 @@
                     {{-- {{ dd($cartItems) }} --}}
                     {{-- {{ dd($item->variant) }} --}}
                     <div class="row">
-                        @forelse ($cartItems as $cart)
-                            <div class="col-md-7">
-                                <div class="cart_table">
-                                    <div class="cart_parameters d-md-block d-none">
-                                        <table class="w-100 text-center align-middle" style="border-collapse: collapse;">
-                                            <thead>
-                                                <tr>
-                                                    <th>Product</th>
-                                                    <th>Price</th>
-                                                    <th>Quantity</th>
-                                                    <th>Total Amount</th>
-                                                </tr>
-                                            </thead>
 
+                        <div class="col-md-7">
+                            <div class="cart_table">
+                                <div class="cart_parameters d-md-block d-none">
+                                    <table class="w-100 text-center align-middle" style="border-collapse: collapse;">
+                                        <thead>
+                                            <tr>
+                                                <th>Product</th>
+                                                <th>Price</th>
+                                                <th>Quantity</th>
+                                                <th>Total Amount</th>
+                                            </tr>
+                                        </thead>
+                                        @forelse ($cartItems as $cart)
                                             @foreach ($cart->items as $item)
                                                 <tbody>
                                                     <tr class="mt-4">
@@ -105,14 +105,19 @@
                                                     </tr>
                                                 </tbody>
                                             @endforeach
-
-                                        </table>
-                                    </div>
+                                        @empty
+                                            <p>No items in your cart.</p>
+                                        @endforelse
+                                    </table>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="col-md-5">
-
+                        <div class="col-md-5">
+                            @if ($cartItems->isNotEmpty())
+                                @php
+                                    $cart = $cartItems->first();
+                                @endphp
                                 <div class="form_wrapper position-sticky top-0 bg-light pickup_opt">
                                     <h3 class="text_inter">Delivery/Pickup Options</h3>
                                     <div class="coupon-section mt-4 d-flex">
@@ -178,11 +183,9 @@
                                     </div>
 
                                 </div>
+                            @endif
+                        </div>
 
-                            </div>
-                        @empty
-                            <p>No items in your cart.</p>
-                        @endforelse
                     </div>
                 </div>
         </section>

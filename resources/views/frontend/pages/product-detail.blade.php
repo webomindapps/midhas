@@ -139,7 +139,7 @@
                                     <div class="add-cart d-block text-center text-uppercase fw-bold">
                                         {{-- {{ dd($product) }} --}}
                                         {{-- {{ dd($default_variant) }} --}}
-                                        @if ($product->total_stock > 0)
+                                        @if ($product->total_stock > 0 && !$product->is_outof_stock)
                                             <a class="addToCart d-block w-100" data-id="{{ $product->id }}"
                                                 data-variant="{{ $default_variant }}"> Add to cart
                                             </a>
