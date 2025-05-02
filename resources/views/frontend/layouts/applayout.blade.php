@@ -37,6 +37,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.8.4/swiper-bundle.min.js"></script>
     <script src="{{ asset('frontend/flash.min.js') }}"></script>
     <script src="{{ asset('frontend/js/cart.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
 
     @stack('scripts')
     <script>
@@ -55,6 +56,36 @@
                     this.classList.toggle("fa-eye-slash");
                 });
             });
+        });
+        var searchTimer;
+        $(document).on('input', '#search-input', function() {
+            
+            var searchInput = $(this).val().trim();
+            if (searchInput.length < 2) {
+                $('#searched-item-List').empty();
+                $('.search-results').hide();
+                return;
+            }
+            
+            clearTimeout(searchTimer);
+            
+            searchTimer = setTimeout(function() {
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ route('search.products') }}",
+                    data: {
+                        search: searchInput,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        $('#searched-item-List').html(response.html);
+                        $('.search-results').show();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            }, 100);
         });
     </script>
 

@@ -8,6 +8,7 @@ use App\Http\Controllers\Frontend\LoginController;
 use App\Http\Controllers\Frontend\PasswordResetController;
 
 Route::get('/', [ShopController::class, 'index'])->name('home');
+Route::post('serarch-products', [ShopController::class, 'searchProduct'])->name('search.products');
 
 //Guest login
 Route::get('/customer-login', [LoginController::class, 'index'])->name('customer.login');

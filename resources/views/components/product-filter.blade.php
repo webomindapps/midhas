@@ -1,22 +1,11 @@
-@props(['categories', 'subcategories'])
+@props(['categories', 'subcategories', 'cat'])
 
 <div class="sidebar">
     <ul class="list-group border-0 text_hind">
         <li class="list-group-item">
             <a class="btn btn-category">Your Selection</a>
             <div class="card card-body bg-white">
-                <p class="mb-0">
-                    <span class="fw-medium">Categories:</span>
-                    @foreach ($categories as $category)
-                        {{ $category->name }}{{ !$loop->last ? ',' : '' }}
-                    @endforeach
-                </p>
-                <p class="mb-0">
-                    <span class="fw-medium">Subcategories:</span>
-                    @foreach ($subcategories as $subcategory)
-                        {{ $subcategory->name }}{{ !$loop->last ? ',' : '' }}
-                    @endforeach
-                </p>
+                <p class="mb-0"><span class="fw-medium">Type :</span> {{ $cat->name }}</p>
             </div>
         </li>
 
@@ -28,21 +17,16 @@
             </a>
             <div class="collapse show" id="collapseExample">
                 <div class="card card-body bg-white">
-                    @foreach ($subcategories as $subcategory)
+                    @foreach ($subcategories as $category)
                         <div class="form-check">
-                            <!-- Add category-checkbox class for easier targeting in JavaScript -->
-                            <input class="form-check-input category-checkbox" type="checkbox"
-                                value="{{ $subcategory->id }}" id="subcat-{{ $subcategory->id }}">
-                            <label class="form-check-label" for="subcat-{{ $subcategory->id }}">
-                                {{ $subcategory->name }}
-                            </label>
+                            <a href="{{ route('productByCategory', $category->slug) }}">
+                                {{ $category->name }}
+                            </a>
                         </div>
                     @endforeach
                 </div>
             </div>
         </li>
-
-
         <li class="list-group-item">
             <a class="btn btn-category collapsed" data-bs-toggle="collapse" href="#collapseExample1" role="button"
                 aria-expanded="false" aria-controls="collapseExample1"> Brands <i
@@ -51,8 +35,9 @@
                 <div class="card card-body bg-white">
                     @foreach ($brands as $brand)
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault5">
-                            <label class="form-check-label" for="flexCheckDefault5">
+                            <input class="form-check-input brand" type="checkbox" name="brand"
+                                value="{{ $brand->id }}" id="flexCheckDefault-{{ $brand->id }}">
+                            <label class="form-check-label" for="flexCheckDefault-{{ $brand->id }}">
                                 {{ $brand->name }}
                             </label>
                         </div>
@@ -61,6 +46,33 @@
             </div>
         </li>
         <li class="list-group-item">
+            <a class="btn btn-category collapsed" data-bs-toggle="collapse" href="#collapseExample4" role="button"
+                aria-expanded="false" aria-controls="collapseExample4"> Price <i
+                    class="fa-solid fa-plus pt-1 float-end"></i> </a>
+            <div class="collapse" id="collapseExample4">
+                <div class="card card-body bg-white">
+                    <div class="form-check">
+                        <input class="form-check-input price" type="radio" name="price_limit" value="0-500" id="price1">
+                        <label class="form-check-label" for="price1">
+                            Under 500
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input price" type="radio" name="price_limit" value="550-1000" id="price2">
+                        <label class="form-check-label" for="price2">
+                            550 - 1000
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input price" type="radio" name="price_limit" value="1050-2500" id="price3">
+                        <label class="form-check-label" for="price3">
+                            1050 - 2500
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </li>
+        {{-- <li class="list-group-item">
             <a class="btn btn-category collapsed" data-bs-toggle="collapse" href="#collapseExample2" role="button"
                 aria-expanded="false" aria-controls="collapseExample2"> Size <i
                     class="fa-solid fa-plus pt-1 float-end"></i> </a>
@@ -109,33 +121,6 @@
                         <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault5">
                         <label class="form-check-label" for="flexCheckDefault5">
                             Label 1
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </li>
-        <li class="list-group-item">
-            <a class="btn btn-category collapsed" data-bs-toggle="collapse" href="#collapseExample4" role="button"
-                aria-expanded="false" aria-controls="collapseExample4"> Price <i
-                    class="fa-solid fa-plus pt-1 float-end"></i> </a>
-            <div class="collapse" id="collapseExample4">
-                <div class="card card-body bg-white">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault5">
-                        <label class="form-check-label" for="flexCheckDefault5">
-                            Under 500
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault5">
-                        <label class="form-check-label" for="flexCheckDefault5">
-                            550 - 1000
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault5">
-                        <label class="form-check-label" for="flexCheckDefault5">
-                            1050 - 2500
                         </label>
                     </div>
                 </div>
@@ -260,61 +245,129 @@
                     </div>
                 </div>
             </div>
-        </li>
+        </li> --}}
     </ul>
 </div>
-<script>
-    $(document).ready(function() {
-        // Filter products by category selection
-        $('input[type="checkbox"].category-checkbox').on('change', function() {
-            filterProducts();
-        });
+@push('scripts')
+    <script>
+        var table = {
+            is_new: '',
+            is_best_seller: '',
+            brand: '',
+            price: '',
+            sortBy: '',
+            sortOrder: '',
+            paginate: null,
+        }
 
-        // Filter products by brand selection
-        $('input[type="checkbox"].brand-checkbox').on('change', function() {
-            filterProducts();
-        });
+        $(document).ready(function() {
+            let is_new = new URLSearchParams(window.location.search).get("is_new");
+            let is_best_seller = new URLSearchParams(window.location.search).get("is_best_seller");
+            let brands = new URLSearchParams(window.location.search).get("brand");
+            let price = new URLSearchParams(window.location.search).get("price");
+            let sale = new URLSearchParams(window.location.search).get("sale");
+            let paginate = new URLSearchParams(window.location.search).get("paginate");
+            let sort = new URLSearchParams(window.location.search).get("sort");
+            let order = new URLSearchParams(window.location.search).get("order");
+            if (brands) {
+                $('.brand').each(function() {
+                    var arr = brands.split(',');
+                    if (arr.indexOf($(this).val()) !== -1) {
+                        $(this).prop('checked', true);
+                    }
+                });
+            }
+            if (price) {
+                $('.price').each(function() {
+                    if ($(this).val() == price) {
+                        $(this).prop('checked', true);
+                    }
+                });
+            }
+            if (sale) {
+                if ($('#sale').val() == sale) {
+                    $('#sale').prop('checked', true);
+                }
+            }
 
-        function filterProducts() {
-            var selectedCategories = [];
+            table.paginate = paginate ? paginate : null;
+            if (paginate) {
+                $(".per_page").each(function() {
+                    if ($(this).val() === paginate) {
+                        $(this).prop('checked', true);
+                    }
+                });
+                var checkedLabel = $('input[name="limit"]:checked').next('span').text();
+                $('#limit_label').text(checkedLabel);
+            } else {
+                $(".per_page[value='100']").prop('checked', true);
+            }
+
+            if (sort && order && sort !== "" && order !== "") {
+                $('.sorting').each(function() {
+                    if ($(this).data('column') === sort && $(this).data('sort') === order) {
+                        $(this).prop('checked', true);
+                    }
+                });
+                updateSortLabel();
+            }
+        });
+        $('.brand').on('change', function() {
             var selectedBrands = [];
-
-            // Collect selected categories
-            $('input[type="checkbox"].category-checkbox:checked').each(function() {
-                selectedCategories.push($(this).val());
-            });
-
-            // Collect selected brands
-            $('input[type="checkbox"].brand-checkbox:checked').each(function() {
+            $('.brand:checked').each(function() {
                 selectedBrands.push($(this).val());
             });
+            table.brand = selectedBrands;
+            filter('brand', selectedBrands.toString());
+        });
+        $('.price').on('change', function() {
+            let price = $(this).val();
+            table.price = price;
+            filter('price', price);
+        });
+        $('.per_page').on('change', function() {
+            let paginate = $(this).val();
+            table.paginate = paginate;
+            filter('paginate', paginate);
+        });
 
-            // Loop through all products and filter them
-            $('.products_list_box .item').each(function() {
-                var productCategories = $(this).data('categories').split(
-                ','); // Assuming you store product categories in data attributes
-                var productBrands = $(this).data('brands').split(
-                ','); // Assuming you store product brands in data attributes
+        $(document).on('click', '.sorting', function() {
+            var column = $(this).data('column');
+            var sort = $(this).data('sort');
+            table.sortBy = column;
+            table.sortOrder = sort;
+            applyFilters();
+        });
 
-                var showProduct = false;
-
-                // Check if product matches selected categories and brands
-                if (
-                    (selectedCategories.length === 0 || selectedCategories.some(category =>
-                        productCategories.includes(category))) &&
-                    (selectedBrands.length === 0 || selectedBrands.some(brand => productBrands.includes(
-                        brand)))
-                ) {
-                    showProduct = true;
-                }
-
-                // Show or hide the product based on the filter
-                if (showProduct) {
-                    $(this).show();
-                } else {
-                    $(this).hide();
-                }
-            });
+        function updateSortLabel() {
+            var checkedLabel = $('input[name="sorting"]:checked').next('span').text();
+            $('#sort_label').text(checkedLabel);
         }
-    });
-</script>
+
+
+        function filter(key, value) {
+            let uri = window.location.href
+            let url = '';
+            var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+            var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+            if (uri.match(re)) {
+                url = uri.replace(re, '$1' + key + "=" + value + '$2');
+            } else {
+                url = uri + separator + key + "=" + value;
+            }
+            window.location.href = url;
+        }
+
+        function applyFilters() {
+            let uri = window.location.href;
+            let params = new URLSearchParams(window.location.search);
+            if (table.is_best_seller) params.set("is_best_seller", table.is_best_seller);
+            if (table.is_new) params.set("is_new", table.is_new);
+            if (table.brand) params.set("brand", table.brand);
+            if (table.price) params.set("price", table.price);
+            if (table.sortOrder !== '') params.set("order", table.sortOrder);
+            if (table.sortBy !== '') params.set("sort", table.sortBy);
+            window.location.href = uri.split('?')[0] + '?' + params.toString();
+        }
+    </script>
+@endpush

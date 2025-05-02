@@ -65,7 +65,7 @@ class ShopController extends Controller
         $paginate = $request->paginate;
         $is_new = $request->is_new;
         $all = $request->all;
-        $is_best_seller = $request->is_best_seller;
+        $is_best_selling = $request->is_best_selling;
         $brand = $request->brand;
         $price = $request->price;
         $sku = $request->sku;
@@ -92,22 +92,20 @@ class ShopController extends Controller
 
         if ($brand) {
             $brand = explode(',', $brand);
-            $query->whereHas('brand_name', function ($query) use ($brand) {
-                $query->whereIn('brand', $brand);
-            });
+            $query->whereIn('brand_id', $brand);
         }
 
         if ($price) {
             $price = explode('-', $price);
-            $query->whereBetween('price', $price);
+            $query->whereBetween('selling_price', $price);
         }
 
         if ($is_new) {
             $query->where('is_new', $is_new);
         }
 
-        if ($is_best_seller) {
-            $query->where('is_best_seller', $is_best_seller);
+        if ($is_best_selling) {
+            $query->where('is_best_selling', $is_best_selling);
         }
 
         ($sort == '') ? $query->orderBy('title', 'asc') : $query->orderBy($sort, $order);
@@ -117,7 +115,7 @@ class ShopController extends Controller
         $products = $paginate ? $query->paginate($paginate)->appends(request()->query()) : $query->paginate(100)->appends(request()->query());
 
 
-        if ($category || $brand || $is_new || $is_best_seller || $all) {
+        if ($category || $brand || $is_new || $is_best_selling || $all) {
             $recentIds = Session::get('recents', []);
             $recentlyViewed = Product::whereIn('id', $recentIds)->get();
             return view('frontend.pages.category-lists', compact('products', 'sub_categories', 'category', 'recentlyViewed'));
@@ -128,44 +126,33 @@ class ShopController extends Controller
             } else {
                 $product = Product::where('slug', $slug)->first();
             }
-            if ($category || $brand || $is_new || $is_best_seller || $all) {
-                return view('frontend.pages.category-lists', compact('products', 'sub_categories', 'category'));
-            } else {
-
-                if ($sku) {
-                    $product = Product::where('slug', $slug)->where('sku', $sku)->first();
+            if ($product) {
+                $category = $product->categories()->first();
+                if ($category) {
+                    $category = $category->category;
                 } else {
-                    $product = Product::where('slug', $slug)->first();
+                    $category = Category::latest()->first();
                 }
-
-                if ($product) {
-                    $category = $product->categories()->first();
-                    if ($category) {
-                        $category = $category->category;
-                    } else {
-                        $category = Category::latest()->first();
-                    }
-                    if ($category) {
-                        $sub_categories = $category->descendants()->pluck('id')->toArray();
-                        $parent_categories = $category->ancestors()->pluck('id')->toArray();
-                        $relatedProducts = $this->getProductsByCategory(array_merge([$category->id], $sub_categories, $parent_categories));
-                        if ($relatedProducts->isEmpty()) {
-                            $relatedProducts = collect();
-                        }
-                    } else {
-                        $sub_categories = [];
-                        $parent_categories = [];
+                if ($category) {
+                    $sub_categories = $category->descendants()->pluck('id')->toArray();
+                    $parent_categories = $category->ancestors()->pluck('id')->toArray();
+                    $relatedProducts = $this->getProductsByCategory(array_merge([$category->id], $sub_categories, $parent_categories));
+                    if ($relatedProducts->isEmpty()) {
                         $relatedProducts = collect();
                     }
-                    $recentIds = Session::get('recents', []);
-                    array_push($recentIds, $product->id);
-                    Session::put('recents', $recentIds);
-                    $recentViewed = Product::whereIn('id', $recentIds)->where('id', '<>', $product->id)->get();
-
-                    return view('frontend.pages.product-detail', compact('product', 'relatedProducts', 'recentViewed'));
                 } else {
-                    abort(404, 'Page not found');
+                    $sub_categories = [];
+                    $parent_categories = [];
+                    $relatedProducts = collect();
                 }
+                $recentIds = Session::get('recents', []);
+                array_push($recentIds, $product->id);
+                Session::put('recents', $recentIds);
+                $recentViewed = Product::whereIn('id', $recentIds)->where('id', '<>', $product->id)->get();
+
+                return view('frontend.pages.product-detail', compact('product', 'relatedProducts', 'recentViewed'));
+            } else {
+                abort(404, 'Page not found');
             }
         }
     }
@@ -196,5 +183,32 @@ class ShopController extends Controller
             ->where($type, $value)
             ->take($limit)
             ->get();
+    }
+
+    public function searchProduct(Request $request)
+    {
+        $search = $request->search;
+        $products = null;
+        $query = Product::query();
+        if ($search != '') {
+            $query
+                ->where('status', true)
+                ->where(function ($query) use ($search) {
+                    $query->whereHas('categories', function ($subquery) use ($search) {
+                        $subquery->where('slug', 'like', '%' . $search . '%')
+                            ->where('status', true); // assuming 'status' is on Category
+                    })->orWhereHas('brand', function ($brandQuery) use ($search) {
+                        $brandQuery->where('name', 'like', '%' . $search . '%');
+                    })->orWhere('title', 'like', '%' . $search . '%')
+                        ->orWhere('sku', 'like', '%' . $search . '%')
+                        ->orWhere('slug', 'like', '%' . $search . '%');
+                });
+
+            $products = $query
+                ->with('images', 'stocks', 'variants')->get();
+        }
+        return [
+            'html' => view('frontend.pages.searched-items', compact('products'))->render()
+        ];
     }
 }
