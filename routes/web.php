@@ -19,16 +19,22 @@ Route::get('customer/email-verify', [LoginController::class, 'verify'])->name('c
 Route::post('customer/email-verify', [LoginController::class, 'sendVerifyMail']);
 Route::get('customer/email-verified', [LoginController::class, 'verifyEmail'])->name('customer.email.verified');
 
-//product category
-Route::any('{any}', [ShopController::class, 'productByCategory'])->name('productByCategory');
+//cart
+Route::get('/cart', [CartController::class, 'cartView'])->name('cart');
+Route::post('/add/cart', [CartController::class, 'store'])->name('add-to-cart');
+Route::get('add/cart/{id}', [CartController::class, 'storeQty1']);
+Route::post('/cart/update', [CartController::class, 'update'])->name('cart-update');
+Route::get('cart-item/delete/{id}', [CartController::class, 'destroy'])->name('delete-cart');
+
+
+
 
 //pages
 Route::get('page/{page}', [ShopController::class, 'pageDetails'])->name('page.view');
 
-//cart
-Route::get('cart', [CartController::class, 'cartView'])->name('cart');
-Route::post('/add/cart', [CartController::class, 'store'])->name('add-to-cart');
-Route::get('add/cart/{id}', [CartController::class, 'storeQty1']);
+
 
 
 require __DIR__ . '/auth.php';
+//product category
+Route::any('{any}', [ShopController::class, 'productByCategory'])->name('productByCategory');

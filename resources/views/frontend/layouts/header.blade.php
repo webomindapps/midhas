@@ -44,7 +44,8 @@
                             <i class="fa-solid fa-heart d-block"></i><span class="d-block">Wishlist</span>
                         </div>
                         <div class="cart ms-4">
-                            <a href="cart.php"><i class="fa-solid fa-basket-shopping"></i><span class="d-block">My
+                            <a href="{{ route('cart') }}"><i class="fa-solid fa-basket-shopping"></i><span
+                                    class="d-block">My
                                     Cart</span></a>
                         </div>
                     </div>

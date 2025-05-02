@@ -1,5 +1,26 @@
 <x-app-layout>
     @section('main-content')
+        {{-- {{ dd($product->variants) }} --}}
+        @php
+            $default_variant = '';
+
+            if ($product->variants && $product->variants->count() > 0) {
+                $default_variant = $product->variants->first()->id;
+            }
+        @endphp
+
+        {{-- {{ dd($default_variant) }} --}}
+
+        @push('scripts')
+            <script>
+                $(document).ready(function() {
+                    $('.color_selector .product_variant').on('click', function() {
+                        var variantId = $(this).data('variant-id');
+                        $('.addToCart').data('variant', variantId);
+                    });
+                });
+            </script>
+        @endpush
         <section class="section breadcrumb pb-0 seo_content w-100">
             <div class="container text-start">
                 <ul class="list_styled d-flex breadcrumb mb-5">
@@ -50,6 +71,7 @@
                                                         class="w-100 img-fluid">
                                                 </div>
                                             @endforeach
+
                                         </div>
                                         <!-- Add Arrows -->
                                         <div class="swiper-button-next"></div>
@@ -94,33 +116,41 @@
                                         <option value="3">Option 3</option>
                                         <option value="4">Option 4</option>
                                     </select> --}}
-
+                                    {{-- {{ dd($product) }} --}}
                                     <p class="d-block w-100 mt-4">Pick a color: </p>
+                                    {{-- <input type="hidden" name="variant_id" id="variantInput"
+                                        value="{{ $default_variant }}"> --}}
+
                                     <div class="color_selector d-flex justify-content-start">
                                         @foreach ($product->variants as $variant)
-                                            <span class="" style="--color:{{ $variant->value }}"></span>
-                                            {{-- <span class="" style="--color:#252831"></span> --}}
-                                            {{-- <span class="" style="--color:#7b6244"></span>
-                                        <span class="" style="--color:#2a5027"></span> --}}
+                                            <span class="product_variant" style="--color:{{ $variant->value }};"
+                                                data-variant-id="{{ $variant->id }}">
+                                            </span>
                                         @endforeach
-
                                     </div>
 
                                 </div>
                                 <div class="d-flex align-items-center detail-addtocart">
                                     <div class="number d-flex align-items-center ">
                                         <p class="d-inline mb-0 me-2 fw-bold">Qty</p>
-                                        {{-- <div class="input-group">
-                                            <input type="button" value="-" data-field="quantity"
-                                                class="button-minus"> <input type="text" step="1" max=""
-                                                value="1" name="quantity" class="quantity-field"> <input type="button"
-                                                value="+" data-field="quantity" class="button-plus">
-                                        </div> --}}
+
                                         <x-qty-input :id="$product->id" />
                                     </div>
-                                    <!--                                <div class="clearflix"></div>-->
                                     <div class="add-cart d-block text-center text-uppercase fw-bold">
-                                        <a class="addToCart d-block w-100" data-id="{{ $product->id }}"> Add to cart </a>
+                                        {{-- {{ dd($product) }} --}}
+                                        {{-- {{ dd($default_variant) }} --}}
+                                        @if ($product->total_stock > 0)
+                                            <a class="addToCart d-block w-100" data-id="{{ $product->id }}"
+                                                data-variant="{{ $default_variant }}"> Add to cart
+                                            </a>
+                                        @else
+                                            <p class="stock-out">
+                                                <a class=" bg-danger text-white d-block w-100"
+                                                    data-id="{{ $product->id }}">
+                                                    Out Of Stock
+                                                </a>
+                                            </p>
+                                        @endif
                                     </div>
                                 </div>
                                 <a href="" class="add_wishlist d-block w-100 text-uppercase text-center"> <i
@@ -151,8 +181,8 @@
                             role="tab" aria-controls="pills-details" aria-selected="true">Product Details</a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="pills-specs-tab" data-bs-toggle="pill" href="#pills-specs"
-                            role="tab" aria-controls="pills-specs" aria-selected="false">PRODUCT SPECIFICATIONS</a>
+                        <a class="nav-link" id="pills-specs-tab" data-bs-toggle="pill" href="#pills-specs" role="tab"
+                            aria-controls="pills-specs" aria-selected="false">PRODUCT SPECIFICATIONS</a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="pills-despcription-tab" data-bs-toggle="pill" href="#pills-despcription"
@@ -202,7 +232,7 @@
                     <div class="tab-pane fade" id="pills-instructions" role="tabpanel"
                         aria-labelledby="pills-instructions-tab">
                         @foreach ($product->manuals as $manual)
-                            <a href="{{ asset('storage/'. $manual->uploaded_file) }}" target="_blank"
+                            <a href="{{ asset('storage/' . $manual->uploaded_file) }}" target="_blank"
                                 contenteditable="false" style="cursor: pointer;">
                                 <img src="{{ asset('frontend/images/pdf-icon.webp') }}" border="0" alt="PDF"
                                     style="height:15px; width:15px">

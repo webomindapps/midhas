@@ -15,10 +15,25 @@
     @endforeach
 </div>
 <h3 class="prd_name text_hind fw-bold">{{ $product->title }}</h3>
-<span class="prd_price fw-bold d-block">{{ $product->msrp }}</span>
+<div class="row">
+    <span class="prd_price fw-bold d-block">${{ number_format($product->msrp ?? 0, 2) }}</span>
+    <span> <x-qty-input :id="$product->id" /></span>
+</div>
+
 <div class="d-flex text_inter prd_actions">
     <div class="col">
-        <a href="#" class="buy d-block">Buy</a>
+        @if ($product->total_stock > 0)
+            <a class="addToCart buy d-block" data-id="{{ $product->id }}"> Buy
+            </a>
+        @else
+            <p class="stock-out">
+                <a class=" bg-danger text-white d-block w-100" data-id="{{ $product->id }}">
+                    Out Of Stock
+                </a>
+            </p>
+        @endif
+
+        {{-- <a href="#" class="buy d-block">Buy</a> --}}
     </div>
     <div class="col">
         <a href="{{ route('productByCategory', $product->slug) }}" class="view d-block">View</a>

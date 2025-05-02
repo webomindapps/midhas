@@ -22,18 +22,21 @@ class CartController extends Controller
     public function cartView()
     {
         $customer = Auth::user();
+
         if ($customer) {
-            $cart = Cart::where('customer_id', $customer->id)->latest()->first();
+            $cartItems = Cart::where('customer_id', $customer->id)->get();
         } else {
             $cart_id = Session::get('cart_id');
             if ($cart_id) {
-                $cart = $this->findBy('id', $cart_id);
+                $cartItems = Cart::with('items')->where('id', $cart_id)->get();
             } else {
-                $cart = null;
+                $cartItems = collect(); // empty collection
             }
         }
-        return view('frontend.pages.cart', compact('cart'));
+
+        return view('frontend.pages.cart', compact('cartItems'));
     }
+
     public function findBy($type, $value)
     {
         return $this->model()->where($type, $value)->first();
@@ -42,45 +45,33 @@ class CartController extends Controller
     {
         DB::beginTransaction();
         try {
-            //check if customer is sign in
             $customer = Auth::user();
             $product_id = $request->product_id;
             $variant_id = $request->variant_id;
             $qty = $request->qty;
-           
+
+            // Remove this in production:
+            // dd($customer->id);
 
             if ($customer) {
-                //check if cart exist already
-                if ($customer->cart) {
-                    $cart = $customer->cart;
-                } else {
-                    $cart = $customer->cart()->create([
-                        'customer_id' => $customer->id,
-                        'name' => $customer->name,
-                        'email' => $customer->email,
-                    ]);
-                }
+                // Check if cart exists
+                $cart = $customer->cart ?: $customer->cart()->create([
+                    'customer_id' => $customer->id,
+                    'name' => $customer->name,
+                    'email' => $customer->email,
+                ]);
             } else {
-                //check if session has cart
+                // Session-based cart
                 $cart_id = Session::get('cart_id');
-                if ($cart_id) {
-                    $cart = $this->findBy('id', $cart_id);
-                } else {
-                    $cart = $this->model()->create(['items_count' => 0]);
-                    Session::put('cart_id', $cart->id);
-                }
+                $cart = $cart_id ? $this->findBy('id', $cart_id) : $this->model()->create(['items_count' => 0]);
+                Session::put('cart_id', $cart->id);
             }
-            $stock = ProductStock::where('product_id', $product_id)->first();
-            if ($stock->stock < $qty) {
-                return response()->json([
-                    'success' => false,
-                ], 200);
-            }
-            //insert cart items
-            $cart_item = $this->cartItemCreate($cart, $product_id, $qty,  $variant_id);
+
+            $cart_item = $this->cartItemCreate($cart, $product_id, $qty, $variant_id);
             DB::commit();
+
             $this->calculateTotal($cart->id);
-            // return $cart;
+
             return response()->json([
                 'success' => true,
                 'data' => $cart,
@@ -90,22 +81,23 @@ class CartController extends Controller
             session()->forget('cart_id');
             return response()->json([
                 'error' => true,
-                'data' => $e,
+                'message' => $e->getMessage(), // better for debugging
             ], 200);
         }
     }
-    public function cartItemCreate($cart, $product_id, $qty, $comments, $variant_id = null)
+
+    public function cartItemCreate($cart, $product_id, $qty, $variant_id)
     {
 
         $product = Product::find($product_id);
         $today = date('Y-m-d');
-        $price = $product->price;
-        if ($variant_id) {
-            $variant = $product->variants()->find($variant_id);
-            if ($variant) {
-                $price = $variant->price;
-            }
-        }
+        $price = $product->msrp;
+        // if ($variant_id) {
+        //     $variant = $product->variants()->find($variant_id);
+        //     if ($variant) {
+        //         $price = $variant->price;
+        //     }
+        // }
         // if ($product->special_price_from) {
         //     if ($product->special_price_from <= $today && $product->special_price_to >= $today) {
         //         $price = $product->special_price;
@@ -113,7 +105,7 @@ class CartController extends Controller
         // }
 
         $cart_item = CartItems::where('product_id', $product_id)->where('variant_id', $variant_id)->where('cart_id', $cart->id)->first();
-        
+
 
         if ($cart_item) {
             $data['variant_id'] = $variant_id;
@@ -132,7 +124,7 @@ class CartController extends Controller
             $data['variant_id'] = $variant_id;
             $data['product_id'] = $product->id;
             $data['sku'] = $product->sku;
-            $data['name'] = $product->name;
+            $data['name'] = $product->title;
             $data['price'] = $price;
             $data['quantity'] = $qty;
             $total_amount = $price * $qty;
@@ -165,7 +157,7 @@ class CartController extends Controller
                 $tax += $item->tax_amount;
                 $grand_total += $item->total_amount + $item->tax_amount;
             }
-           
+
             // if ($cart->coupon_code) {
             //     $coupon = Coupon::where('name', $cart->coupon_code)->first();
             //     $valid = $this->checkCoupon($coupon, $cart);
@@ -198,5 +190,54 @@ class CartController extends Controller
                 'grand_total' => $grand_total
             ]);
         }
+    }
+    public function update(Request $request)
+    {
+        $item_id = $request->item_id;
+        $qty = $request->qty;
+        $cart_item = CartItems::find($item_id);
+        $cart = Cart::find($cart_item->cart_id);
+        $product = Product::find($cart_item->product_id);
+        $today = date('Y-m-d');
+        $price = $product->msrp;
+        // if ($product->special_price_from) {
+        //     if ($product->special_price_from <= $today && $product->special_price_to >= $today) {
+        //         $price = $product->special_price;
+        //     }
+        // }
+        // if ($cart_item->variant) {
+        //     // $price = $cart_item->variant?->price;
+        // }
+        DB::beginTransaction();
+        try {
+            $cart_item->quantity = $qty;
+            $total_amount = $price * $qty;
+            if ($cart_item->tax_percent) {
+                $new_tax_amount = $total_amount * ($cart_item->tax_percent / 100);
+                $cart_item->tax_amount = $new_tax_amount;
+            }
+            $cart_item->total_amount = $total_amount;
+            $cart_item->save();
+            $this->calculateTotal($cart->id);
+            $cart = Cart::find($cart_item->cart_id);
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            session()->forget('cart_id');
+            dd($e);
+        }
+        return response()->json([
+            'success' => true,
+            'data' => $cart_item,
+            'cart' => $cart,
+        ], 200);
+    }
+    public function destroy($item_id)
+    {
+        $cart_item = CartItems::findOrFail($item_id);
+        $cart_item->delete();
+        $cart = Cart::find($cart_item->cart_id);
+        $this->calculateTotal($cart->id);
+        return back()->with('error', 'item was removed successfully from the cart');
     }
 }

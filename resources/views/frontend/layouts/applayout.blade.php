@@ -17,6 +17,8 @@
         href="https://fonts.googleapis.com/css2?family=Hind:wght@300;400;500;600;700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('frontend/css/style.css') }}">
+    <link href="{{ asset('frontend/flash.min.css') }}" rel="stylesheet">
+
     @stack('css')
 </head>
 
@@ -33,20 +35,21 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.8.4/swiper-bundle.min.js"></script>
+    <script src="{{ asset('frontend/flash.min.js') }}"></script>
     <script src="{{ asset('frontend/js/cart.js') }}"></script>
 
     @stack('scripts')
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             const toggles = document.querySelectorAll(".toggle-password");
-    
-            toggles.forEach(function (toggle) {
-                toggle.addEventListener("click", function () {
+
+            toggles.forEach(function(toggle) {
+                toggle.addEventListener("click", function() {
                     const input = document.getElementById(this.getAttribute("data-target"));
                     const isPassword = input.getAttribute("type") === "password";
-    
+
                     input.setAttribute("type", isPassword ? "text" : "password");
-    
+
                     // Toggle icon class
                     this.classList.toggle("fa-eye");
                     this.classList.toggle("fa-eye-slash");
@@ -54,9 +57,27 @@
             });
         });
     </script>
-    
+
+    @if (session('message'))
+        <script>
+            // toastr.success('{{ session('message') }}')
+            window.FlashMessage.info('{{ session('message') }}', {
+                timeout: 2000,
+                progress: true
+            });
+        </script>
+    @endif
+    @if (session('error'))
+        <script>
+            // toastr.error('{{ session('error') }}')
+            window.FlashMessage.error('{{ session('error') }}', {
+                timeout: 2000,
+                progress: true
+            });
+        </script>
+    @endif
+
     <script>
-        
         $(function() {
             $('.color_selector').each(function(index, element) {
                 $(element).find('span').click(function() {

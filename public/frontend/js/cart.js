@@ -18,14 +18,18 @@ $(document).on("click", ".addToCart", function () {
     let product_id = $(this).data("id");
     let variant = $(this).data("variant");
     let qty = $(`#quantity-${product_id}`).val();
-    let comments = $('#comments').val();
-    console.log(variant);
-    addToCart(product_id, qty, comments, variant);
+    if (!qty || qty <= 0) {
+        alert("Please enter a valid quantity");
+        return;
+    }
+
+    console.log("Adding to cart:", product_id, qty, variant);
+    addToCart(product_id, qty, variant);
 });
-const addToCart = (id, qty, comments, variant) => {
 
+const addToCart = (id, qty, variant) => {
     let url = window.location.origin + "/add/cart";
-
+    console.log(url);
     $.ajax({
         type: "POST",
         url: url,
@@ -33,27 +37,46 @@ const addToCart = (id, qty, comments, variant) => {
             product_id: id,
             variant_id: variant,
             qty: qty,
-            comments: comments,
             _token: document.querySelector('meta[name="csrf-token"]').content,
-
         },
-
         success: function (response) {
             if (response.success) {
-                hoverCartItems();
-                $("#quantity").val(1);
-                window.FlashMessage.info('Item was successfully added to the cart', {
+                $(`#quantity-${id}`).val(1);
+                window.FlashMessage?.info?.('Item was successfully added to the cart', {
                     timeout: 2000,
                     progress: true
                 });
             } else if (response.error) {
-                window.FlashMessage.error('Stock not Available', {
+                window.FlashMessage?.error?.('Stock not Available', {
                     timeout: 2000,
                     progress: true
                 });
             } else {
                 console.error("Unexpected response:", response);
             }
+        },
+        error: function (xhr, status, error) {
+            console.error("AJAX error:", xhr.responseText);
+        },
+        complete: function () {
+            $(".enquire-btn").prop("disabled", false);
+        },
+    });
+    console.log(url);
+};
+
+const updateCart = (id, qty) => {
+    let url = window.location.origin + "/cart/update";
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: {
+            item_id: id,
+            qty: qty,
+            _token: document.querySelector('meta[name="csrf-token"]').content,
+        },
+        success: function (response) {
+            hoverCartItems(true);
         },
         error: function (xhr, status, error) {
             console.error(xhr.responseText);
