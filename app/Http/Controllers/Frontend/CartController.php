@@ -51,15 +51,18 @@ class CartController extends Controller
             $qty = $request->qty;
 
             // Remove this in production:
-            // dd($customer->id);
 
             if ($customer) {
                 // Check if cart exists
-                $cart = $customer->cart ?: $customer->cart()->create([
-                    'customer_id' => $customer->id,
-                    'name' => $customer->name,
-                    'email' => $customer->email,
-                ]);
+                if ($customer->cart) {
+                    $cart = $customer->cart;
+                } else {
+                    $cart = $customer->cart()->create([
+                        'customer_id' => $customer->id,
+                        'name' => $customer->name,
+                        'email' => $customer->email,
+                    ]);
+                }
             } else {
                 // Session-based cart
                 $cart_id = Session::get('cart_id');

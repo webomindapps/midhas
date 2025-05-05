@@ -20,6 +20,9 @@ Route::get('customer/email-verify', [LoginController::class, 'verify'])->name('c
 Route::post('customer/email-verify', [LoginController::class, 'sendVerifyMail']);
 Route::get('customer/email-verified', [LoginController::class, 'verifyEmail'])->name('customer.email.verified');
 
+//logout
+Route::get('/customer-logout', [LoginController::class, 'logout'])->name('customer.logout');
+
 //cart
 Route::get('/cart', [CartController::class, 'cartView'])->name('cart');
 Route::post('/add/cart', [CartController::class, 'store'])->name('add-to-cart');
