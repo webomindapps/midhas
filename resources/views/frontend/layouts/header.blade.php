@@ -1,6 +1,54 @@
 <header>
-    <div class="col-12 announcement_bar text-white text-center text_inter">🎆 New Year Special! Buy One, Get One Free +
-        Free Shipping on All Orders – Celebrate 2025 with Big Savings! 🎉</div>
+    <div class="row">
+        <div class="col-10 announcement_bar text-white text-center text_inter">🎆 New Year Special! Buy One, Get One Free
+            +
+            Free Shipping on All Orders – Celebrate 2025 with Big Savings! 🎉
+        </div>
+        <div class="col-2 announcement_bar text-white  text-start">
+            <div class="address">
+                <ul class="header-top-left text-right mb-0 auth-links">
+                    @php
+                        $customer = Auth::user();
+                    @endphp
+                    @if (!is_null($customer))
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-dark btn-sm" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                {{ $customer->name }}
+                                <i class='bx bxs-chevron-down'></i>
+                            </button>
+                            <ul class="dropdown-menu bg-dark">
+                                <li>
+                                    <a class="dropdown-item text-white" href="#">
+                                        <i class='bx bx-user me-1'></i>
+                                        Profile
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-white" href="#">
+                                        <i class='bx bx-package me-1'></i>
+                                        Orders
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-white" href="">
+                                        <i class='bx bx-heart me-1'></i>
+                                        Wishlist
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item text-white" href="{{ route('customer.logout') }}">
+                                        <i class='bx bx-log-out-circle me-1'></i>
+                                        Logout
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    @endif
+                </ul>
+            </div>
+        </div>
+    </div>
     <div class="col-12 header_top text-center text_hind position-relative">
         <div class="section py-4">
             <div class="container d-flex align-items-center justify-content-between">

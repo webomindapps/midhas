@@ -85,7 +85,6 @@ class LoginController extends Controller
         if (!is_null($cart_id)) {
 
             $cart = Cart::find($cart_id);
-            // dd($cart,$customer->cart);
             //check if customer has already cart
             if ($customer->cart) {
                 //load session cart and add it to customer cart id
@@ -93,10 +92,10 @@ class LoginController extends Controller
 
                     app(CartController::class)->cartItemCreate($customer->cart, $item->product_id, $item->quantity, $item->variant_id);
 
-                    //delete cart item of session
                     app(CartController::class)->destroy($item->id);
+
+                    //update cart total 
                 }
-                //update cart total 
                 $customer->cart()->update([
                     'items_qty' => $customer->cart->items_qty + $cart->items_qty,
                     'total_amount' => $customer->cart->total_amount + $cart->total_amount,
@@ -120,4 +119,9 @@ class LoginController extends Controller
         }
     }
 
+    public function logout()
+    {
+        Auth::logout();
+        return redirect('/');
+    }
 }

@@ -47,7 +47,7 @@
                                         @forelse ($cartItems as $cart)
                                             @foreach ($cart->items as $item)
                                                 <tbody>
-                                                    <tr class="mt-4">
+                                                    <tr>
                                                         <td class="cart_prd d-flex gap-3 align-items-center">
                                                             <div class="prd-img" style="width: 100px;">
                                                                 @if (count($item?->product->images))
