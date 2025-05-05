@@ -60,16 +60,16 @@
         });
         var searchTimer;
         $(document).on('input', '#search-input', function() {
-            
+
             var searchInput = $(this).val().trim();
             if (searchInput.length < 2) {
                 $('#searched-item-List').empty();
                 $('.search-results').hide();
                 return;
             }
-            
+
             clearTimeout(searchTimer);
-            
+
             searchTimer = setTimeout(function() {
                 $.ajax({
                     type: 'POST',
