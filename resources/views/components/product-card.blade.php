@@ -17,7 +17,7 @@
 <h3 class="prd_name text_hind fw-bold">{{ $product->title }}</h3>
 <div class="row">
     <span class="prd_price fw-bold d-block">${{ number_format($product->msrp ?? 0, 2) }}</span>
-    <span> <x-qty-input :id="$product->id" /></span>
+    {{-- <span> <x-qty-input :id="$product->id" /></span> --}}
 </div>
 
 <div class="d-flex text_inter prd_actions">

@@ -17,12 +17,12 @@ $(document).on("click", ".qtyDecrement", function () {
 $(document).on("click", ".addToCart", function () {
     let product_id = $(this).data("id");
     let variant = $(this).data("variant");
-    let qty = $(`#quantity-${product_id}`).val();
-    if (!qty || qty <= 0) {
+    let qty = parseInt($(`#quantity-${product_id}`).val()) || 1;
+
+    if (qty <= 0) {
         alert("Please enter a valid quantity");
         return;
     }
-
     console.log("Adding to cart:", product_id, qty, variant);
     addToCart(product_id, qty, variant);
 });

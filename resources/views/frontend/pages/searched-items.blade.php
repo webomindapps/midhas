@@ -15,7 +15,7 @@
                                     class="img-fluid img-responsive">
                             @endif
                         </div>
-                        <div class="col-lg-3 col-6">
+                        <div class="col-lg-6 col-6">
                             <a href="{{ route('productByCategory', $product->slug) }}">
                                 <div class="pct-desc">
                                     <p class="mb-0">
@@ -25,12 +25,12 @@
                             </a>
                         </div>
                         <div class="col-lg-2 col-3 text-center">
-                            <div class="search-price">$ {{ $product->msrp }}</div>
+                            <div class="search-price">${{ number_format($product->msrp ?? 0, 2) }}</div>
                         </div>
-                        <div class="col-lg-3 col-5 text-center">
-                            {{-- <input type="number" name="product_quantity" value="1" style="width: 50px;"> --}}
+                        {{-- <div class="col-lg-3 col-5 text-center">
+                            <input type="number" name="product_quantity" value="1" style="width: 50px;">
                             <x-qty-input :id="$product->id" />
-                        </div>
+                        </div> --}}
                         <div class="col-lg-2  col-4 text-center my-auto">
                             @if ($product->total_stock > 0 && !$product->is_outof_stock)
                                 <a class="search-btn-cart addToCart" data-id="{{ $product->id }}">

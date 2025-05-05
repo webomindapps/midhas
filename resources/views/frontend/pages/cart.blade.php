@@ -98,7 +98,8 @@
                                                         <td>
                                                             <a href="{{ route('delete-cart', $item->id) }}"
                                                                 onclick="return confirm('Are you sure you want to delete this item?')">
-                                                                <i class='bx bx-x'>X</i>
+                                                                <i class='bx bx-trash'
+                                                                    style="color: red; cursor: pointer;"></i>
                                                             </a>
 
                                                         </td>
