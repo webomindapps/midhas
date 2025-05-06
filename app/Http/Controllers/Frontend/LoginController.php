@@ -74,6 +74,7 @@ class LoginController extends Controller
     {
         $customer = User::where('email', $request->email)->first();
         $customer->email_verified_at = Carbon::now();
+        $customer->status = 1;
         $customer->save();
         return redirect()->route('customer.login');
     }

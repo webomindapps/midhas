@@ -34,6 +34,13 @@ class SideBar extends Component
             'name' => 'products',
         ],
         [
+            'title' => 'Customer Master',
+            'icon' => 'fal fa-clipboard-list',
+            'route' => 'admin.customers.index',
+            'isSubMenu' => false,
+            'name' => 'customers',
+        ],
+        [
             'title' => 'Stores',
             'icon' => 'fal fa-store',
             'route' => 'admin.stores.index',
