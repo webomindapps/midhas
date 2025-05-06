@@ -5,6 +5,7 @@ namespace App\Models\Product;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Seo;
+use App\Models\Wishlist;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Builder;
@@ -141,5 +142,19 @@ class Product extends Model
     public function isPackage(): bool
     {
         return $this->type == 'package';
+    }
+
+    public function isAddedToWishList(): bool
+    {
+        $user = Auth::check();
+
+        if ($user) {
+            return auth()->user()->wishlists()->where('product_id', $this->id)->exists();
+        }
+        return false;
+    }
+    public function wishlists(): HasMany
+    {
+        return $this->hasMany(Wishlist::class);
     }
 }

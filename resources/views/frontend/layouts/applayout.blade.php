@@ -21,6 +21,7 @@
     <link href="{{ asset('frontend/flash.min.css') }}" rel="stylesheet">
 
     @stack('css')
+    @vite(['resources/js/frontend.js'])
 </head>
 
 <body>
@@ -60,16 +61,16 @@
         });
         var searchTimer;
         $(document).on('input', '#search-input', function() {
-            
+
             var searchInput = $(this).val().trim();
             if (searchInput.length < 2) {
                 $('#searched-item-List').empty();
                 $('.search-results').hide();
                 return;
             }
-            
+
             clearTimeout(searchTimer);
-            
+
             searchTimer = setTimeout(function() {
                 $.ajax({
                     type: 'POST',
@@ -94,7 +95,7 @@
         <script>
             // toastr.success('{{ session('message') }}')
             window.FlashMessage.info('{{ session('message') }}', {
-                timeout: 2000,
+                timeout: 5000,
                 progress: true
             });
         </script>

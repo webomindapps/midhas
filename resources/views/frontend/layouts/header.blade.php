@@ -31,7 +31,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item text-white" href="">
+                                    <a class="dropdown-item text-white" href="{{ route('wishlist.index') }}">
                                         <i class='bx bx-heart me-1'></i>
                                         Wishlist
                                     </a>
@@ -95,7 +95,8 @@
                                     class="d-block">Login</span></a>
                         </div>
                         <div class="wishlist ms-4">
-                            <i class="fa-solid fa-heart d-block"></i><span class="d-block">Wishlist</span>
+                            <a href="{{ route('wishlist.index') }}"> <i class="fa-solid fa-heart d-block"></i><span
+                                    class="d-block">Wishlist</span></a>
                         </div>
                         <div class="cart ms-4">
                             <a href="{{ route('cart') }}"><i class="fa-solid fa-basket-shopping"></i><span

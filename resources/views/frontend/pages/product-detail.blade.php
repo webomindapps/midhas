@@ -30,7 +30,7 @@
             </div>
         </section>
 
-
+        <input type="hidden" value="{{ $product->id }}" id="product_id">
         <section class="section detail_wrapper w-100">
             <div class="container text-start">
                 <div class="col-12">
@@ -153,8 +153,26 @@
                                         @endif
                                     </div>
                                 </div>
-                                <a href="" class="add_wishlist d-block w-100 text-uppercase text-center"> <i
-                                        class="fa-solid fa-heart me-2"></i> Add to wishlist</a>
+                                @if (Auth::check())
+                                    @php
+                                        $isWishlisted = $product->isAddedToWishList();
+                                    @endphp
+
+                                    <a href="javascript:void(0);"
+                                        class="add_wishlist addToWishList d-block w-100 text-uppercase text-center {{ $isWishlisted ? 'active' : '' }}"
+                                        data-product-id="{{ $product->id }}">
+
+                                        <i class="fa{{ $isWishlisted ? 's' : 'r' }} fa-heart me-2 wishlist-icon"
+                                            style="color: {{ $isWishlisted ? 'red' : '#ccc' }}"></i>
+
+                                        <span class="wishlist-text">
+                                            {{ $isWishlisted ? 'Remove from wishlist' : 'Add to wishlist' }}
+                                        </span>
+                                    </a>
+                                @endif
+
+
+
                                 <div class="d-flex align-items-center other_actions">
                                     <button class="btn text-uppercase">ask a question</button>
                                     <button class="btn text-uppercase">Tell a friend</button>
@@ -181,8 +199,8 @@
                             role="tab" aria-controls="pills-details" aria-selected="true">Product Details</a>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="pills-specs-tab" data-bs-toggle="pill" href="#pills-specs" role="tab"
-                            aria-controls="pills-specs" aria-selected="false">PRODUCT SPECIFICATIONS</a>
+                        <a class="nav-link" id="pills-specs-tab" data-bs-toggle="pill" href="#pills-specs"
+                            role="tab" aria-controls="pills-specs" aria-selected="false">PRODUCT SPECIFICATIONS</a>
                     </li>
                     <li class="nav-item" role="presentation">
                         <a class="nav-link" id="pills-despcription-tab" data-bs-toggle="pill" href="#pills-despcription"

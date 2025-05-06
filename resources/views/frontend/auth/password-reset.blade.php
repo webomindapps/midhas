@@ -31,25 +31,28 @@
                                             @error('email')
                                                 <span style="font-size:12px;color:red;">{{ $message }}</span>
                                             @enderror
-                                            <div class="form-floating mb-3">
-                                                <input type="password" name="password" class="form-control input-password"
-                                                    id="floatingPassword" placeholder="Password">
-                                                <label for="floatingPassword">Password</label>
-                                                <span class="login-pass toggle-password"><i class='bx bx-hide'></i></span>
+                                            <div class="password-container position-relative">
+                                                <input type="password" name="password" class="form-control"
+                                                    placeholder="Password" id="input-password"
+                                                    aria-label="Password input field" aria-required="true"
+                                                    aria-describedby="input-password-description">
+                                                <i class="fa-solid fa-eye eye-icon toggle-password"
+                                                    data-target="input-password"></i>
                                             </div>
+
                                             @error('password')
-                                                <span style="font-size:12px;color:red;">{{ $message }}</span>
+                                                <div class="text-danger">{{ $message }}</div>
                                             @enderror
-                                            <div class="form-floating mb-3">
-                                                <input type="password" name="password_confirmation"
-                                                    class="form-control input-password" id="floatingPassword"
-                                                    placeholder="Password">
-                                                <label for="floatingPassword">Confirm Password</label>
-                                                <span class="login-pass toggle-password"><i class='bx bx-hide'></i></span>
+
+                                            <div class="password-container position-relative mt-2">
+                                                <input type="password" class="form-control" placeholder="Confirm Password"
+                                                    id="input-c-password" name="password_confirmation"
+                                                    aria-label="Confirm Password input field" aria-required="true"
+                                                    aria-describedby="input-confirm-password-description">
+                                                <i class="fa-solid fa-eye eye-icon toggle-password"
+                                                    data-target="input-c-password"></i>
                                             </div>
-                                            @error('password_confirmation')
-                                                <span style="font-size:12px;color:red;">{{ $message }}</span>
-                                            @enderror
+
                                             <div class="col-auto text-center">
                                                 <button type="submit"
                                                     class="btn btn-outline-secondary login-btn w-100 mb-3">Reset

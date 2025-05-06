@@ -6,6 +6,7 @@ use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\ShopController;
 use App\Http\Controllers\Frontend\LoginController;
 use App\Http\Controllers\Frontend\PasswordResetController;
+use App\Http\Controllers\Frontend\WishListController;
 
 Route::get('/', [ShopController::class, 'index'])->name('home');
 Route::post('serarch-products', [ShopController::class, 'searchProduct'])->name('search.products');
@@ -31,7 +32,12 @@ Route::post('/cart/update', [CartController::class, 'update'])->name('cart-updat
 Route::get('cart-item/delete/{id}', [CartController::class, 'destroy'])->name('delete-cart');
 
 
-
+//wishlist
+Route::group(['prefix' => 'wishlists'], function () {
+    Route::get('/', [WishListController::class, 'index'])->name('wishlist.index');
+    Route::post('add', [WishListController::class, 'store']);
+    Route::get('/{id}/delete', [WishListController::class, 'destroy'])->name('wishlist.destroy');
+});
 
 //pages
 Route::get('page/{page}', [ShopController::class, 'pageDetails'])->name('page.view');
