@@ -151,6 +151,11 @@ class Product extends Model
         if ($user) {
             return auth()->user()->wishlists()->where('product_id', $this->id)->exists();
         }
+
+        if (session()->has('wishlist_ids')) {
+            return Wishlist::whereIn('id', session('wishlist_ids'))->where('product_id', $this->id)->exists();
+        }
+
         return false;
     }
     public function wishlists(): HasMany
