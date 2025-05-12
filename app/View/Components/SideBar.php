@@ -66,6 +66,19 @@ class SideBar extends Component
             ],
         ],
         [
+            'title' => 'Settings',
+            'icon' => 'fal fa-cogs',
+            'isSubMenu' => true,
+            'name' => 'settings',
+            'subMenus' => [
+                [
+                    'title' => 'Filters',
+                    'icon' => 'bx bx-chevron-right',
+                    'route' => 'admin.settings.filters.index',
+                ],
+            ]
+        ],
+        [
             'title' => 'CMS',
             'icon' => 'fal fa-sitemap',
             'isSubMenu' => true,

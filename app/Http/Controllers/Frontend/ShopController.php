@@ -9,8 +9,11 @@ use App\Models\Sliders;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Filter;
+use App\Models\FilterItem;
 use App\Models\Product\Product;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 class ShopController extends Controller
@@ -118,7 +121,8 @@ class ShopController extends Controller
         if ($category || $brand || $is_new || $is_best_selling || $all) {
             $recentIds = Session::get('recents', []);
             $recentlyViewed = Product::whereIn('id', $recentIds)->get();
-            return view('frontend.pages.category-lists', compact('products', 'sub_categories', 'category', 'recentlyViewed'));
+            $filters = $this->getCategoryFilters($category);
+            return view('frontend.pages.category-lists', compact('products', 'sub_categories', 'category', 'recentlyViewed','filters'));
         } else {
 
             if ($sku) {
@@ -210,5 +214,41 @@ class ShopController extends Controller
         return [
             'html' => view('frontend.pages.searched-items', compact('products'))->render()
         ];
+    }
+
+
+    private function getCategoryFilters($category)
+    {
+        $products = $category->products()->pluck('products.id')->toArray();
+        $filter = Filter::where('filter_for', 'List')->whereIn('sub_category_id', array_merge([$category->id]))->first();
+        dd($filter);
+        if ($filter) {
+            return FilterItem::where('filter_id', $filter->id)
+                ->get()
+                ->map(function ($q) use ($products) {
+                    $type = $q->type;
+
+
+                    if ($q->column_name) {
+                        $values =
+                            Product::whereIn('id', $products)
+                            ->whereNotNull($q->column_name)
+                            ->select(DB::raw("MIN(id) as id"), DB::raw("`$q->column_name` as value"))
+                            ->groupBy(DB::raw("`$q->column_name`"))
+                            ->get();
+                    } else {
+                        $values = [];
+                    }
+
+                    return [
+                        'id' => $q->id,
+                        'name' => $q->name,
+                        'type' => $type,
+                        'column' => $q->column_name,
+                        'values' => $values,
+                        'productsIds' => $products
+                    ];
+                });
+        }
     }
 }

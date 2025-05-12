@@ -14,7 +14,7 @@
         <section class="section listing_wrapper w-100">
             <div class="container text-start">
                 <div class="col-12 d-flex sm-flex-column">
-                    <x-product-filter :subcategories="$sub_categories" :cat="$category" />
+                    <x-product-filter :subcategories="$sub_categories" :cat="$category" :filter="$filters ?? []" />
 
                     @forelse ($products as $product)
                         <div class="products_list_box text-center">

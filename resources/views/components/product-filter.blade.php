@@ -1,4 +1,4 @@
-@props(['categories', 'subcategories', 'cat'])
+@props(['categories', 'subcategories', 'cat','filters' => []])
 
 <div class="sidebar">
     <ul class="list-group border-0 text_hind">
@@ -45,6 +45,62 @@
                 </div>
             </div>
         </li>
+        {{-- Availability filters --}}
+        @foreach ($filters as $filter)
+        <div class="types">
+            <button class="btn collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapse-{{ $filter['id'] }}" aria-expanded="true"
+                aria-controls="collapseExample">
+                {{ $filter['name'] }} <i class="fas fa-angle-down float-end"></i>
+            </button>
+            <div class="collapse show" id="collapse-{{ $filter['id'] }}">
+                <div class="card card-body">
+                    @if ($filter['type'] == 'checkbox')
+                        <ul class="cat-list">
+                            @foreach ($filter['values'] as $value)
+                                @php
+                                    $prdCount = \App\Models\Product\Product::whereIn(
+                                        'id',
+                                        $filter['productsIds'],
+                                    )
+                                        ->where($filter['column'], $value['value'])
+                                        ->count();
+                                @endphp
+                                <li>
+                                    <input type="checkbox" class="form-check-input category-specification"
+                                        id="checkbox-{{ $filter['id'] }}-{{ Str::slug($value['value'], '-') }}"
+                                        value="{{ $filter['id'] . '-' . $value['value'] }}">
+
+                                    <label class="form-check-label"
+                                        for="checkbox-{{ $filter['id'] }}-{{ Str::slug($value['value'], '-') }}">{{ $value['value'] }}
+                                        ({{ $prdCount }})
+                                    </label>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
+
+                    @if ($filter['type'] == 'input-range')
+                        @if (count($filter['values']) > 0)
+                            @php
+                                $inputRanges = Teletime::getInputRanges($filter['values']);
+                            @endphp
+
+                            <div class="d-flex">
+                                <span id="minPrice" class="mr-2">{{ $inputRanges['min'] }}</span>
+                                <input type="range" class="w-100 mr-2 category-range-filter"
+                                    step="{{ $inputRanges['step'] }}" value="{{ $inputRanges['min'] }}"
+                                    min="{{ $inputRanges['min'] }}" max="{{ $inputRanges['max'] }}"
+                                    id="input-range-{{ $filter['id'] }}">
+                                <span id="maxPrice">{{ $inputRanges['max'] }}</span>
+                            </div>
+                        @endif
+                    @endif
+                </div>
+            </div>
+        </div>
+    @endforeach
+
         <li class="list-group-item">
             <a class="btn btn-category collapsed" data-bs-toggle="collapse" href="#collapseExample4" role="button"
                 aria-expanded="false" aria-controls="collapseExample4"> Price <i
@@ -52,19 +108,22 @@
             <div class="collapse" id="collapseExample4">
                 <div class="card card-body bg-white">
                     <div class="form-check">
-                        <input class="form-check-input price" type="radio" name="price_limit" value="0-500" id="price1">
+                        <input class="form-check-input price" type="radio" name="price_limit" value="0-500"
+                            id="price1">
                         <label class="form-check-label" for="price1">
                             Under 500
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input price" type="radio" name="price_limit" value="550-1000" id="price2">
+                        <input class="form-check-input price" type="radio" name="price_limit" value="550-1000"
+                            id="price2">
                         <label class="form-check-label" for="price2">
                             550 - 1000
                         </label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input price" type="radio" name="price_limit" value="1050-2500" id="price3">
+                        <input class="form-check-input price" type="radio" name="price_limit" value="1050-2500"
+                            id="price3">
                         <label class="form-check-label" for="price3">
                             1050 - 2500
                         </label>
