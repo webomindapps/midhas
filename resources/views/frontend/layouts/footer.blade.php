@@ -43,7 +43,9 @@
                                 <h2 class="text-uppercase">Popular Categories</h2>
                                 <ul class="list_styled">
                                     @foreach ($categories as $category)
-                                        <li><a href="">{{ $category->name }}</a></li>
+                                        <li><a
+                                                href="{{ route('productByCategory', $category->slug) }}">{{ $category->name }}</a>
+                                        </li>
                                     @endforeach
 
                                 </ul>

@@ -64,6 +64,10 @@
                         <x-admin.product-setting />
                     </x-accordion.item>
 
+                    <x-accordion.item id="filters" title="Filters">
+                        <x-admin.product-filter />
+                    </x-accordion.item>
+
                     <x-accordion.item id="upload-images" title="Upload Images">
                         <div class="row">
                             <x-forms.input label="Product Thumbnail" type="file" name="thumbnail" id="thumbnail"

@@ -4,6 +4,7 @@ import ProductStock from "./admin/products/Stock.vue";
 import ImageUploader from "./admin/ImageUploader.vue";
 import Variant from "./admin/products/Variant.vue";
 import MultipleItem from "./admin/MultipleItem.vue";
+import Filter from "./admin/Filter.vue";
 
 
 const root = defineComponent({})
@@ -19,6 +20,7 @@ multipleApps.map((item) => {
     appName.component('multiple-item', MultipleItem)
     appName.component('product-variant', Variant)
     appName.component('image-uploader', ImageUploader)
+    appName.component('filter-section', Filter)
     appName.mount(`#admin-app-${item}`);
 })
 

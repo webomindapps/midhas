@@ -34,14 +34,16 @@
                                         <!-- Input field with aria-label for better accessibility -->
                                         <input type="text" class="form-control" placeholder="Enter your name"
                                             id="input-text" name="name" aria-label="Text input field"
-                                            aria-required="true" aria-describedby="input-text-description">
+                                            aria-required="true" aria-describedby="input-text-description"
+                                            value="{{ old('name') }}">
                                         @error('name')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror
                                         <!-- Input field with aria-label for better accessibility -->
                                         <input type="email" class="form-control" placeholder="Enter mail ID"
                                             id="input-email" name="email" aria-label="Email input field"
-                                            aria-required="true" aria-describedby="input-email-description">
+                                            aria-required="true" aria-describedby="input-email-description"
+                                            value="{{ old('email') }}">
                                         @error('email')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror

@@ -1,5 +1,5 @@
 <header>
-    <div class="row">
+    <div class="col-12 mx-0 row">
         <div class="col-10 announcement_bar text-white text-center text_inter">🎆 New Year Special! Buy One, Get One Free
             +
             Free Shipping on All Orders – Celebrate 2025 with Big Savings! 🎉
@@ -31,7 +31,7 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item text-white" href="">
+                                    <a class="dropdown-item text-white" href="{{ route('wishlist.index') }}">
                                         <i class='bx bx-heart me-1'></i>
                                         Wishlist
                                     </a>
@@ -90,12 +90,15 @@
                 </div>
                 <div class="col-md-5 right_side_action">
                     <div class="d-flex text-center justify-content-end align-items-center">
-                        <div class="login">
-                            <a href="{{ route('customer.login') }}"><i class="fa-solid fa-user d-block"></i><span
-                                    class="d-block">Login</span></a>
-                        </div>
+                        @if (!Auth::check())
+                            <div class="login">
+                                <a href="{{ route('customer.login') }}"><i class="fa-solid fa-user d-block"></i><span
+                                        class="d-block">Login</span></a>
+                            </div>
+                        @endif
                         <div class="wishlist ms-4">
-                            <i class="fa-solid fa-heart d-block"></i><span class="d-block">Wishlist</span>
+                            <a href="{{ route('wishlist.index') }}"> <i class="fa-solid fa-heart d-block"></i><span
+                                    class="d-block">Wishlist</span></a>
                         </div>
                         <div class="cart ms-4">
                             <a href="{{ route('cart') }}"><i class="fa-solid fa-basket-shopping"></i><span

@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\Setting\FilterController;
 use App\Http\Controllers\Admin\SpecificationController;
 
 Route::get('login', [LoginController::class, 'index']);
@@ -46,5 +47,12 @@ Route::middleware('auth:admin')->group(function () {
             'sliders' => SliderController::class,
         ]);
     });
+    Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
+        Route::resources([
+            'filters' => FilterController::class
+        ]);
+    });
 });
 Route::post('deleteProductImage', [AjaxController::class, 'deleteImage']);
+Route::get('getSubCategories', [AjaxController::class, 'getSubCategories']);
+

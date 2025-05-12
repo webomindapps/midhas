@@ -35,8 +35,8 @@
                     <x-forms.input label="Product Upc" type="text" name="upc_code" id="upc_code" :required="false"
                         size="col-lg-3 mt-4" :value="$product->upc_code" />
 
-                    <x-forms.select label="Brand" name="brand_id" id="brand_id" :required="false"
-                        size="col-lg-3 mt-4" :options="Midhas::getBrands()" :value="$product->brand_id" />
+                    <x-forms.select label="Brand" name="brand_id" id="brand_id" :required="false" size="col-lg-3 mt-4"
+                        :options="Midhas::getBrands()" :value="$product->brand_id" />
 
                     <x-forms.select label="Order Type" name="order_type" id="order_type" :required="true"
                         size="col-lg-3 mt-4" :options="Midhas::getOrderType()" :value="$product->order_type" />
@@ -74,6 +74,10 @@
                     <x-accordion.item id="product-setting" title="Product Settings">
                         <x-admin.product-setting :existing="$product" />
                     </x-accordion.item>
+
+                    <x-accordion.item id="filters" title="Filters">
+                        <x-admin.product-filter :existing="$product" />
+                    </x-accordion.item>
                     <x-accordion.item id="upload-images" title="Upload Images">
                         <div class="row">
                             <x-forms.input label="Product Thumbnail" type="file" name="thumbnail" id="thumbnail"
@@ -90,7 +94,8 @@
 
                     <x-accordion.item id="stock" title="Stock">
                         <div class="row" id="admin-app-two">
-                            <product-stock :stores="{{ Midhas::getStore() }}" :stock="{{ $product->total_stock }}" :existing="{{ $product->stocks }}" />
+                            <product-stock :stores="{{ Midhas::getStore() }}" :stock="{{ $product->total_stock }}"
+                                :existing="{{ $product->stocks }}" />
                         </div>
                     </x-accordion.item>
 
@@ -119,11 +124,13 @@
                                     <x-forms.textarea label="Product Details" name="product_details" id="editor-1"
                                         :required="true" size="col-lg-12" :value="$product->product_details" :editor="true" />
 
-                                    <x-forms.textarea label="Product Description" name="product_description" id="editor-3"
-                                        :required="true" size="col-lg-12 mb-2" :value="$product->product_description" :editor="true" />
+                                    <x-forms.textarea label="Product Description" name="product_description"
+                                        id="editor-3" :required="true" size="col-lg-12 mb-2" :value="$product->product_description"
+                                        :editor="true" />
 
                                     <x-forms.textarea label="Payment & security" name="payment_security"
-                                        id="editor-2" :editor="true" :required="true" size="col-lg-12" :value="$product->payment_security" />
+                                        id="editor-2" :editor="true" :required="true" size="col-lg-12"
+                                        :value="$product->payment_security" />
                                 </div>
                             </x-tabs.content>
 

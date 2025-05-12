@@ -64,6 +64,18 @@ class ProductRequest extends FormRequest
             'product_id' => 'nullable|array',
             'product_selling_price' => 'nullable|array',
             'is_taxable' => 'nullable|boolean',
+
+            // product filters
+            'color' => 'nullable',
+            'size' => 'nullable',
+            'material' => 'nullable',
+            'style' => 'nullable',
+            'no_of_drawers' => 'nullable',
+            'no_of_doors' => 'nullable',
+            'no_of_hooks' => 'nullable',
+            'no_of_shelves' => 'nullable',
+            'assembly' => 'nullable',
+            'upholstery_material' => 'nullable',
         ];
     }
 }

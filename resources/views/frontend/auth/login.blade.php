@@ -48,7 +48,8 @@
                                         <!-- Input field with aria-label for better accessibility -->
                                         <input type="email" class="form-control" placeholder="Enter mail ID"
                                             id="input-email" name="email" aria-label="Email input field"
-                                            aria-required="true" aria-describedby="input-email-description">
+                                            aria-required="true" aria-describedby="input-email-description"
+                                            value="{{ old('email') }}">
                                         @error('email')
                                             <div class="text-danger">{{ $message }}</div>
                                         @enderror

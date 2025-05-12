@@ -1,8 +1,8 @@
 @section('metaTitle', $pageDetails->meta_title)
 @section('metaDescription', $pageDetails->meta_description)
 @section('metaKeywords', $pageDetails->meta_keywords)
-@extends('frontend.layouts.applayout')
-@section('main-content')
+<x-frontend.page>
+
     <div class="content brdcrumb detail_page mt-3 p-3 mb-5 ">
         <div class="container">
             <nav aria-label="breadcrumb">
@@ -21,4 +21,4 @@
             </div>
         </div>
     </div>
-@endsection
+</x-frontend.page>

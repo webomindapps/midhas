@@ -1,67 +1,47 @@
-<x-app-layout>
-    @section('main-content')
-        {{-- {{ dd($product->variants) }} --}}
-        @php
-            $default_variant = '';
+<x-frontend.page>
 
-            if ($product->variants && $product->variants->count() > 0) {
-                $default_variant = $product->variants->first()->id;
-            }
-        @endphp
+    {{-- {{ dd($product->variants) }} --}}
+    @php
+        $default_variant = '';
 
-        {{-- {{ dd($default_variant) }} --}}
+        if ($product->variants && $product->variants->count() > 0) {
+            $default_variant = $product->variants->first()->id;
+        }
+    @endphp
 
-        @push('scripts')
-            <script>
-                $(document).ready(function() {
-                    $('.color_selector .product_variant').on('click', function() {
-                        var variantId = $(this).data('variant-id');
-                        $('.addToCart').data('variant', variantId);
-                    });
+    {{-- {{ dd($default_variant) }} --}}
+
+    @push('scripts')
+        <script>
+            $(document).ready(function() {
+                $('.color_selector .product_variant').on('click', function() {
+                    var variantId = $(this).data('variant-id');
+                    $('.addToCart').data('variant', variantId);
                 });
-            </script>
-        @endpush
-        <section class="section breadcrumb pb-0 seo_content w-100">
-            <div class="container text-start">
-                <ul class="list_styled d-flex breadcrumb mb-5">
-                    <li><a href="">Home<i class="fa-solid fa-chevron-right"></i></a></li>
-                    <li>{{ $product->title }}</li>
-                </ul>
-            </div>
-        </section>
+            });
+        </script>
+    @endpush
+    <section class="section breadcrumb pb-0 seo_content w-100">
+        <div class="container text-start">
+            <ul class="list_styled d-flex breadcrumb mb-5">
+                <li><a href="">Home<i class="fa-solid fa-chevron-right"></i></a></li>
+                <li>{{ $product->title }}</li>
+            </ul>
+        </div>
+    </section>
 
-
-        <section class="section detail_wrapper w-100">
-            <div class="container text-start">
-                <div class="col-12">
-                    <div class="row">
-                        <div class="col-md-7">
-                            <div class="left_sticky">
-                                <!-- Slider main wrapper -->
-                                <div class="swiper-container-wrapper">
-                                    <!-- Slider thumbnail container -->
-                                    <div class="thumb_with_navs position-relative">
-                                        <div class="swiper-container gallery-thumbs">
-                                            <!-- Additional required wrapper -->
-                                            <div class="swiper-wrapper">
-                                                <!-- Slides -->
-                                                @foreach ($product->images as $image)
-                                                    <div class="swiper-slide">
-                                                        <img src="{{ asset($image->url) }}" alt=""
-                                                            class="w-100 img-fluid">
-                                                    </div>
-                                                @endforeach
-
-                                            </div>
-                                        </div>
-                                        <!-- Add Arrows -->
-                                        <div class="swiper-Tbutton-next position-absolute text-center bottom-0 w-100"><i
-                                                class="fa-solid fa-chevron-down"></i></div>
-                                        <div class="swiper-Tbutton-prev position-absolute text-center top-0 w-100"><i
-                                                class="fa-solid fa-chevron-up"></i></div>
-                                    </div>
-                                    <!-- Slider main container -->
-                                    <div class="swiper-container gallery-top">
+    <input type="hidden" value="{{ $product->id }}" id="product_id">
+    <section class="section detail_wrapper w-100">
+        <div class="container text-start">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="left_sticky">
+                            <!-- Slider main wrapper -->
+                            <div class="swiper-container-wrapper">
+                                <!-- Slider thumbnail container -->
+                                <div class="thumb_with_navs position-relative">
+                                    <div class="swiper-container gallery-thumbs">
                                         <!-- Additional required wrapper -->
                                         <div class="swiper-wrapper">
                                             <!-- Slides -->
@@ -73,208 +53,241 @@
                                             @endforeach
 
                                         </div>
-                                        <!-- Add Arrows -->
-                                        <div class="swiper-button-next"></div>
-                                        <div class="swiper-button-prev"></div>
                                     </div>
+                                    <!-- Add Arrows -->
+                                    <div class="swiper-Tbutton-next position-absolute text-center bottom-0 w-100"><i
+                                            class="fa-solid fa-chevron-down"></i></div>
+                                    <div class="swiper-Tbutton-prev position-absolute text-center top-0 w-100"><i
+                                            class="fa-solid fa-chevron-up"></i></div>
                                 </div>
+                                <!-- Slider main container -->
+                                <div class="swiper-container gallery-top">
+                                    <!-- Additional required wrapper -->
+                                    <div class="swiper-wrapper">
+                                        <!-- Slides -->
+                                        @foreach ($product->images as $image)
+                                            <div class="swiper-slide">
+                                                <img src="{{ asset($image->url) }}" alt=""
+                                                    class="w-100 img-fluid">
+                                            </div>
+                                        @endforeach
 
-                                <div class="share_icons text_inter">
-                                    <p>Code: COFOR cortz coffee Table</p>
-                                    <div class="share_on d-flex align-items-center text-uppercase fw-bold">
-                                        <h3 class="mb-0">Share</h3>
-                                        <ul class="d-flex list_styled">
-                                            <li><a href=""><i class="fa-brands fa-facebook-f"></i></a></li>
-                                            <li><a href=""><i class="fa-brands fa-x-twitter"></i></a></li>
-                                            <li><a href=""><i class="fa-brands fa-whatsapp"></i></a></li>
-                                            <li><a href=""><i class="fa-brands fa-linkedin-in"></i></a></li>
-                                        </ul>
                                     </div>
+                                    <!-- Add Arrows -->
+                                    <div class="swiper-button-next"></div>
+                                    <div class="swiper-button-prev"></div>
+                                </div>
+                            </div>
+
+                            <div class="share_icons text_inter">
+                                <p>Code: COFOR cortz coffee Table</p>
+                                <div class="share_on d-flex align-items-center text-uppercase fw-bold">
+                                    <h3 class="mb-0">Share</h3>
+                                    <ul class="d-flex list_styled">
+                                        <li><a href=""><i class="fa-brands fa-facebook-f"></i></a></li>
+                                        <li><a href=""><i class="fa-brands fa-x-twitter"></i></a></li>
+                                        <li><a href=""><i class="fa-brands fa-whatsapp"></i></a></li>
+                                        <li><a href=""><i class="fa-brands fa-linkedin-in"></i></a></li>
+                                    </ul>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-5">
-                            <div class="product_info text_inter">
-                                <h2 class="prod_title fw-bold text_hind">{{ $product->title }}</h2>
-                                <p class="mb-0 prod_price text-uppercase text_inter">From <span>${{ $product->msrp }}</span>
-                                </p>
-                                <div class="payment d-flex align-items-center"><img src="images/PayPal.webp" alt=""
-                                        class="img-fluid"><strong> SKU:{{ $product->sku }}</strong></div>
-                                <div class="stock d-flex align-items-center"><span class="text_orange">
-                                        @if ($product->is_outof_stock == 1)
-                                            Out Of Stock
-                                        @else
-                                            InStock
-                                        @endif
-                                    </span>
-                                    &nbsp;|&nbsp; <span>Usually dispatched within 24 hours</span></div>
-                                <div class="product_options mt-4 col-md-6 col-12">
-                                    {{-- <select class="form-select rounded-0" id="exampleSelect" aria-label="Select an option">
+                    </div>
+                    <div class="col-md-5">
+                        <div class="product_info text_inter">
+                            <h2 class="prod_title fw-bold text_hind">{{ $product->title }}</h2>
+                            <p class="mb-0 prod_price text-uppercase text_inter">From <span>${{ $product->msrp }}</span>
+                            </p>
+                            <div class="payment d-flex align-items-center"><img src="images/PayPal.webp" alt=""
+                                    class="img-fluid"><strong> SKU:{{ $product->sku }}</strong></div>
+                            <div class="stock d-flex align-items-center"><span class="text_orange">
+                                    @if ($product->is_outof_stock == 1)
+                                        Out Of Stock
+                                    @else
+                                        InStock
+                                    @endif
+                                </span>
+                                &nbsp;|&nbsp; <span>Usually dispatched within 24 hours</span></div>
+                            <div class="product_options mt-4 col-md-6 col-12">
+                                {{-- <select class="form-select rounded-0" id="exampleSelect" aria-label="Select an option">
                                         <option selected>Choose an option</option>
                                         <option value="1">Option 1</option>
                                         <option value="2">Option 2</option>
                                         <option value="3">Option 3</option>
                                         <option value="4">Option 4</option>
                                     </select> --}}
-                                    {{-- {{ dd($product) }} --}}
-                                    <p class="d-block w-100 mt-4">Pick a color: </p>
-                                    {{-- <input type="hidden" name="variant_id" id="variantInput"
+                                {{-- {{ dd($product) }} --}}
+                                <p class="d-block w-100 mt-4">Pick a color: </p>
+                                {{-- <input type="hidden" name="variant_id" id="variantInput"
                                         value="{{ $default_variant }}"> --}}
 
-                                    <div class="color_selector d-flex justify-content-start">
-                                        @foreach ($product->variants as $variant)
-                                            <span class="product_variant" style="--color:{{ $variant->value }};"
-                                                data-variant-id="{{ $variant->id }}">
-                                            </span>
-                                        @endforeach
-                                    </div>
-
+                                <div class="color_selector d-flex justify-content-start">
+                                    @foreach ($product->variants as $variant)
+                                        <span class="product_variant" style="--color:{{ $variant->value }};"
+                                            data-variant-id="{{ $variant->id }}">
+                                        </span>
+                                    @endforeach
                                 </div>
-                                <div class="d-flex align-items-center detail-addtocart">
-                                    <div class="number d-flex align-items-center ">
-                                        <p class="d-inline mb-0 me-2 fw-bold">Qty</p>
 
-                                        <x-qty-input :id="$product->id" />
-                                    </div>
-                                    <div class="add-cart d-block text-center text-uppercase fw-bold">
-                                        {{-- {{ dd($product) }} --}}
-                                        {{-- {{ dd($default_variant) }} --}}
-                                        @if ($product->total_stock > 0 && !$product->is_outof_stock)
-                                            <a class="addToCart d-block w-100" data-id="{{ $product->id }}"
-                                                data-variant="{{ $default_variant }}"> Add to cart
+                            </div>
+                            <div class="d-flex align-items-center detail-addtocart mb-4">
+                                <div class="number d-flex align-items-center ">
+                                    <p class="d-inline mb-0 me-2 fw-bold">Qty</p>
+
+                                    <x-qty-input :id="$product->id" />
+                                </div>
+                                <div class="add-cart d-block text-center text-uppercase fw-bold">
+                                    {{-- {{ dd($product) }} --}}
+                                    {{-- {{ dd($default_variant) }} --}}
+                                    @if ($product->total_stock > 0 && !$product->is_outof_stock)
+                                        <a class="addToCart d-block w-100" data-id="{{ $product->id }}"
+                                            data-variant="{{ $default_variant }}"> Add to cart
+                                        </a>
+                                    @else
+                                        <p class="stock-out">
+                                            <a class=" bg-danger text-white d-block w-100"
+                                                data-id="{{ $product->id }}">
+                                                Out Of Stock
                                             </a>
-                                        @else
-                                            <p class="stock-out">
-                                                <a class=" bg-danger text-white d-block w-100"
-                                                    data-id="{{ $product->id }}">
-                                                    Out Of Stock
-                                                </a>
-                                            </p>
-                                        @endif
-                                    </div>
+                                        </p>
+                                    @endif
                                 </div>
-                                <a href="" class="add_wishlist d-block w-100 text-uppercase text-center"> <i
-                                        class="fa-solid fa-heart me-2"></i> Add to wishlist</a>
-                                <div class="d-flex align-items-center other_actions">
-                                    <button class="btn text-uppercase">ask a question</button>
-                                    <button class="btn text-uppercase">Tell a friend</button>
-                                    <button class="btn text-uppercase">add to compare</button>
-                                </div>
-                                <div class="d-block w-100 more_actions">
-                                    <button class="btn d-block w-100 text-uppercase">View all cortez</button>
-                                    <button class="btn d-block w-100 text-uppercase">View all living room</button>
-                                    <button class="btn d-block w-100 text-uppercase">View all coffee tables</button>
-                                </div>
+                            </div>
+
+                            @php
+                                $isWishlisted = $product->isAddedToWishList();
+                            @endphp
+
+                            <a href="javascript:void(0);"
+                                class="add_wishlist addToWishList d-block w-100 text-uppercase text-center {{ $isWishlisted ? 'active' : '' }}"
+                                data-product-id="{{ $product->id }}">
+
+                                <i class="fa{{ $isWishlisted ? 's' : 'r' }} fa-heart me-2 wishlist-icon"
+                                    style="color: {{ $isWishlisted ? 'red' : '#ccc' }}"></i>
+
+                                <span class="wishlist-text">
+                                    {{ $isWishlisted ? 'Remove from wishlist' : 'Add to wishlist' }}
+                                </span>
+                            </a>
+                            <div class="d-flex align-items-center other_actions">
+                                <button class="btn text-uppercase">ask a question</button>
+                                <button class="btn text-uppercase">Tell a friend</button>
+                                <button class="btn text-uppercase">add to compare</button>
+                            </div>
+                            <div class="d-block w-100 more_actions">
+                                <button class="btn d-block w-100 text-uppercase">View all cortez</button>
+                                <button class="btn d-block w-100 text-uppercase">View all living room</button>
+                                <button class="btn d-block w-100 text-uppercase">View all coffee tables</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
 
-        <section class="section prd_info w-100 text_inter">
-            <div class="container text-start">
-                <ul class="nav nav-pills" id="pills-tab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link active" id="pills-details-tab" data-bs-toggle="pill" href="#pills-details"
-                            role="tab" aria-controls="pills-details" aria-selected="true">Product Details</a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="pills-specs-tab" data-bs-toggle="pill" href="#pills-specs" role="tab"
-                            aria-controls="pills-specs" aria-selected="false">PRODUCT SPECIFICATIONS</a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="pills-despcription-tab" data-bs-toggle="pill" href="#pills-despcription"
-                            role="tab" aria-controls="pills-despcription" aria-selected="false">PRODUCT
-                            DESCRIPTION</a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="pills-instructions-tab" data-bs-toggle="pill" href="#pills-instructions"
-                            role="tab" aria-controls="pills-instructions" aria-selected="false">ASSEMBLY
-                            INSTRUCTION</a>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <a class="nav-link" id="pills-payment-tab" data-bs-toggle="pill" href="#pills-payment"
-                            role="tab" aria-controls="pills-payment" aria-selected="false">PAYMENT SECURITY</a>
-                    </li>
-                </ul>
-                <div class="tab-content" id="pills-tabContent">
-                    <div class="tab-pane fade show active" id="pills-details" role="tabpanel"
-                        aria-labelledby="pills-details-tab">
-                        <ul>
-                            @foreach (explode("\n", $product->product_details) as $detail)
-                                @if (trim($detail) != '')
-                                    <li>{{ $detail }}</li>
-                                @endif
-                            @endforeach
-                        </ul>
-
-                    </div>
-                    <div class="tab-pane fade" id="pills-specs" role="tabpanel" aria-labelledby="pills-specs-tab">
-                        <div class="site-title text-center text-uppercase">Shoe Cabinet</div>
-                        <table class="vertical-table">
-                            <tbody>
-                                @foreach ($product->specifications as $specs)
-                                    <tr>
-                                        <th>{{ $specs->specs->name }}</th>
-                                        <td data-th="assembly">{{ $specs->value }}</td>
-                                    </tr>
-                                @endforeach
-
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="tab-pane fade" id="pills-despcription" role="tabpanel"
-                        aria-labelledby="pills-despcription-tab">
-                        <p>{{ $product->product_description }}</p>
-                    </div>
-                    <div class="tab-pane fade" id="pills-instructions" role="tabpanel"
-                        aria-labelledby="pills-instructions-tab">
-                        @foreach ($product->manuals as $manual)
-                            <a href="{{ asset('storage/' . $manual->uploaded_file) }}" target="_blank"
-                                contenteditable="false" style="cursor: pointer;">
-                                <img src="{{ asset('frontend/images/pdf-icon.webp') }}" border="0" alt="PDF"
-                                    style="height:15px; width:15px">
-                                {{ $manual->name }} </a>
+    <section class="section prd_info w-100 text_inter">
+        <div class="container text-start">
+            <ul class="nav nav-pills" id="pills-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="pills-details-tab" data-bs-toggle="pill" href="#pills-details"
+                        role="tab" aria-controls="pills-details" aria-selected="true">Product Details</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="pills-specs-tab" data-bs-toggle="pill" href="#pills-specs"
+                        role="tab" aria-controls="pills-specs" aria-selected="false">PRODUCT SPECIFICATIONS</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="pills-despcription-tab" data-bs-toggle="pill" href="#pills-despcription"
+                        role="tab" aria-controls="pills-despcription" aria-selected="false">PRODUCT
+                        DESCRIPTION</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="pills-instructions-tab" data-bs-toggle="pill" href="#pills-instructions"
+                        role="tab" aria-controls="pills-instructions" aria-selected="false">ASSEMBLY
+                        INSTRUCTION</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="pills-payment-tab" data-bs-toggle="pill" href="#pills-payment"
+                        role="tab" aria-controls="pills-payment" aria-selected="false">PAYMENT SECURITY</a>
+                </li>
+            </ul>
+            <div class="tab-content" id="pills-tabContent">
+                <div class="tab-pane fade show active" id="pills-details" role="tabpanel"
+                    aria-labelledby="pills-details-tab">
+                    <ul>
+                        @foreach (explode("\n", $product->product_details) as $detail)
+                            @if (trim($detail) != '')
+                                <li>{{ $detail }}</li>
+                            @endif
                         @endforeach
-                    </div>
-                    <div class="tab-pane fade" id="pills-payment" role="tabpanel" aria-labelledby="pills-payment-tab">
-                        <p class=""><strong>Payment</strong></p>
-                        <ul>
-                            @foreach (explode("\n", $product->payment_security) as $method)
-                                @if (trim($method))
-                                    <li>{{ trim($method) }}</li>
-                                @endif
+                    </ul>
+
+                </div>
+                <div class="tab-pane fade" id="pills-specs" role="tabpanel" aria-labelledby="pills-specs-tab">
+                    <div class="site-title text-center text-uppercase">Shoe Cabinet</div>
+                    <table class="vertical-table">
+                        <tbody>
+                            @foreach ($product->specifications as $specs)
+                                <tr>
+                                    <th>{{ $specs->specs->name }}</th>
+                                    <td data-th="assembly">{{ $specs->value }}</td>
+                                </tr>
                             @endforeach
-                        </ul>
-                    </div>
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="tab-pane fade" id="pills-despcription" role="tabpanel"
+                    aria-labelledby="pills-despcription-tab">
+                    <p>{{ $product->product_description }}</p>
+                </div>
+                <div class="tab-pane fade" id="pills-instructions" role="tabpanel"
+                    aria-labelledby="pills-instructions-tab">
+                    @foreach ($product->manuals as $manual)
+                        <a href="{{ asset('storage/' . $manual->uploaded_file) }}" target="_blank"
+                            contenteditable="false" style="cursor: pointer;">
+                            <img src="{{ asset('frontend/images/pdf-icon.webp') }}" border="0" alt="PDF"
+                                style="height:15px; width:15px">
+                            {{ $manual->name }} </a>
+                    @endforeach
+                </div>
+                <div class="tab-pane fade" id="pills-payment" role="tabpanel" aria-labelledby="pills-payment-tab">
+                    <p class=""><strong>Payment</strong></p>
+                    <ul>
+                        @foreach (explode("\n", $product->payment_security) as $method)
+                            @if (trim($method))
+                                <li>{{ trim($method) }}</li>
+                            @endif
+                        @endforeach
+                    </ul>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
 
-        <section class="section sellers bg-light">
-            <div class="container text-center">
-                <h2 class="sec_title text_inter text-uppercase fw-normal">you may <span class="fw-bold">also like</span>
-                </h2>
+    <section class="section sellers bg-light">
+        <div class="container text-center">
+            <h2 class="sec_title text_inter text-uppercase fw-normal">you may <span class="fw-bold">also like</span>
+            </h2>
 
-                <div class="col-12 mt-5 swiper-container M_products">
-                    <div class="product_wrap swiper-wrapper">
-                        @foreach ($relatedProducts as $related)
-                            <div class="swiper-slide">
-                                <x-product-card :product="$related" />
-                            </div>
-                        @endforeach
-                    </div>
-                    <!-- Custom Navigation buttons -->
-                    <div class="product-swiper-button-next"><i class="fa-solid fa-arrow-right"></i></div>
-                    <div class="product-swiper-button-prev"><i class="fa-solid fa-arrow-left"></i></div>
+            <div class="col-12 mt-5 swiper-container M_products">
+                <div class="product_wrap swiper-wrapper">
+                    @foreach ($relatedProducts as $related)
+                        <div class="swiper-slide">
+                            <x-product-card :product="$related" />
+                        </div>
+                    @endforeach
                 </div>
+                <!-- Custom Navigation buttons -->
+                <div class="product-swiper-button-next"><i class="fa-solid fa-arrow-right"></i></div>
+                <div class="product-swiper-button-prev"><i class="fa-solid fa-arrow-left"></i></div>
             </div>
-        </section>
-    @endsection
-    @push('scripts')
+        </div>
+    </section>
+    <x-slot:scripts>
         <script>
             $(function() {
                 $('.color_selector').each(function(index, element) {
@@ -444,5 +457,5 @@
                 }
             });
         </script>
-    @endpush
-</x-app-layout>
+    </x-slot:scripts>
+</x-frontend.page>
