@@ -70,9 +70,9 @@
                 ];
             @endphp
             <tr>
-                <td>
+                {{-- <td>
                     <input type="checkbox" name="selected_items[]" class="single-item-check" value="{{ $item->id }}">
-                </td>
+                </td> --}}
                 <td>{{ $key + 1 }}</td>
                 <td>{{ $item->name }}</td>
                 <td>{{ $item->email }}</td>
