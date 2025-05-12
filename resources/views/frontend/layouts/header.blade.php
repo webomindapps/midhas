@@ -1,52 +1,8 @@
 <header>
-    <div class="col-12 mx-0 row">
-        <div class="col-10 announcement_bar text-white text-center text_inter">🎆 New Year Special! Buy One, Get One Free
+    <div class="">
+        <div class="announcement_bar text-white text-center text_inter">🎆 New Year Special! Buy One, Get One Free
             +
             Free Shipping on All Orders – Celebrate 2025 with Big Savings! 🎉
-        </div>
-        <div class="col-2 announcement_bar text-white  text-start">
-            <div class="address">
-                <ul class="header-top-left text-right mb-0 auth-links">
-                    @php
-                        $customer = Auth::user();
-                    @endphp
-                    @if (!is_null($customer))
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-dark btn-sm" data-bs-toggle="dropdown"
-                                aria-expanded="false">
-                                {{ $customer->name }}
-                                <i class='bx bxs-chevron-down'></i>
-                            </button>
-                            <ul class="dropdown-menu bg-dark">
-                                <li>
-                                    <a class="dropdown-item text-white" href="#">
-                                        <i class='bx bx-user me-1'></i>
-                                        Profile
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item text-white" href="#">
-                                        <i class='bx bx-package me-1'></i>
-                                        Orders
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item text-white" href="{{ route('wishlist.index') }}">
-                                        <i class='bx bx-heart me-1'></i>
-                                        Wishlist
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item text-white" href="{{ route('customer.logout') }}">
-                                        <i class='bx bx-log-out-circle me-1'></i>
-                                        Logout
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    @endif
-                </ul>
-            </div>
         </div>
     </div>
     <div class="col-12 header_top text-center text_hind position-relative">
@@ -82,20 +38,62 @@
                     </div>
                 </div>
                 <div class="col-md-2 position-relative">
-                    <a href="./"><img src="{{ asset('frontend/images/midhas_logo.png') }}" alt="midhas_logo"
-                            class="img-fluid w-100"></a>
+                    <a href="{{url('/')}}">
+                        <img src="{{ asset('frontend/images/midhas_logo.png') }}" alt="midhas_logo" class="img-fluid w-100">
+                    </a>
                     <a class="btn btn-search_toggle collapsed d-sm-none d-block position-absolute top-50 end-0 translate-middle-y"
                         data-bs-toggle="collapse" href="#search_collapse" role="button" aria-expanded="false"
                         aria-controls="search_collapse"> <i class="fa-solid fa-magnifying-glass"></i> </a>
                 </div>
                 <div class="col-md-5 right_side_action">
                     <div class="d-flex text-center justify-content-end align-items-center">
-                        @if (!Auth::check())
-                            <div class="login">
-                                <a href="{{ route('customer.login') }}"><i class="fa-solid fa-user d-block"></i><span
-                                        class="d-block">Login</span></a>
+                        <div class="login header_login">
+                            <a href="!#">
+                                <i class="fa-solid fa-user d-block"></i>
+                                <span class="d-block">{{ !Auth::check() ? 'Login' : 'Account' }}</span>
+                            </a>
+                            <div class="account__dropdown">
+                                <div class="dropdown__inner">
+                                    @if (!Auth::check())
+                                        <ul class="no-bullet account__ul">
+                                            <li class="account__ul--li">
+                                                <a href="{{ route('customer.login') }}" class="">
+                                                    <i class='bx bxs-user'></i>
+                                                    <span class="dropdown__text"> Account </span>
+                                                </a>
+                                            </li>
+                                            <li class="account__ul--li">
+                                                <a href="{{ route('customer.login') }}" class="">
+                                                    <i class='bx bxs-basket'></i>
+                                                    <span class="dropdown__text"> Orders </span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    @else
+                                        <ul class="no-bullet account__ul">
+                                            <li class="account__ul--li">
+                                                <a href="#" class="">
+                                                    <i class='bx bxs-user'></i>
+                                                    <span class="dropdown__text"> Profile </span>
+                                                </a>
+                                            </li>
+                                            <li class="account__ul--li">
+                                                <a href="#" class="">
+                                                    <i class='bx bxs-basket'></i>
+                                                    <span class="dropdown__text"> Orders </span>
+                                                </a>
+                                            </li>
+                                            <li class="account__ul--li">
+                                                <a href="{{ route('customer.logout') }}" class="">
+                                                    <i class='bx bx-power-off'></i>
+                                                    <span class="dropdown__text"> Log Out </span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    @endif
+                                </div>
                             </div>
-                        @endif
+                        </div>
                         <div class="wishlist ms-4">
                             <a href="{{ route('wishlist.index') }}"> <i class="fa-solid fa-heart d-block"></i><span
                                     class="d-block">Wishlist</span></a>

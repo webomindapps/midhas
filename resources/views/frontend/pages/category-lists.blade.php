@@ -18,13 +18,13 @@
                             <x-product-card :product="$product" />
                         </div>
                     @empty
-                        <div class="item empty"></div>
-                        <div class="item empty"></div>
-                        <div class="item empty"></div>
-                        <div class="item empty"></div>
-                        <div class="item empty"></div>
-                        <p>No products available.</p>
+                    <p>No products available.</p>
                     @endforelse
+                    <div class="item empty"></div>
+                    <div class="item empty"></div>
+                    <div class="item empty"></div>
+                    <div class="item empty"></div>
+                    <div class="item empty"></div>
                 </div>
             </div>
         </div>
