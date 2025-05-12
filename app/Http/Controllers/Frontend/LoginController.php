@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Mail\VerificationMail;
 use App\Http\Controllers\Controller;
+use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -59,6 +60,7 @@ class LoginController extends Controller
                 return back()->with('danger', 'Your account is not verified. Please check your email to verify your account.');
             }
             $this->updateCart();
+            $this->syncWishlist($user);
             return redirect()->intended('cart')->with('success', 'Logged in successfully.');
         } else {
             return back()->with('danger', 'Invalid credentials. Please try again.');
@@ -119,6 +121,35 @@ class LoginController extends Controller
             session()->forget('cart_id');
         }
     }
+    protected function syncWishlist($user)
+    {
+        $wishlistIds = session('wishlist_ids', []);
+
+        if (!empty($wishlistIds)) {
+            $productIds = Wishlist::whereIn('id', $wishlistIds)
+                ->pluck('product_id')
+                ->toArray();
+
+            foreach ($productIds as $productId) {
+                $exists = Wishlist::where('user_id', $user->id)
+                    ->where('product_id', $productId)
+                    ->exists();
+
+                if (!$exists) {
+                    Wishlist::create([
+                        'user_id' => $user->id,
+                        'product_id' => $productId
+                    ]);
+                    Wishlist::whereIn('id', $wishlistIds)->delete();
+                }
+            }
+
+
+            // Clear the session
+            session()->forget('wishlist_ids');
+        }
+    }
+
 
     public function logout()
     {
