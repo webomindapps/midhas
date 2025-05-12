@@ -31,6 +31,10 @@ class Category extends Model
         return $this->morphOne(Seo::class, 'seoable');
     }
 
+    public function parent()
+    {
+        return $this->belongsTo(static::class, 'parent_id');
+    }
     public function children()
     {
         return $this->hasMany(static::class, 'parent_id')->orderBy('position', 'asc');

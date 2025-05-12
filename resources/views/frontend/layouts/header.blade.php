@@ -1,5 +1,5 @@
 <header>
-    <div class="row">
+    <div class="col-12 mx-0 row">
         <div class="col-10 announcement_bar text-white text-center text_inter">🎆 New Year Special! Buy One, Get One Free
             +
             Free Shipping on All Orders – Celebrate 2025 with Big Savings! 🎉

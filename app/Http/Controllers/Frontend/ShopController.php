@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Session;
 
 class ShopController extends Controller
 {
+    public function __construct(public Product $product) {}
     public function index()
     {
         $categories = Category::with('children.children', 'image')
@@ -72,11 +73,12 @@ class ShopController extends Controller
         $brand = $request->brand;
         $price = $request->price;
         $sku = $request->sku;
+        $specifications = json_decode($request->get('specifications'), true);
 
         $query = Product::query();
 
         $category = Category::where('slug', $slug)->first();
-        // dd($category);
+
         if ($category) {
             $category_children = $category->children()->pluck('id')->toArray();
             $categories_id = array_merge([$category->id], $category_children);
@@ -84,12 +86,18 @@ class ShopController extends Controller
             $query->whereHas('categories', function ($query) use ($categories_id) {
                 $query->whereIn('category_id', $categories_id);
             });
-            $sub_categories = $category->children()->orderBy('name', 'asc')->get();
-            if ($sub_categories->isEmpty()) {
-                $parentCategory = $category->parent;
-                if ($parentCategory) {
-                    $sub_categories = $parentCategory->children()->where('status', true)->orderBy('name', 'asc')->get();
-                }
+            $sub_categories = $category->children()
+                ->where('status', true)
+                ->orderBy('name', 'asc')
+                ->get();
+
+            if ($sub_categories->isEmpty() && $category->parent) {
+                $sub_categories = $category->parent
+                    ->children()
+                    ->where('status', true)
+                    ->where('id', '!=', $category->id)
+                    ->orderBy('name', 'asc')
+                    ->get();
             }
         }
 
@@ -110,7 +118,16 @@ class ShopController extends Controller
         if ($is_best_selling) {
             $query->where('is_best_selling', $is_best_selling);
         }
-
+        if (is_array($specifications)) {
+            foreach ($specifications as $filter) {
+                $filterId = $filter['id'];
+                $values = $filter['values'];
+                $filterConfig = FilterItem::find($filterId);
+                if ($filterConfig) {
+                    $query->whereIn($filterConfig->column_name, $values);
+                }
+            }
+        }
         ($sort == '') ? $query->orderBy('title', 'asc') : $query->orderBy($sort, $order);
 
         $query->where('status', true);
@@ -122,7 +139,8 @@ class ShopController extends Controller
             $recentIds = Session::get('recents', []);
             $recentlyViewed = Product::whereIn('id', $recentIds)->get();
             $filters = $this->getCategoryFilters($category);
-            return view('frontend.pages.category-lists', compact('products', 'sub_categories', 'category', 'recentlyViewed','filters'));
+            $brands  = $this->getBrands($products);
+            return view('frontend.pages.category-lists', compact('products', 'sub_categories', 'category', 'recentlyViewed', 'filters', 'brands'));
         } else {
 
             if ($sku) {
@@ -131,29 +149,12 @@ class ShopController extends Controller
                 $product = Product::where('slug', $slug)->first();
             }
             if ($product) {
-                $category = $product->categories()->first();
-                if ($category) {
-                    $category = $category->category;
-                } else {
-                    $category = Category::latest()->first();
-                }
-                if ($category) {
-                    $sub_categories = $category->descendants()->pluck('id')->toArray();
-                    $parent_categories = $category->ancestors()->pluck('id')->toArray();
-                    $relatedProducts = $this->getProductsByCategory(array_merge([$category->id], $sub_categories, $parent_categories));
-                    if ($relatedProducts->isEmpty()) {
-                        $relatedProducts = collect();
-                    }
-                } else {
-                    $sub_categories = [];
-                    $parent_categories = [];
-                    $relatedProducts = collect();
-                }
+                $category_ids = $product->categories()->get()->pluck('id')->toArray();
+                $relatedProducts = $this->getProductsByCategory($category_ids);
                 $recentIds = Session::get('recents', []);
                 array_push($recentIds, $product->id);
                 Session::put('recents', $recentIds);
                 $recentViewed = Product::whereIn('id', $recentIds)->where('id', '<>', $product->id)->get();
-
                 return view('frontend.pages.product-detail', compact('product', 'relatedProducts', 'recentViewed'));
             } else {
                 abort(404, 'Page not found');
@@ -164,7 +165,7 @@ class ShopController extends Controller
 
     public function activeProducts()
     {
-        return Product::with('images', 'inventory', 'variants', 'variants.variant', 'variants.variant_value')
+        return Product::with('images', 'stocks', 'variants')
             ->where('status', true);
     }
 
@@ -220,14 +221,15 @@ class ShopController extends Controller
     private function getCategoryFilters($category)
     {
         $products = $category->products()->pluck('products.id')->toArray();
-        $filter = Filter::where('filter_for', 'List')->whereIn('sub_category_id', array_merge([$category->id]))->first();
-        dd($filter);
+        $ancestors = $category->parent()->pluck('id')->toArray();
+        $filter = Filter::where('filter_for', 'List')
+            ->whereIn('sub_category_id', array_merge($ancestors, [$category->id]))
+            ->orWhere('category_id', $category->id)->first();
         if ($filter) {
             return FilterItem::where('filter_id', $filter->id)
                 ->get()
                 ->map(function ($q) use ($products) {
                     $type = $q->type;
-
 
                     if ($q->column_name) {
                         $values =
@@ -250,5 +252,10 @@ class ShopController extends Controller
                     ];
                 });
         }
+    }
+    private function getBrands($products = null)
+    {
+        $brand_ids = $products->pluck('brand_id')->toArray();
+        return Brand::whereIn('id', $brand_ids)->get();
     }
 }
