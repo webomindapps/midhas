@@ -8,15 +8,16 @@
 
             <h2 class="text_inter text-uppercase">Cart</h2>
             <div class="checkout_progress position-relative d-flex align-items-center" style="--progress: 5%;">
-                <p class="d-flex align-items-center"><i
-                        class="fa-solid fa-check me-3 d-flex align-items-center justify-content-center"></i> View Cart
+                <p class="d-flex align-items-center">
+                    <i class="fa-solid fa-check me-3 d-flex align-items-center justify-content-center"></i> View Cart
                 </p>
-                <p class="d-flex align-items-center"><i
-                        class="number me-3 d-flex align-items-center justify-content-center">2</i> Customer Information
+                <p class="d-flex align-items-center">
+                    <i class="number me-3 d-flex align-items-center justify-content-center">2</i> Customer Information
                 </p>
-                <p class="d-flex align-items-center"><i
-                        class="number me-3 d-flex align-items-center justify-content-center">3</i> Order Summary &
-                    Payment</p>
+                <p class="d-flex align-items-center">
+                    <i class="number me-3 d-flex align-items-center justify-content-center">3</i> Order Summary &
+                    Payment
+                </p>
             </div>
 
         </div>
@@ -33,83 +34,58 @@
 
                     <div class="col-md-7">
                         <div class="cart_table">
-                            <div class="cart_parameters d-md-block d-none">
-                                <table class="w-100 text-center align-middle" style="border-collapse: collapse;">
-                                    <thead>
-                                        <tr>
-                                            <th>Product</th>
-                                            <th>Price</th>
-                                            <th>Quantity</th>
-                                            <th>Total Amount</th>
-                                        </tr>
-                                    </thead>
-                                    @forelse ($cartItems as $cart)
-                                        @foreach ($cart->items as $item)
-                                            <tbody>
-                                                <tr>
-                                                    <td class="cart_prd d-flex gap-3 align-items-center">
-                                                        <div class="prd-img" style="width: 100px;">
-                                                            @if (count($item?->product->images))
-                                                                <img src="{{ asset($item->product->images[0]->url) }}"
-                                                                    class="img-fluid w-100" alt="{{ $item->name }}">
-                                                            @else
-                                                                <img src="{{ asset('frontend/assets/images/default.png') }}"
-                                                                    class="img-fluid w-100" alt="{{ $item->name }}">
-                                                            @endif
-                                                        </div>
-                                                        <div class="prd_name">
-                                                            <h6 class="fw-bold mb-1">{{ $item->name }}
-                                                                @if ($item->variant)
-                                                                    <strong class="ms-2">
-                                                                        ({{ $item->variant->value }})
-                                                                    </strong>
-                                                                @endif
-                                                            </h6>
-                                                            <small><b>SKU:</b> {{ $item->sku }}</small>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span
-                                                            class="fw-bold">${{ number_format($item->price ?? 0, 2) }}</span>
-                                                    </td>
-                                                    <td>
-                                                        <div class="d-flex justify-content-center align-items-center">
-                                                            <div class="input-group" style="width: 120px;">
-                                                                <input type="button" value="-"
-                                                                    class="button-minus btn btn-outline-secondary"
-                                                                    data-id="{{ $item->id }}">
-                                                                <input type="text" step="1" min="1"
-                                                                    value="{{ $item->quantity }}" name="quantity"
-                                                                    class="form-control quantity-field crtItmQty text-center"
-                                                                    data-id="{{ $item->id }}"
-                                                                    data-price="{{ $item->price }}">
-                                                                <input type="button" value="+"
-                                                                    class="button-plus btn btn-outline-secondary"
-                                                                    data-id="{{ $item->id }}">
-                                                            </div>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <span class="fw-bold item-total">
-                                                            ${{ number_format($item->total_amount ?? $item->price * $item->quantity, 2) }}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <a href="{{ route('delete-cart', $item->id) }}"
-                                                            onclick="return confirm('Are you sure you want to delete this item?')">
-                                                            <i class='bx bx-trash'
-                                                                style="color: red; cursor: pointer;"></i>
-                                                        </a>
-
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        @endforeach
-                                    @empty
-                                        <p>No items in your cart.</p>
-                                    @endforelse
-                                </table>
-                            </div>
+                            @forelse ($cartItems as $cart)
+                                @foreach ($cart->items as $item)
+                                    <div class="cart_products">
+                                        <ul class="list_styled d-md-flex d-block gx-4">
+                                            <li class="cart_prd d-flex gx-4">
+                                                <img src="{{ asset($item->product->thumbnail) }}"
+                                                    alt="{{ $item->name }}">
+                                                <div class="prd_name">
+                                                    <h3 class="mt-0 fw-bold">{{ $item->name }}</h3>
+                                                    <span><b>SKU:</b> #{{ $item->sku }}</span>
+                                                </div>
+                                            </li>
+                                            <li class="text-md-center text-start"><span
+                                                    class="fw-bold d-block px-1">${{ number_format($item->price ?? 0, 2) }}</span>
+                                            </li>
+                                            <li class="text-md-center text-start">
+                                                <div class="number d-flex align-items-center">
+                                                    <p class="d-inline mb-0 me-2 fw-bold d-none">Qty</p>
+                                                    <div
+                                                        class="input-group justify-content-md-center justify-content-start">
+                                                        <input type="button" value="-" data-field="quantity"
+                                                            class="button-minus" fdprocessedid="1d819l"
+                                                            data-id="{{ $item->id }}">
+                                                        <input type="text" step="1" max=""
+                                                            value="{{ $item->quantity }}" name="quantity"
+                                                            class="quantity-field crtItmQty" fdprocessedid="ipx1yj"
+                                                            data-id="{{ $item->id }}"
+                                                            data-price="{{ $item->price }}">
+                                                        <input type="button" value="+" data-field="quantity"
+                                                            class="button-plus" fdprocessedid="efqtyq"
+                                                            data-id="{{ $item->id }}">
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li class="text-md-center text-start total">
+                                                <span class="d-md-none d-inline-block fw-bold">Total:</span>
+                                                <span class="fw-bold d-md-block d-inline-block px-1 item-total">
+                                                    ${{ number_format($item->total_amount ?? $item->price * $item->quantity, 2) }}
+                                                </span>
+                                            </li>
+                                            <li class="text-md-center text-start total">
+                                                <a href="{{ route('delete-cart', $item->id) }}"
+                                                    onclick="return confirm('Are you sure you want to delete this item?')">
+                                                    <i class='bx bx-trash' style="color: red; cursor: pointer;"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                @endforeach
+                            @empty
+                                <p>No items in your cart.</p>
+                            @endforelse
                         </div>
                     </div>
 
@@ -122,9 +98,8 @@
                                 <h3 class="text_inter">Delivery/Pickup Options</h3>
                                 <div class="coupon-section mt-4 d-flex">
                                     <input type="text" class="form-control" id="coupon-input"
-                                        placeholder="Enter postal code">
-                                    <button id="apply-coupon-button" class="btn theme_btn rounded-0 text-white">Show
-                                        Options</button>
+                                        placeholder="Enter Cupon code">
+                                    <button id="apply-coupon-button" class="btn theme_btn rounded-0 text-white">Apply</button>
                                 </div>
                                 <div class="order-summary mb-4">
                                     <div class="d-flex pt-0 justify-content-between">
@@ -243,7 +218,7 @@
                 var item_id = $this.data('id');
                 var item_price = parseFloat($this.data('price')) || 0;
 
-                var totalTr = $this.closest('tr').find('.item-total'); // assumes you're using <tr><td> layout
+                var totalTr = $this.closest('ul').find('.item-total'); // assumes you're using <tr><td> layout
 
                 let url = window.location.origin + "/cart/update";
 

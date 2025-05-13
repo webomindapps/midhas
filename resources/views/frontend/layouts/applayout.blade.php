@@ -60,6 +60,35 @@
                 });
             });
         });
+        var searchTimer;
+        $(document).on('input', '#search-input', function() {
+            var searchInput = $(this).val().trim();
+            if (searchInput.length < 2) {
+                $('#searched-item-List').empty();
+                $('.search-results').hide();
+                return;
+            }
+
+            clearTimeout(searchTimer);
+
+            searchTimer = setTimeout(function() {
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ route('search.products') }}",
+                    data: {
+                        search: searchInput,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        $('#searched-item-List').html(response.html);
+                        $('.search-results').show();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            }, 200);
+        });
     </script>
 </body>
 
