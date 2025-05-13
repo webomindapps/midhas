@@ -99,7 +99,8 @@
                                 <div class="coupon-section mt-4 d-flex">
                                     <input type="text" class="form-control" id="coupon-input"
                                         placeholder="Enter Cupon code">
-                                    <button id="apply-coupon-button" class="btn theme_btn rounded-0 text-white">Apply</button>
+                                    <button id="apply-coupon-button"
+                                        class="btn theme_btn rounded-0 text-white">Apply</button>
                                 </div>
                                 <div class="order-summary mb-4">
                                     <div class="d-flex pt-0 justify-content-between">
@@ -141,6 +142,7 @@
                                                 ${{ number_format($cart->tax_total, 2) }}
                                             </b>
                                         </div>
+                                        {{-- {{ dd($cart->tax_total) }} --}}
                                     </div>
                                     <div class="total d-flex justify-content-between">
                                         <div class="col-text-start fs-2x fw-bold">Order Total</div>
@@ -272,9 +274,9 @@
             });
 
             function calculate(cart) {
-                $('#sub_total').html('<b>$' + cart.total_amount.toFixed(2) + '</b>');
-                $('#tax_total').html('<b>HST: $' + cart.tax_total.toFixed(2) + '</b>');
-                $('#grand_total').html('<b>$' + cart.grand_total.toFixed(2) + '</b>');
+                $('#sub_total').html('$' + cart.total_amount.toFixed(2));
+                $('#tax_total').html(' $' + cart.tax_total.toFixed(2));
+                $('#grand_total').html('$' + cart.grand_total.toFixed(2));
                 $('#tax').html('$' + cart.tax.toFixed(2)); // optional if you have a #tax element elsewhere
 
                 if (cart.total_amount > 1) {

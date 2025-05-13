@@ -30,7 +30,7 @@ class CartController extends Controller
             if ($cart_id) {
                 $cartItems = Cart::with('items')->where('id', $cart_id)->get();
             } else {
-                $cartItems = collect(); // empty collection
+                $cartItems = collect();
             }
         }
 
@@ -50,10 +50,8 @@ class CartController extends Controller
             $variant_id = $request->variant_id;
             $qty = $request->qty;
 
-            // Remove this in production:
 
             if ($customer) {
-                // Check if cart exists
                 if ($customer->cart) {
                     $cart = $customer->cart;
                 } else {
@@ -64,7 +62,6 @@ class CartController extends Controller
                     ]);
                 }
             } else {
-                // Session-based cart
                 $cart_id = Session::get('cart_id');
                 $cart = $cart_id ? $this->findBy('id', $cart_id) : $this->model()->create(['items_count' => 0]);
                 Session::put('cart_id', $cart->id);
@@ -84,116 +81,87 @@ class CartController extends Controller
             session()->forget('cart_id');
             return response()->json([
                 'error' => true,
-                'message' => $e->getMessage(), // better for debugging
+                'message' => $e->getMessage(),
             ], 200);
         }
     }
 
     public function cartItemCreate($cart, $product_id, $qty, $variant_id)
     {
-
-        $product = Product::find($product_id);
-        $today = date('Y-m-d');
+        $product = Product::findOrFail($product_id);
         $price = $product->msrp;
-        // if ($variant_id) {
-        //     $variant = $product->variants()->find($variant_id);
-        //     if ($variant) {
-        //         $price = $variant->price;
-        //     }
-        // }
-        // if ($product->special_price_from) {
-        //     if ($product->special_price_from <= $today && $product->special_price_to >= $today) {
-        //         $price = $product->special_price;
-        //     }
-        // }
+        $total_amount = $price * $qty;
 
-        $cart_item = CartItems::where('product_id', $product_id)->where('variant_id', $variant_id)->where('cart_id', $cart->id)->first();
+        $cart_item = CartItems::where('product_id', $product_id)
+            ->where('variant_id', $variant_id)
+            ->where('cart_id', $cart->id)
+            ->first();
 
+        $data = [
+            'variant_id' => $variant_id,
+            'price' => $price,
+        ];
+
+        if ($product->is_taxable == 1) {
+            $tax_percent = $product->tax?->percent ?? 13;
+            $data['tax_percent'] = $tax_percent;
+            $data['tax_amount'] = round($total_amount * ($tax_percent / 100), 2);
+        } else {
+            $data['tax_percent'] = 0;
+            $data['tax_amount'] = 0;
+        }
 
         if ($cart_item) {
-            $data['variant_id'] = $variant_id;
             $data['quantity'] = $cart_item->quantity + $qty;
-            $new_total_amount = $price * $qty;
-            $total_amount = $cart_item->total_amount + $new_total_amount;
-            if ($cart_item->tax_percent) {
-                $data['tax_percent'] = $cart_item->tax_percent;
-                $new_tax_amount = $total_amount * ($cart_item->tax_percent / 100);
-                $data['tax_amount'] = $new_tax_amount;
+            $data['total_amount'] = round($cart_item->total_amount + $total_amount, 2);
+
+            if ($product->is_taxable == 1) {
+                $new_tax = $price * $qty * ($data['tax_percent'] / 100);
+                $data['tax_amount'] = round($cart_item->tax_amount + $new_tax, 2);
             }
-            $data['total_amount'] = $total_amount;
+
             $cart_item->update($data);
             return $cart_item;
         } else {
-            $data['variant_id'] = $variant_id;
             $data['product_id'] = $product->id;
             $data['sku'] = $product->sku;
             $data['name'] = $product->title;
-            $data['price'] = $price;
             $data['quantity'] = $qty;
-            $total_amount = $price * $qty;
-            if ($product->tax) {
-                $data['tax_percent'] = $product->tax?->percent;
-                $new_tax_amount = $total_amount * ($product->tax?->percent / 100);
-                $data['tax_amount'] = $new_tax_amount;
-            }
-            $data['total_amount'] = $total_amount;
+            $data['total_amount'] = round($total_amount, 2);
+
+            $cart->increment('items_count');
             return $cart->items()->create($data);
         }
     }
+
     public function calculateTotal($cart_id)
     {
         $cart = $this->findBy('id', $cart_id);
         $item_qty = 0;
         $total_amount = 0;
         $tax_total = 0;
-        $tax = 0;
         $discount = 0;
         $grand_total = 0;
 
         if (!is_null($cart)) {
             foreach ($cart->items as $item) {
-                if ($item->tax_amount) {
-                    $tax_total += $item->total_amount;
-                }
                 $item_qty += $item->quantity;
                 $total_amount += $item->total_amount;
-                $tax += $item->tax_amount;
+                $tax_total += $item->tax_amount;
                 $grand_total += $item->total_amount + $item->tax_amount;
             }
 
-            // if ($cart->coupon_code) {
-            //     $coupon = Coupon::where('name', $cart->coupon_code)->first();
-            //     $valid = $this->checkCoupon($coupon, $cart);
-            //     if ($valid) {
-            //         if ($coupon->is_condition_coupon == 1) {
-            //             if ($total_amount >= $coupon->min_amount_for_discount) {
-            //                 if ($coupon->discount_type == 1) {
-            //                     $discount = $total_amount * ($coupon->discount_type_value / 100);
-            //                     if ($discount > $coupon->max_discount_amount) {
-            //                         $discount = $coupon->max_discount_amount;
-            //                     }
-            //                 } else {
-            //                     $discount = $coupon->discount_type_value;
-            //                 }
-            //             } else {
-            //                 $cart->coupon_code = null;
-            //                 $cart->save();
-            //                 $discount = 0;
-            //             }
-            //         }
-            //         $grand_total = $grand_total - $discount;
-            //     }
-            // }
             $cart->update([
                 'items_qty' => $item_qty,
-                'total_amount' => $total_amount,
-                'discount_amount' => $discount,
-                'tax_total' => $tax_total,
-                'tax' => $tax,
-                'grand_total' => $grand_total
+                'total_amount' => round($total_amount, 2),
+                'discount_amount' => round($discount, 2),
+                'tax_total' => round($tax_total, 2),
+                'tax' => round($tax_total, 2),
+                'grand_total' => round($grand_total, 2),
             ]);
         }
     }
+
     public function update(Request $request)
     {
         $item_id = $request->item_id;
@@ -203,14 +171,7 @@ class CartController extends Controller
         $product = Product::find($cart_item->product_id);
         $today = date('Y-m-d');
         $price = $product->msrp;
-        // if ($product->special_price_from) {
-        //     if ($product->special_price_from <= $today && $product->special_price_to >= $today) {
-        //         $price = $product->special_price;
-        //     }
-        // }
-        // if ($cart_item->variant) {
-        //     // $price = $cart_item->variant?->price;
-        // }
+
         DB::beginTransaction();
         try {
             $cart_item->quantity = $qty;
