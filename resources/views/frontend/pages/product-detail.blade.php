@@ -1,15 +1,6 @@
 <x-frontend.page>
 
-    {{-- {{ dd($product->variants) }} --}}
-    @php
-        $default_variant = '';
 
-        if ($product->variants && $product->variants->count() > 0) {
-            $default_variant = $product->variants->first()->id;
-        }
-    @endphp
-
-    {{-- {{ dd($default_variant) }} --}}
 
     @push('scripts')
         <script>
@@ -109,17 +100,9 @@
                                 </span>
                                 &nbsp;|&nbsp; <span>Usually dispatched within 24 hours</span></div>
                             <div class="product_options mt-4 col-md-6 col-12">
-                                {{-- <select class="form-select rounded-0" id="exampleSelect" aria-label="Select an option">
-                                        <option selected>Choose an option</option>
-                                        <option value="1">Option 1</option>
-                                        <option value="2">Option 2</option>
-                                        <option value="3">Option 3</option>
-                                        <option value="4">Option 4</option>
-                                    </select> --}}
-                                {{-- {{ dd($product) }} --}}
+
                                 <p class="d-block w-100 mt-4">Pick a color: </p>
-                                {{-- <input type="hidden" name="variant_id" id="variantInput"
-                                        value="{{ $default_variant }}"> --}}
+
 
                                 <div class="color_selector d-flex justify-content-start">
                                     @foreach ($product->variants as $variant)
@@ -137,11 +120,9 @@
                                     <x-qty-input :id="$product->id" />
                                 </div>
                                 <div class="add-cart d-block text-center text-uppercase fw-bold">
-                                    {{-- {{ dd($product) }} --}}
-                                    {{-- {{ dd($default_variant) }} --}}
+
                                     @if ($product->total_stock > 0 && !$product->is_outof_stock)
-                                        <a class="addToCart d-block w-100" data-id="{{ $product->id }}"
-                                            data-variant="{{ $default_variant }}"> Add to cart
+                                        <a class="addToCart d-block w-100" data-id="{{ $product->id }}"> Add to cart
                                         </a>
                                     @else
                                         <p class="stock-out">

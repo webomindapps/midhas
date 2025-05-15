@@ -25,13 +25,8 @@
 
     <section class="section checkout_form mt-4">
         <div class="container">
-
             <div class="col-md-12">
-
-                {{-- {{ dd($cartItems) }} --}}
-                {{-- {{ dd($item->variant) }} --}}
                 <div class="row">
-
                     <div class="col-md-7">
                         <div class="cart_table">
                             @forelse ($cartItems as $cart)
@@ -59,9 +54,10 @@
                                                             data-id="{{ $item->id }}">
                                                         <input type="text" step="1" max=""
                                                             value="{{ $item->quantity }}" name="quantity"
-                                                            class="quantity-field crtItmQty" fdprocessedid="ipx1yj"
+                                                            class="quantity-field crtItmQty"
                                                             data-id="{{ $item->id }}"
-                                                            data-price="{{ $item->price }}">
+                                                            data-price="{{ $item->price }}"
+                                                            data-stock="{{ $item->product->total_stock }}">
                                                         <input type="button" value="+" data-field="quantity"
                                                             class="button-plus" fdprocessedid="efqtyq"
                                                             data-id="{{ $item->id }}">
@@ -167,61 +163,38 @@
             </div>
     </section>
     <x-slot:scripts>
-        {{-- <script>
-            $(document).on("click", ".qtyIncrement", function() {
-                var id = $(this).data("id");
-                var currentValue = parseInt($(`#quantity-${id}`).val()) || 1;
-
-                $(`.quantity-${id}`).val(currentValue + 1).trigger('change');
-            });
-
-            $(document).on("click", ".qtyDecrement", function() {
-                var id = $(this).data("id");
-                var currentValue = parseInt($(`#quantity-${id}`).val()) || 1;
-
-                if (currentValue > 1) {
-                    $(`.quantity-${id}`).val(currentValue - 1).trigger('change');
-                }
-            });
-            </script> --}}
         <script>
-            $(document).on('click', '.button-plus, .button-minus', function() {
-                const $input = $(this).siblings('.quantity-field');
-                let qty = parseInt($input.val()) || 1;
+            $(document).on('click', '.quantity .quantity-btn, .button-plus, .button-minus', function() {
+                var $input = $(this).closest('.input-group').find('.quantity-field');
+                var currentQty = parseInt($input.val());
+                var stock = parseInt($input.data('stock'));
 
-                if ($(this).hasClass('button-plus')) {
-                    qty++;
-                } else {
-                    if (qty > 1) qty--;
+                if ($(this).hasClass('button-plus') || $(this).hasClass('quantity-plus')) {
+                    if (currentQty < stock) {
+                        $input.val(currentQty + 1).trigger('change');
+                    } else {
+                        window.FlashMessage?.error?.('Cannot add more than available stock.', {
+                            timeout: 2000,
+                            progress: true
+                        });
+                    }
                 }
 
-                $input.val(qty).trigger('change');
-            });
-
-            $(document).on('click', '.quantity .quantity-btn', function() {
-                var $input = $(this).closest('.quantity').find('.input-text');
-
-                if ($(this).hasClass('quantity-plus')) {
-                    $input[0].stepUp();
-                    $input.trigger('change');
-                }
-
-                if ($(this).hasClass('quantity-minus')) {
-                    if ($input.val() > 1) {
-                        $input[0].stepDown();
-                        $input.trigger('change');
+                if ($(this).hasClass('button-minus') || $(this).hasClass('quantity-minus')) {
+                    if (currentQty > 1) {
+                        $input.val(currentQty - 1).trigger('change');
                     }
                 }
             });
 
+
             $(document).on('change', '.crtItmQty', function() {
                 var $this = $(this);
-                var qty = parseInt($this.val()) || 1; // fallback to 1 if NaN
+                var qty = parseInt($this.val()) || 1;
                 var item_id = $this.data('id');
                 var item_price = parseFloat($this.data('price')) || 0;
 
-                var totalTr = $this.closest('ul').find('.item-total'); // assumes you're using <tr><td> layout
-
+                var totalTr = $this.closest('ul').find('.item-total');
                 let url = window.location.origin + "/cart/update";
 
                 $.ajax({
@@ -230,12 +203,12 @@
                     data: {
                         item_id: item_id,
                         qty: qty,
-                        _token: $('meta[name="csrf-token"]').attr('content') // safer than inline blade
+                        _token: $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(response) {
                         if (response.success) {
                             if (typeof calculate === 'function') {
-                                calculate(response.cart); // update totals if function exists
+                                calculate(response.cart);
                             }
 
                             $('.cart_updated').show();
@@ -277,7 +250,7 @@
                 $('#sub_total').html('$' + cart.total_amount.toFixed(2));
                 $('#tax_total').html(' $' + cart.tax_total.toFixed(2));
                 $('#grand_total').html('$' + cart.grand_total.toFixed(2));
-                $('#tax').html('$' + cart.tax.toFixed(2)); // optional if you have a #tax element elsewhere
+                $('#tax').html('$' + cart.tax.toFixed(2));
 
                 if (cart.total_amount > 1) {
                     $('.checkout-btn').removeClass('disabled');

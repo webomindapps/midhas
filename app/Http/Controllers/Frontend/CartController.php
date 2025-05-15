@@ -43,11 +43,11 @@ class CartController extends Controller
     }
     public function store(Request $request)
     {
+        // dd("hello");
         DB::beginTransaction();
         try {
             $customer = Auth::user();
             $product_id = $request->product_id;
-            $variant_id = $request->variant_id;
             $qty = $request->qty;
 
 
@@ -63,11 +63,28 @@ class CartController extends Controller
                 }
             } else {
                 $cart_id = Session::get('cart_id');
-                $cart = $cart_id ? $this->findBy('id', $cart_id) : $this->model()->create(['items_count' => 0]);
-                Session::put('cart_id', $cart->id);
+                if ($cart_id) {
+                    $cart = $this->findBy('id', $cart_id);
+                } else {
+                    $cart = $this->model()->create(['items_count' => 0]);
+                    Session::put('cart_id', $cart->id);
+                }
             }
 
-            $cart_item = $this->cartItemCreate($cart, $product_id, $qty, $variant_id);
+            $stock = Product::find($product_id);
+            $existingQty = $cart->items
+                ->where('product_id', $product_id)
+                ->sum('quantity');
+
+            $totalRequestedQty = $existingQty + $qty;
+
+            if (!$stock || $stock->total_stock < $totalRequestedQty) {
+                return response()->json([
+                    'error' => true,
+                    'message' => 'Insufficient stock available.',
+                ], 200);
+            }
+            $cart_item = $this->cartItemCreate($cart, $product_id, $qty);
             DB::commit();
 
             $this->calculateTotal($cart->id);
@@ -86,19 +103,17 @@ class CartController extends Controller
         }
     }
 
-    public function cartItemCreate($cart, $product_id, $qty, $variant_id)
+    public function cartItemCreate($cart, $product_id, $qty)
     {
         $product = Product::findOrFail($product_id);
         $price = $product->msrp;
         $total_amount = $price * $qty;
 
         $cart_item = CartItems::where('product_id', $product_id)
-            ->where('variant_id', $variant_id)
             ->where('cart_id', $cart->id)
             ->first();
 
         $data = [
-            'variant_id' => $variant_id,
             'price' => $price,
         ];
 
@@ -169,9 +184,13 @@ class CartController extends Controller
         $cart_item = CartItems::find($item_id);
         $cart = Cart::find($cart_item->cart_id);
         $product = Product::find($cart_item->product_id);
-        $today = date('Y-m-d');
         $price = $product->msrp;
-
+        if ($product->total_stock < $qty) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Insufficient stock available.',
+            ], 200);
+        }
         DB::beginTransaction();
         try {
             $cart_item->quantity = $qty;
@@ -204,4 +223,6 @@ class CartController extends Controller
         $this->calculateTotal($cart->id);
         return back()->with('error', 'item was removed successfully from the cart');
     }
+
+
 }

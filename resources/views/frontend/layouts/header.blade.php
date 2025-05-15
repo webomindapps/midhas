@@ -38,8 +38,9 @@
                     </div>
                 </div>
                 <div class="col-md-2 position-relative">
-                    <a href="{{url('/')}}">
-                        <img src="{{ asset('frontend/images/midhas_logo.png') }}" alt="midhas_logo" class="img-fluid w-100">
+                    <a href="{{ url('/') }}">
+                        <img src="{{ asset('frontend/images/midhas_logo.png') }}" alt="midhas_logo"
+                            class="img-fluid w-100">
                     </a>
                     <a class="btn btn-search_toggle collapsed d-sm-none d-block position-absolute top-50 end-0 translate-middle-y"
                         data-bs-toggle="collapse" href="#search_collapse" role="button" aria-expanded="false"
@@ -98,12 +99,62 @@
                             <a href="{{ route('wishlist.index') }}"> <i class="fa-solid fa-heart d-block"></i><span
                                     class="d-block">Wishlist</span></a>
                         </div>
-                        <div class="cart ms-4">
+                        <div class="cart ms-4 hover-box" id="miniCart">
                             <a href="{{ route('cart') }}"><i class="fa-solid fa-basket-shopping"></i><span
                                     class="d-block">My
                                     Cart</span></a>
                         </div>
+                        <div class="collapse" id="hovedCart"></div>
+
+
                     </div>
+
+                </div>
+                <div class="mini_cart hover-box">
+                    @if ($cart && $cart->items->count())
+
+                        <div class="d-flex bag_title align-items-center justify-content-between">
+                            <a href="{{ route('cart') }}" class="fw-bold text-uppercase mc_title">
+                                Bag Summary (<span>{{ $cart->items->count() }}</span>)
+                            </a>
+                            <a href="{{ route('cart') }}" class="fw-bold text-uppercase mc_btn d-md-none d-block">
+                                View Full Bag
+                            </a>
+                        </div>
+
+                        <div class="bag_wrapper">
+                            @foreach ($cart->items as $item)
+                                <div class="bag_items">
+                                    <div class="bag_prd_img">
+                                        <img src="{{ asset($item->product->thumbnail) }}" alt="{{ $item->name }}"
+                                            class="img-fluid">
+                                    </div>
+                                    <div class="bag_prd_info text-start">
+                                        <div class="bag_prd_info_title">
+                                            <a href="" class="d-inline-block pb-1">
+                                                {{ $item->name }}
+                                            </a>
+                                            <p class="bag_prd_info_price mb-1">
+                                                <b>${{ number_format($item->price, 2) }}</b>
+                                            </p>
+                                            <small class="bag_prd_info_qty">Qty: {{ $item->quantity }}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+
+                        <div class="d-flex bag_total py-3 align-items-center justify-content-between">
+                            <p class="fw-bold text-uppercase mc_title mb-0">Total</p>
+                            <p class="fw-bold text-uppercase mc_title mb-0" id="grand_total">
+                                ${{ number_format($cart->grand_total, 2) }}
+                            </p>
+                        </div>
+
+                        <a href="" class="theme_btn text-uppercase d-block text-white">CheckOut</a>
+                    @else
+                        <p class="text-center p-3">Your bag is empty.</p>
+                    @endif
                 </div>
             </div>
         </div>
@@ -234,4 +285,29 @@
             <i class="fa-solid fa-basket-shopping"></i>
         </a>
     </div>
+    @push('scripts')
+        <script>
+            const boxes = document.querySelectorAll('.hover-box');
+            const mini_cart = document.querySelector('.mini_cart');
+            var mobile_cart = document.getElementById('mob_cart');
+
+            boxes.forEach(box => {
+                const toggleHover = () => mini_cart.classList.add('hovered');
+                box.addEventListener('mouseenter', toggleHover);
+            });
+
+            mobile_cart.addEventListener('click', () => {
+                mini_cart.classList.toggle('hovered');
+            });
+
+            document.body.addEventListener('mousemove', (e) => {
+                const isOverBox = [...boxes].some(box => box.contains(e.target));
+
+                if (!isOverBox) {
+                    boxes.forEach(box => mini_cart.classList.remove('hovered'));
+                }
+            });
+        </script>
+    @endpush
+
 </header>

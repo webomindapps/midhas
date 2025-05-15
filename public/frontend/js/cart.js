@@ -16,18 +16,18 @@ $(document).on("click", ".qtyDecrement", function () {
 
 $(document).on("click", ".addToCart", function () {
     let product_id = $(this).data("id");
-    let variant = $(this).data("variant");
     let qty = parseInt($(`#quantity-${product_id}`).val()) || 1;
 
     if (qty <= 0) {
         alert("Please enter a valid quantity");
         return;
     }
-    console.log("Adding to cart:", product_id, qty, variant);
-    addToCart(product_id, qty, variant);
+    console.log("Adding to cart:", product_id, qty);
+    addToCart(product_id, qty);
 });
 
-const addToCart = (id, qty, variant) => {
+
+const addToCart = (id, qty) => {
     let url = window.location.origin + "/add/cart";
     console.log(url);
     $.ajax({
@@ -35,7 +35,6 @@ const addToCart = (id, qty, variant) => {
         url: url,
         data: {
             product_id: id,
-            variant_id: variant,
             qty: qty,
             _token: document.querySelector('meta[name="csrf-token"]').content,
         },

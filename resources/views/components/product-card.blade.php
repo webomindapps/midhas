@@ -11,10 +11,12 @@
         @foreach ($product->variants as $variant)
             <span style="--color: {{ $variant->value }};" class="color-variant"
                 data-variant-image="{{ asset('storage/' . $variant->thumbnail) }}"
-                data-variant-name="{{ $variant->variant->name }}" data-product-id="{{ $product->id }}"></span>
+                data-variant-name="{{ $variant->variant->name }}" data-product-id="{{ $product->id }}"
+                data-stock="{{ $product->total_stock }}"></span>
         @endforeach
     </div>
-    <h3 class="prd_name text_hind fw-bold">{{ $product->title }}</h3>
+    <h3 class="prd_name
+                text_hind fw-bold">{{ $product->title }}</h3>
     <div class="row">
         <span class="prd_price fw-bold d-block">${{ number_format($product->msrp ?? 0, 2) }}</span>
     </div>

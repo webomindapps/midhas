@@ -2,11 +2,13 @@
 
 namespace App\View\Components\Frontend;
 
-use App\Facades\Midhas;
 use Closure;
-use Illuminate\Contracts\View\View;
-use Illuminate\Support\Collection;
+use App\Facades\Midhas;
 use Illuminate\View\Component;
+use Illuminate\Support\Collection;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Cart;
 
 class Header extends Component
 {
@@ -19,7 +21,16 @@ class Header extends Component
     {
         $this->categories = Midhas::getCategories('root', false);
     }
+    protected function getCart()
+    {
+        $user = Auth::user();
+        if ($user) {
+            return Cart::with('items')->where('customer_id', $user->id)->latest()->first();
+        }
 
+        $cartId = session('cart_id');
+        return Cart::with('items')->find($cartId);
+    }
     /**
      * Get the view / contents that represent the component.
      */
@@ -27,6 +38,7 @@ class Header extends Component
     {
         return view('frontend.layouts.header', [
             'categories' => $this->categories,
+            'cart' => $this->getCart(),
         ]);
     }
 }
