@@ -21,16 +21,7 @@ class Header extends Component
     {
         $this->categories = Midhas::getCategories('root', false);
     }
-    protected function getCart()
-    {
-        $user = Auth::user();
-        if ($user) {
-            return Cart::with('items')->where('customer_id', $user->id)->latest()->first();
-        }
-
-        $cartId = session('cart_id');
-        return Cart::with('items')->find($cartId);
-    }
+  
     /**
      * Get the view / contents that represent the component.
      */
@@ -38,7 +29,6 @@ class Header extends Component
     {
         return view('frontend.layouts.header', [
             'categories' => $this->categories,
-            'cart' => $this->getCart(),
         ]);
     }
 }

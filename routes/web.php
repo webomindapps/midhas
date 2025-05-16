@@ -30,7 +30,7 @@ Route::post('/add/cart', [CartController::class, 'store'])->name('add-to-cart');
 Route::get('add/cart/{id}', [CartController::class, 'storeQty1']);
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart-update');
 Route::get('cart-item/delete/{id}', [CartController::class, 'destroy'])->name('delete-cart');
-
+ Route::get('/minicart-items', [CartController::class, 'minicartItems'])->name('minicart.items');
 
 //wishlist
 Route::group(['prefix' => 'wishlists'], function () {

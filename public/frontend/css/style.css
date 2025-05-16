@@ -2028,4 +2028,25 @@ section.section.login_form {
     }
 }
 
+#miniCart {
+    position: relative;
+}
+
+.mini-cart-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    width: 300px;
+    background: white;
+    border: 1px solid #ddd;
+    z-index: 1000;
+    padding: 10px;
+}
+
+/* Show minicart content on hover */
+#miniCart:hover .mini-cart-content {
+    display: block;
+}
+
 /*End Mini Cart design*/

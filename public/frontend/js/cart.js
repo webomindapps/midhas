@@ -14,6 +14,58 @@ $(document).on("click", ".qtyDecrement", function () {
     }
 });
 
+$(document).ready(function () {
+    hoverCartItems();
+
+    // Show cart on hover
+    $("#miniCart").hover(
+        function () {
+            hoverCartItems(); // Load items on hover
+            showMiniCart();   // Show the cart
+        },
+        function () {
+            hideMiniCart();   // Hide when not hovering
+        }
+    );
+});
+
+function hoverCartItems(update = false) {
+    let url = window.location.origin + "/minicart-items";
+
+    if (!update) {
+        hideMiniCart();
+    }
+
+    $.ajax({
+        type: "GET",
+        url: url,
+        success: function (response) {
+            if (response.count > 0) {
+                if (!update) {
+                    showMiniCart();
+                }
+                $("#hovedCart").html(response.html);
+                $("#item-count").text(response.count);
+                $("#item-count-sm").text(response.count);
+            }
+        },
+        error: function (xhr) {
+            console.error(xhr.responseText);
+        },
+        complete: function () {
+            $(".enquire-btn").prop("disabled", false);
+        },
+    });
+}
+
+const showMiniCart = () => {
+    $("#miniCart").addClass("v_cart");
+};
+
+const hideMiniCart = () => {
+    $("#miniCart").removeClass("v_cart");
+};
+
 $(document).on("click", ".addToCart", function () {
     let product_id = $(this).data("id");
     let qty = parseInt($(`#quantity-${product_id}`).val()) || 1;

@@ -224,5 +224,39 @@ class CartController extends Controller
         return back()->with('error', 'item was removed successfully from the cart');
     }
 
+    public function minicartItems()
+    {
+        $customer = Auth::user();
+        if ($customer) {
+            $cart = Cart::where('customer_id', $customer->id)->latest()->first();
+        } else {
+            $cart_id = Session::get('cart_id');
+            if ($cart_id) {
+                $cart = $this->findBy('id', $cart_id);
+            } else {
+                $cart = null;
+            }
+        }
+        $count = 0;
+        if ($cart) {
+            $count = count($cart?->items);
+        }
+        return [
+            'html' => view('frontend.pages.minicart', compact('cart'))->render(),
+            'count' => $count
+        ];
+    }
+
+    // public function miniCartItems()
+    // {
+    //     $cartItems = session()->get('cart', []);
+    //     $count = count($cartItems);
+    //     $html = view('partials.minicart-items', compact('cartItems'))->render();
+
+    //     return response()->json([
+    //         'count' => $count,
+    //         'html' => $html,
+    //     ]);
+    // }
 
 }
