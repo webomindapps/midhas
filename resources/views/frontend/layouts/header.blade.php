@@ -49,7 +49,7 @@
                 <div class="col-md-5 right_side_action">
                     <div class="d-flex text-center justify-content-end align-items-center">
                         <div class="login header_login">
-                            <a href="!#">
+                            <a href="{{ route('customer.login') }}">
                                 <i class="fa-solid fa-user d-block"></i>
                                 <span class="d-block">{{ !Auth::check() ? 'Login' : 'Account' }}</span>
                             </a>

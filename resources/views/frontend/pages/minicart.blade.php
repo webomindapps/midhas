@@ -37,7 +37,7 @@
              </p>
          </div>
 
-         <a href="" class="theme_btn text-uppercase d-block text-white">CheckOut</a>
+         <a href="{{ route('checkout.index') }}" class="theme_btn text-uppercase d-block text-white">CheckOut</a>
      @else
          <p class="text-center p-3">Your bag is empty.</p>
      @endif

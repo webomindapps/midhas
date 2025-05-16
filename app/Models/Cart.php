@@ -3,7 +3,9 @@
 namespace App\Models;
 
 use App\Models\CartItems;
+use App\Models\OrderAddress;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Cart extends Model
@@ -31,5 +33,14 @@ class Cart extends Model
     public function items()
     {
         return $this->hasMany(CartItems::class);
+    }
+    /**
+     * Get all of the addresses for the Order
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function addresses(): HasMany
+    {
+        return $this->hasMany(OrderAddress::class);
     }
 }

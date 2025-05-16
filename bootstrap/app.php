@@ -25,7 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 }
                 return route('admin.login');
             }
-            return route('admin.login');
+            return route('customer.login');
         });
     })
     ->withExceptions(function (Exceptions $exceptions) {

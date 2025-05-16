@@ -5,8 +5,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\ShopController;
 use App\Http\Controllers\Frontend\LoginController;
-use App\Http\Controllers\Frontend\PasswordResetController;
+use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\WishListController;
+use App\Http\Controllers\Frontend\PasswordResetController;
 
 Route::get('/', [ShopController::class, 'index'])->name('home');
 Route::post('serarch-products', [ShopController::class, 'searchProduct'])->name('search.products');
@@ -30,7 +31,14 @@ Route::post('/add/cart', [CartController::class, 'store'])->name('add-to-cart');
 Route::get('add/cart/{id}', [CartController::class, 'storeQty1']);
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart-update');
 Route::get('cart-item/delete/{id}', [CartController::class, 'destroy'])->name('delete-cart');
- Route::get('/minicart-items', [CartController::class, 'minicartItems'])->name('minicart.items');
+Route::get('/minicart-items', [CartController::class, 'minicartItems'])->name('minicart.items');
+
+//checkout
+Route::group(['prefix' => 'checkout', 'middleware' => ['auth', 'verified']], function () {
+    Route::get('/', [CheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/', [CheckoutController::class, 'store'])->name('checkout.store');
+    Route::get('/status', [CheckoutController::class, 'status'])->name('checkout.status');
+});
 
 //wishlist
 Route::group(['prefix' => 'wishlists'], function () {
