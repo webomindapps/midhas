@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\ShopController;
 use App\Http\Controllers\Frontend\LoginController;
+use App\Http\Controllers\Frontend\OrderController;
 use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\WishListController;
 use App\Http\Controllers\Frontend\PasswordResetController;
@@ -45,6 +46,12 @@ Route::group(['prefix' => 'wishlists'], function () {
     Route::get('/', [WishListController::class, 'index'])->name('wishlist.index');
     Route::post('add', [WishListController::class, 'store']);
     Route::get('/{id}/delete', [WishListController::class, 'destroy'])->name('wishlist.destroy');
+});
+
+//my_profiles
+Route::group(['prefix' => 'my-profiles'], function () {
+    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('orders/{order}', [OrderController::class, 'show'])->name('order.show');
 });
 
 //pages

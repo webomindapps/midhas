@@ -64,7 +64,7 @@
                                                 </a>
                                             </li>
                                             <li class="account__ul--li">
-                                                <a href="{{ route('customer.login') }}" class="">
+                                                <a href="{{ route('orders.index') }}" class="">
                                                     <i class='bx bxs-basket'></i>
                                                     <span class="dropdown__text"> Orders </span>
                                                 </a>
@@ -79,7 +79,7 @@
                                                 </a>
                                             </li>
                                             <li class="account__ul--li">
-                                                <a href="#" class="">
+                                                <a href="{{ route('orders.index') }}" class="">
                                                     <i class='bx bxs-basket'></i>
                                                     <span class="dropdown__text"> Orders </span>
                                                 </a>

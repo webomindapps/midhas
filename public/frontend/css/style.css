@@ -2049,4 +2049,12 @@ section.section.login_form {
     display: block;
 }
 
+#item-count {
+    position: absolute;
+    top: 4px;
+    right: -1px;
+    border-radius: 50%;
+    background-color: #f58b33 !important;
+}
+
 /*End Mini Cart design*/

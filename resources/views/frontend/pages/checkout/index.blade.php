@@ -46,7 +46,7 @@
                             <div class="col-md-6 a-d-name text-center">
                                 <div class="radio-button">
                                     <input class="l-t-radio" type="radio" id="option1" name="location_type"
-                                        value="residential">
+                                        value="residential" checked>
                                     <label class="l-t-label" for="option1"><i class="fas fa-home"></i>&nbsp;
                                         Residential</label>
                                 </div>
@@ -73,7 +73,7 @@
                             <div class="col-md-6 a-d-name text-start">
                                 <div class="radio-button custom-radio">
                                     <input class="b-a-radio" type="radio" id="optionba1" name="isShippingInformation"
-                                        value="1" onclick="toggleBillingAddress()">
+                                        value="1" onclick="toggleBillingAddress()" checked>
                                     <span class="checkmark"></span>
                                     <label class="b-a-label" for="optionba1">Use Shipping information</label>
                                 </div>

@@ -17,16 +17,15 @@ $(document).on("click", ".qtyDecrement", function () {
 $(document).ready(function () {
     hoverCartItems();
 
-    // Show cart on hover
-    $("#miniCart").hover(
-        function () {
-            hoverCartItems(); // Load items on hover
-            showMiniCart();   // Show the cart
-        },
-        function () {
-            hideMiniCart();   // Hide when not hovering
-        }
-    );
+    // $("#miniCart").hover(
+    //     function () {
+    //         hoverCartItems();
+    //         showMiniCart();
+    //     },
+    //     function () {
+    //         hideMiniCart();
+    //     }
+    // );
 });
 
 function hoverCartItems(update = false) {
@@ -59,11 +58,11 @@ function hoverCartItems(update = false) {
 }
 
 const showMiniCart = () => {
-    $("#miniCart").addClass("v_cart");
+    $("#miniCart").addClass("show");
 };
 
 const hideMiniCart = () => {
-    $("#miniCart").removeClass("v_cart");
+    $("#miniCart").removeClass("show");
 };
 
 $(document).on("click", ".addToCart", function () {
@@ -92,6 +91,7 @@ const addToCart = (id, qty) => {
         },
         success: function (response) {
             if (response.success) {
+                hoverCartItems();
                 $(`#quantity-${id}`).val(1);
                 window.FlashMessage?.info?.('Item was successfully added to the cart', {
                     timeout: 2000,
