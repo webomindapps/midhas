@@ -1,4 +1,4 @@
-const apiUrl = window.location.origin;
+const apiUrl = "https://www.furniturestore.to/staging/public";
 export const product_id = document.getElementById('product_id')?.value;
 
 //wishlists

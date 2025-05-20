@@ -1,5 +1,4 @@
 <x-frontend.page>
-    <x-frontend.my-profile></x-frontend.my-profile>
     <x-frontend.my-profile>
         <div class="row">
             <div class="col-lg-6">
@@ -70,7 +69,7 @@
                                         </td>
                                         <td>
                                             <div class="action">
-                                                <a href="{{ route('order.show', ['order' => $order]) }}">
+                                                <a href="{{ route('order.show', $order->id) }}">
                                                     <i class="fas fa-eye fs-4"></i>
                                                 </a>
                                             </div>

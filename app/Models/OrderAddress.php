@@ -40,7 +40,7 @@ class OrderAddress extends Model
      */
     public function order(): BelongsTo
     {
-        return $this->belongsTo(Orders::class);
+        return $this->belongsTo(Orders::class,'order_id');
     }
 
 }

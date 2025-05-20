@@ -79,8 +79,9 @@
              placeholder="Company Name" required>
      </div>
      <div class="col-md-4">
-         <input type="text" class="form-control" id="" name="{{ $prefix }}_address_1"
-             placeholder="Address line 1" required>
+         <input type="text" class="form-control" id="{{ $prefix }}_address_1"
+             name="{{ $prefix }}_address_1" placeholder="Address line 1" required>
+
      </div>
      <div class="col-md-4">
          <input type="text" class="form-control" id="" name="{{ $prefix }}_address_2"
@@ -89,16 +90,19 @@
 
 
      <div class="col-md-4">
-         <input type="text" class="form-control" id="" name="{{ $prefix }}_city" placeholder="City"
-             required>
+         <input type="text" class="form-control" id="{{ $prefix }}_locality" name="{{ $prefix }}_city"
+             placeholder="City" required>
+
      </div>
      <div class="col-md-4">
-         <input type="text" class="form-control" id="" name="{{ $prefix }}_province"
-             placeholder="Province" required>
+         <input type="text" class="form-control" id="{{ $prefix }}_administrative_area_level_1"
+             name="{{ $prefix }}_province" placeholder="Province" required>
+
      </div>
      <div class="col-md-4">
-         <input type="text" class="form-control" id="" name="{{ $prefix }}_postal_code"
-             placeholder="Postal Code" required>
+         <input type="text" class="form-control" id="{{ $prefix }}_postal_code"
+             name="{{ $prefix }}_postal_code" placeholder="Postal Code" required>
+
      </div>
 
      <div class="col-md-4">

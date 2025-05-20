@@ -209,4 +209,8 @@ class Midhas extends Controller
     {
         return Pages::orderBy('position', 'asc')->get();
     }
+    public function formatPrice($value)
+    {
+        return number_format((float)$value, 2);
+    }
 }

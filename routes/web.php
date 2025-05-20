@@ -38,7 +38,7 @@ Route::get('/minicart-items', [CartController::class, 'minicartItems'])->name('m
 Route::group(['prefix' => 'checkout', 'middleware' => ['auth', 'verified']], function () {
     Route::get('/', [CheckoutController::class, 'index'])->name('checkout.index');
     Route::post('/', [CheckoutController::class, 'store'])->name('checkout.store');
-    Route::get('/status', [CheckoutController::class, 'status'])->name('checkout.status');
+    Route::get('/status/{order}', [CheckoutController::class, 'status'])->name('checkout.status');
 });
 
 //wishlist

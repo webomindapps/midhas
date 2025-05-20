@@ -63,13 +63,14 @@ class Orders extends Model
      */
     public function addresses(): HasMany
     {
-        return $this->hasMany(OrderAddress::class);
+        return $this->hasMany(OrderAddress::class,'order_id');
     }
 
-    public function address($type): OrderAddress
+    public function address($type): ?OrderAddress
     {
         return $this->addresses()->where('address_type', $type)->first();
     }
+
 
     protected function orderDate(): Attribute
     {

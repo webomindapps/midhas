@@ -36,7 +36,7 @@
                 <div class="col-lg-6 mx-auto">
                     <div class="success_message border bg-white text-center">
                         <img src="./imgs/success-tick.gif" class="img-fluid" alt="">
-                        <h5>Your order id is: <span class="text-success fw-bold"> </span> </h5>
+                        <h5>Your order id is: <span class="text-success fw-bold"> #MD00{{$order->id}}</span> </h5>
                         <h3>Your order has been confirmed</h3>
 
                         <p>
