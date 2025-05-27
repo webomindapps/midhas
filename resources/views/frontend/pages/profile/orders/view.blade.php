@@ -47,6 +47,7 @@
                 </div>
                 <div class="col-9">
                     <p>{{ $order->status }}</p>
+                    {{-- {{ dd($order->address('billing')) }} --}}
                 </div>
             </div>
 
@@ -260,7 +261,7 @@
                                 <td>-</td>
                                 <td class="width150">${{ $order->sub_total }}</td>
                             </tr>
-                            <tr>
+                            {{-- <tr>
                                 <td>Taxable Product SubTotal </td>
                                 <td>-</td>
                                 <td> ${{ $order->tax_total }} </td>
@@ -274,11 +275,11 @@
                                 <td>Shipping Handling</td>
                                 <td>-</td>
                                 <td>$0.00</td>
-                            </tr>
+                            </tr> --}}
                             <tr class="border-bottom">
                                 <td>Tax 13%</td>
                                 <td>-</td>
-                                <td>$0.00</td>
+                                <td>${{ $order->tax_total }}</td>
                             </tr>
                             <tr class="fw-bold pt-2">
                                 <td>Grand Total</td>

@@ -61,17 +61,36 @@ class CheckoutController extends Controller
                 'grand_total' => $cart->grand_total,
             ]);
 
+
+
             foreach ($cart->items as $item) {
-                $order->items()->create($item->toArray());
+                // dd($item->product->brand_id);
+                $order->items()->create([
+                    'product_id' => $item->product_id,
+                    'name' => $item->name,
+                    'sku' => $item->sku ?? null,
+                    'upc_code' => $item->upc_code ?? null,
+                    'brand_id' => $item->product->brand_id ?? null,
+                    'price' => $item->price,
+                    'qty' => $item->quantity, // assuming $item->quantity is the correct field
+                    'sub_total' => $item->price * $item->quantity,
+                    'tax_percent' => $item->tax_percent ?? 0,
+                    'tax_amount' => $item->tax_amount ?? 0,
+                    'grand_total' => ($item->price * $item->quantity) + ($item->tax_amount ?? 0),
+                ]);
 
                 if ($item->product?->stock !== null) {
                     $item->product->decrement('stock', $item->quantity);
                 }
             }
 
+            if ($item->product?->stock !== null) {
+                $item->product->decrement('stock', $item->quantity);
+            }
+
             OrderAddress::where('cart_id', $cart->id)->update(['order_id' => $order->id]);
 
-         
+
             DB::commit();
             OrderCreatedEvent::dispatch($order);
 
@@ -88,11 +107,9 @@ class CheckoutController extends Controller
 
         if ($request->isShippingInformation == '1' || $request->isShippingInformation == 1) {
             $type = 'shipping';
-        } else {
-            $type = 'billing';
         }
 
-        $order->addresses()->create([
+        $address = $order->addresses()->create([
             'address_type' => $address_type,
             'first_name' => $request[$type . '_first_name'],
             'last_name' => $request[$type . '_last_name'],
@@ -108,6 +125,7 @@ class CheckoutController extends Controller
             'alternate_number' => $request[$type . '_alternate_number'],
             'how_you_know_about_us' => $request[$type . '_how_you_know_about_us']
         ]);
+        // dd($address);
     }
     public function status(Orders $order)
     {

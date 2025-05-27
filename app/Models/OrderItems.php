@@ -20,19 +20,9 @@ class OrderItems extends Model
         'brand_id',
         'price',
         'qty',
-        'product_warranty_id',
-        'protection_plan_name',
-        'protection_plan_no_of_months',
         'sub_total',
         'tax_percent',
         'tax_amount',
-        'discount_percent',
-        'discount_id',
-        'discount_code',
-        'discount_type',
-        'discount_value',
-        'discount_amount',
-        'protection_plan_price',
         'grand_total'
     ];
 
@@ -44,5 +34,9 @@ class OrderItems extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Orders::class);
+    }
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(Brand::class);
     }
 }

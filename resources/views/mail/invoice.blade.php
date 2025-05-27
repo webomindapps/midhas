@@ -94,7 +94,7 @@
         </tbody>
     </table>
 
-    <table class="table table-bordered" style="margin-top: 20px;">
+    {{-- <table class="table table-bordered" style="margin-top: 20px;">
         <tbody>
             <thead style="background-color: #e6e6e6;">
                 <tr>
@@ -133,7 +133,7 @@
             </tr>
 
         </tbody>
-    </table>
+    </table> --}}
 
 
     <table class="table table-bordered  h4-14" style="width: 100%; -fs-table-paginate: paginate; margin-top: 30px;">
