@@ -6,6 +6,7 @@ use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\ShopController;
 use App\Http\Controllers\Frontend\LoginController;
 use App\Http\Controllers\Frontend\OrderController;
+use App\Http\Controllers\Frontend\ReviewController;
 use App\Http\Controllers\Frontend\EnquiryController;
 use App\Http\Controllers\Frontend\CheckoutController;
 use App\Http\Controllers\Frontend\WishListController;
@@ -53,6 +54,7 @@ Route::group(['prefix' => 'wishlists'], function () {
 Route::group(['prefix' => 'my-profiles'], function () {
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('order.show');
+    Route::post('cart/{product}', [ReviewController::class, 'store'])->name('review.store');
 });
 
 //pages

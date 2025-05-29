@@ -80,6 +80,13 @@ class SideBar extends Component
             'name' => 'enquiries',
         ],
         [
+            'title' => 'Reviews',
+            'icon' => 'fas fa-comments',
+            'route' => 'admin.reviews.index',
+            'isSubMenu' => false,
+            'name' => 'reviews',
+        ],
+        [
             'title' => 'Settings',
             'icon' => 'fal fa-cogs',
             'isSubMenu' => true,

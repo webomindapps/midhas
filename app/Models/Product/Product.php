@@ -5,6 +5,7 @@ namespace App\Models\Product;
 use Carbon\Carbon;
 use App\Models\Seo;
 use App\Models\Brand;
+use App\Models\Review;
 use App\Models\Category;
 use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Product extends Model
@@ -169,4 +171,10 @@ class Product extends Model
     {
         return $this->hasMany(Wishlist::class);
     }
+
+    public function reviews(): MorphMany
+    {
+        return $this->morphMany(Review::class, 'reviewable')->where('status', true);
+    }
+    
 }

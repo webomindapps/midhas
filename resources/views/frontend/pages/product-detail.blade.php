@@ -239,6 +239,10 @@
                     <a class="nav-link" id="pills-payment-tab" data-bs-toggle="pill" href="#pills-payment"
                         role="tab" aria-controls="pills-payment" aria-selected="false">PAYMENT SECURITY</a>
                 </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="pills-review-tab" data-bs-toggle="pill" href="#pills-review"
+                        role="tab" aria-controls="pills-review" aria-selected="false">REVIEWS</a>
+                </li>
             </ul>
             <div class="tab-content" id="pills-tabContent">
                 <div class="tab-pane fade show active" id="pills-details" role="tabpanel"
@@ -288,6 +292,16 @@
                                 <li>{{ trim($method) }}</li>
                             @endif
                         @endforeach
+                    </ul>
+                </div>
+                <div class="tab-pane fade" id="pills-review" role="tabpanel" aria-labelledby="pills-review-tab">
+                    {{-- <p class=""><strong>Review</strong></p> --}}
+                    <ul>
+                        <x-frontend.review.section :product="$product">
+                            @auth
+                                <x-frontend.review.create :product="$product" />
+                            @endauth
+                        </x-frontend.review.section>
                     </ul>
                 </div>
             </div>

@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\StoreController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\EnquiryController;
 use App\Http\Controllers\Admin\ProductController;
@@ -32,6 +33,8 @@ Route::middleware('auth:admin')->group(function () {
         'customers' => CustomerController::class,
         'orders' => OrderController::class,
         'enquiries' => EnquiryController::class,
+        'reviews' => ReviewController::class,
+
 
     ]);
 
