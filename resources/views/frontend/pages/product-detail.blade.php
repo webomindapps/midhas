@@ -113,28 +113,74 @@
                                 </div>
 
                             </div>
-                            <div class="d-flex align-items-center detail-addtocart mb-4">
-                                <div class="number d-flex align-items-center ">
-                                    <p class="d-inline mb-0 me-2 fw-bold">Qty</p>
-
-                                    <x-qty-input :id="$product->id" />
+                            @if ($product->isEnquiry())
+                                <div class=" d-block text-center text-uppercase fw-bold">
+                                    <a class=" add_wishlist bg-danger text-white d-block w-100" data-bs-toggle="modal"
+                                        data-bs-target="#sendEnquiry">
+                                        Send Enquiry
+                                    </a>
                                 </div>
-                                <div class="add-cart d-block text-center text-uppercase fw-bold">
 
-                                    @if ($product->total_stock > 0 && !$product->is_outof_stock)
-                                        <a class="addToCart d-block w-100" data-id="{{ $product->id }}"> Add to cart
-                                        </a>
-                                    @else
-                                        <p class="stock-out">
-                                            <a class=" bg-danger text-white d-block w-100"
-                                                data-id="{{ $product->id }}">
-                                                Out Of Stock
+                                <div class="modal fade" id="sendEnquiry" tabindex="-1"
+                                    aria-labelledby="sendEnquiryLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Send Enquiry</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form
+                                                    action="{{ route('product.enquiry', ['product' => $product->id]) }}"
+                                                    method="POST">
+                                                    @csrf
+                                                    <div class="mb-3">
+                                                        <label for="exampleInputName" class="form-label">Name</label>
+                                                        <input type="text" class="form-control" name="name"
+                                                            id="exampleInputName" value="{{ auth()->user()?->name }}"
+                                                            required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="exampleInputPhone" class="form-label">Phone</label>
+                                                        <input type="text" class="form-control" name="phone"
+                                                            id="exampleInputPhone" value="" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="exampleInputMessage"
+                                                            class="form-label">Message</label>
+                                                        <textarea name="message" class="form-control" id="exampleInputMessage" cols="30" rows="10" required></textarea>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @else
+                                <div class="d-flex align-items-center detail-addtocart mb-4">
+                                    <div class="number d-flex align-items-center ">
+                                        <p class="d-inline mb-0 me-2 fw-bold">Qty</p>
+
+                                        <x-qty-input :id="$product->id" />
+                                    </div>
+                                    <div class="add-cart d-block text-center text-uppercase fw-bold">
+
+                                        @if ($product->total_stock > 0 && !$product->is_outof_stock)
+                                            <a class="addToCart d-block w-100" data-id="{{ $product->id }}"> Add to
+                                                cart
                                             </a>
-                                        </p>
-                                    @endif
+                                        @else
+                                            <p class="stock-out">
+                                                <a class=" bg-danger text-white d-block w-100"
+                                                    data-id="{{ $product->id }}">
+                                                    Out Of Stock
+                                                </a>
+                                            </p>
+                                        @endif
+                                    </div>
                                 </div>
-                            </div>
-
+                            @endif
                             @php
                                 $isWishlisted = $product->isAddedToWishList();
                             @endphp
@@ -403,7 +449,7 @@
 
                 //        --------------------------------------------------------------
 
-              
+
             });
         </script>
     </x-slot:scripts>

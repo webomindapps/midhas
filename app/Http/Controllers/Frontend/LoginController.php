@@ -40,7 +40,7 @@ class LoginController extends Controller
         if ($user) {
             Mail::to($user->email)->send(new VerificationMail($user));
         }
-        return redirect()->route('customer.login')->with('success', 'User Registered Sucessfully');
+        return redirect()->route('customer.login')->with('message', 'User Registered Sucessfully');
     }
 
     public function authenticate(Request $request)
@@ -61,7 +61,7 @@ class LoginController extends Controller
             }
             $this->updateCart();
             $this->syncWishlist($user);
-            return redirect()->intended('cart')->with('success', 'Logged in successfully.');
+            return redirect()->intended('cart')->with('message', 'Logged In Successfully.');
         } else {
             return back()->with('danger', 'Invalid credentials. Please try again.');
         }
@@ -154,6 +154,6 @@ class LoginController extends Controller
     public function logout()
     {
         Auth::logout();
-        return redirect('/');
+        return redirect('/')->with('message', 'Logged Out successfully.');
     }
 }

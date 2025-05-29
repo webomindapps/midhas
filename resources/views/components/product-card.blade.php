@@ -22,23 +22,40 @@
     </div>
 
     <div class="d-flex text_inter prd_actions">
-        <div class="col">
-            @if ($product->total_stock > 0 && !$product->is_outof_stock)
-                <a class="addToCart buy d-block" data-id="{{ $product->id }}"> Buy
+        @if ($product->isEnquiry())
+            <div class="w-100 text-center text-uppercase fw-bold">
+                <a href="{{ route('productByCategory', $product->slug) }}"
+                    class="view d-block w-100 text-uppercase fw-bold text-center"
+                    style="background-color: rgb(255, 0, 0); color: white;">
+                    Out Of Stock
                 </a>
+            </div>
+        @else
+            @if ($product->total_stock > 0 && !$product->is_outof_stock)
+                <div class="col">
+                    <a class="addToCart buy d-block w-100 text-uppercase fw-bold text-center"
+                        data-id="{{ $product->id }}">
+                        Buy
+                    </a>
+                </div>
+                <div class="col">
+                    <a href="{{ route('productByCategory', $product->slug) }}"
+                        class="view d-block w-100 text-uppercase fw-bold text-center">
+                        View
+                    </a>
+                </div>
             @else
-                <p class="stock-out">
-                    <a class=" bg-danger buy d-block" data-id="{{ $product->id }}">
+                <div class="stock-out w-100 text-center text-uppercase fw-bold">
+                    <a href="{{ route('productByCategory', $product->slug) }}"
+                        class="view d-block w-100 text-uppercase fw-bold text-center" data-id="{{ $product->id }}"
+                        style="background-color: rgb(255, 0, 0); color: white;">
                         Out Of Stock
                     </a>
-                </p>
+                </div>
             @endif
-
-        </div>
-        <div class="col">
-            <a href="{{ route('productByCategory', $product->slug) }}" class="view d-block">View</a>
-        </div>
+        @endif
     </div>
+
 </div>
 <script>
     document.addEventListener("DOMContentLoaded", function() {

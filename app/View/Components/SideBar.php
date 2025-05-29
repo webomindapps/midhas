@@ -66,6 +66,20 @@ class SideBar extends Component
             ],
         ],
         [
+            'title' => 'Orders',
+            'icon' => 'fal fa-cart-plus',
+            'route' => 'admin.orders.index',
+            'isSubMenu' => false,
+            'name' => 'orders',
+        ],
+        [
+            'title' => 'Enquiries',
+            'icon' => 'fal fa-user-headset',
+            'route' => 'admin.enquiries.index',
+            'isSubMenu' => false,
+            'name' => 'enquiries',
+        ],
+        [
             'title' => 'Settings',
             'icon' => 'fal fa-cogs',
             'isSubMenu' => true,

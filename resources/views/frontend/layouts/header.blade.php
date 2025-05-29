@@ -49,7 +49,7 @@
                 <div class="col-md-5 right_side_action">
                     <div class="d-flex text-center justify-content-end align-items-center">
                         <div class="login header_login">
-                            <a href="{{ route('customer.login') }}">
+                            <a href="#">
                                 <i class="fa-solid fa-user d-block"></i>
                                 <span class="d-block">{{ !Auth::check() ? 'Login' : 'Account' }}</span>
                             </a>
@@ -60,13 +60,13 @@
                                             <li class="account__ul--li">
                                                 <a href="{{ route('customer.login') }}" class="">
                                                     <i class='bx bxs-user'></i>
-                                                    <span class="dropdown__text"> Account </span>
+                                                    <span class="dropdown__text"> Login </span>
                                                 </a>
                                             </li>
                                             <li class="account__ul--li">
-                                                <a href="{{ route('orders.index') }}" class="">
+                                                <a href="{{ route('customer.sign-up') }}" class="">
                                                     <i class='bx bxs-basket'></i>
-                                                    <span class="dropdown__text"> Orders </span>
+                                                    <span class="dropdown__text"> Sign Up </span>
                                                 </a>
                                             </li>
                                         </ul>

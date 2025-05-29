@@ -2,19 +2,20 @@
 
 namespace App\Models\Product;
 
+use Carbon\Carbon;
+use App\Models\Seo;
 use App\Models\Brand;
 use App\Models\Category;
-use App\Models\Seo;
 use App\Models\Wishlist;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Casts\Attribute;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Product\ProductEnquiry;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Product extends Model
 {
@@ -111,21 +112,27 @@ class Product extends Model
         return $this->order_type == 1;
     }
 
+    public function enquiries(): HasMany
+    {
+        return $this->hasMany(ProductEnquiry::class);
+    }
+
     public function currentPrice(): float
     {
         $currentDate = Carbon::now()->format('Y-m-d');
 
         if (count($this->prices) > 0) {
-            if ($price = $this->prices()
-                ->whereDate('start_date', '<=', $currentDate)
-                ->whereDate('end_date', '>=', $currentDate)
-                ->first()
+            if (
+                $price = $this->prices()
+                    ->whereDate('start_date', '<=', $currentDate)
+                    ->whereDate('end_date', '>=', $currentDate)
+                    ->first()
             ) {
                 return $price->price;
             }
         }
 
-        return  $this->selling_price;
+        return $this->selling_price;
     }
 
     public function typeOfProduct(): array
