@@ -22,13 +22,19 @@ class CartItems extends Model
         'total_amount',
         'tax_percent',
         'tax_amount',
+        'discount_percent',
+        'discount_id',
+        'discount_code',
+        'discount_type',
+        'discount_value',
+        'discount_amount',
         'comments',
     ];
 
     protected $with = [
         'product',
     ];
-     
+
     public function cart()
     {
         return $this->belongsTo(Cart::class);

@@ -211,6 +211,48 @@ class Midhas extends Controller
     }
     public function formatPrice($value)
     {
-        return number_format((float)$value, 2);
+        return number_format((float) $value, 2);
+    }
+
+    public function discountType()
+    {
+        return [
+            [
+                'label' => 'Dollar',
+                'value' => 1
+            ],
+            [
+                'label' => 'Percentage',
+                'value' => 2
+            ],
+        ];
+    }
+
+    public function discountCouponType()
+    {
+        return [
+            [
+                'label' => 'Limited',
+                'value' => 1
+            ],
+            [
+                'label' => 'Unlimited',
+                'value' => 2
+            ],
+        ];
+    }
+
+    public function discountApplicable()
+    {
+        return [
+            [
+                'label' => 'All Products',
+                'value' => 1
+            ],
+            [
+                'label' => 'Selected Products',
+                'value' => 2
+            ],
+        ];
     }
 }

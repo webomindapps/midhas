@@ -22,6 +22,10 @@ class Cart extends Model
         'total_amount',
         'tax_total',
         'tax',
+        'discount_id',
+        'discount_code',
+        'discount_type',
+        'discount_value',
         'discount_amount',
         'grand_total',
         'plans',
@@ -42,5 +46,9 @@ class Cart extends Model
     public function addresses(): HasMany
     {
         return $this->hasMany(OrderAddress::class);
+    }
+    public function coupon()
+    {
+        return $this->hasOne(Discount::class, 'code', 'coupon_code');
     }
 }

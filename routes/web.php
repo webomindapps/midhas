@@ -35,6 +35,9 @@ Route::get('add/cart/{id}', [CartController::class, 'storeQty1']);
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart-update');
 Route::get('cart-item/delete/{id}', [CartController::class, 'destroy'])->name('delete-cart');
 Route::get('/minicart-items', [CartController::class, 'minicartItems'])->name('minicart.items');
+Route::post('/coupon/apply', [CartController::class, 'applyCoupon'])->name('coupon.apply');
+Route::post('/coupon/remove', [CartController::class, 'removeCoupon'])->name('coupon.remove');
+
 
 //checkout
 Route::group(['prefix' => 'checkout', 'middleware' => ['auth', 'verified']], function () {

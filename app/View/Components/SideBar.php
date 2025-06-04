@@ -87,6 +87,19 @@ class SideBar extends Component
             'name' => 'reviews',
         ],
         [
+            'title' => 'Offers',
+            'icon' => 'fas fa-percent',
+            'isSubMenu' => true,
+            'name' => 'offers',
+            'subMenus' => [
+                [
+                    'title' => 'Discounts',
+                    'icon' => 'bx bx-chevron-right',
+                    'route' => 'admin.discounts.index',
+                ],
+            ]
+        ],
+        [
             'title' => 'Settings',
             'icon' => 'fal fa-cogs',
             'isSubMenu' => true,

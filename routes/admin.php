@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\EnquiryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\SpecificationController;
 use App\Http\Controllers\Admin\Setting\FilterController;
@@ -47,17 +48,20 @@ Route::middleware('auth:admin')->group(function () {
     Route::group(['prefix' => 'cms', 'as' => 'cms.'], function () {
         Route::resources([
             'banners' => BannerController::class,
-        ]);
-        Route::resources([
             'pages' => PageController::class,
-        ]);
-        Route::resources([
             'sliders' => SliderController::class,
         ]);
+
     });
     Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
         Route::resources([
             'filters' => FilterController::class
+        ]);
+    });
+
+    Route::group(['prefix' => 'offers'], function () {
+        Route::resources([
+            'discounts' => DiscountController::class,
         ]);
     });
 });

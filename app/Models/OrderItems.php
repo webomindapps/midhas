@@ -23,6 +23,12 @@ class OrderItems extends Model
         'sub_total',
         'tax_percent',
         'tax_amount',
+        'discount_percent',
+        'discount_id',
+        'discount_code',
+        'discount_type',
+        'discount_value',
+        'discount_amount',
         'grand_total'
     ];
 
