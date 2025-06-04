@@ -36,7 +36,9 @@ Route::post('/cart/update', [CartController::class, 'update'])->name('cart-updat
 Route::get('cart-item/delete/{id}', [CartController::class, 'destroy'])->name('delete-cart');
 Route::get('/minicart-items', [CartController::class, 'minicartItems'])->name('minicart.items');
 Route::post('/coupon/apply', [CartController::class, 'applyCoupon'])->name('coupon.apply');
-Route::post('/coupon/remove', [CartController::class, 'removeCoupon'])->name('coupon.remove');
+Route::post('/coupon/remove', [CartController::class, 'removeCoupon']);
+Route::get('/coupon/remove/{id}', [CartController::class, 'removeCoupons'])->name('coupons.remove');
+
 
 
 //checkout

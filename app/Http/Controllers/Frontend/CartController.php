@@ -14,6 +14,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Product\ProductStock;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use PhpParser\Node\Stmt\Return_;
 
 class CartController extends Controller
 {
@@ -197,21 +198,18 @@ class CartController extends Controller
         }
         DB::beginTransaction();
         try {
+            $discount_amount = 0;
             $cart_item->quantity = $qty;
             $total_amount = $price * $qty;
-            // $sub_total = $cart->total_amount;
-            // // $cart_item->discount_type = $cart->discount_type;
-            // // $cart_item->discount_value = $cart->discount_value;
+            $sub_total = $cart->total_amount;
+            if ($cart->discount_type == 2) {
+                $discount_amount = ($sub_total * $cart->discount_value) / 100;
+            } elseif ($cart->discount_type == 1) {
 
-            // // $discount_amount =$cart->discount_amount ;
-            // if ($cart->discount_type == 2) { // Percentage
-            //     $discount_amount = ($sub_total * $cart->discount_value) / 100;
-            // } elseif ($cart->discount_type == 1) { // Fixed
-            //     // Distribute fixed amount proportionally
-            //     $discount_amount = $cart->discount_value;
-            // }
+                $discount_amount = $cart->discount_value ?? 0;
+            }
 
-            // $cart->discount_amount = $discount_amount;
+            $cart->discount_amount = $discount_amount;
 
             if ($cart_item->tax_percent) {
                 $new_tax_amount = $total_amount * ($cart_item->tax_percent / 100);
@@ -371,11 +369,9 @@ class CartController extends Controller
             'discount_type' => $coupon->type,
             'discount_value' => $coupon->value,
             'discount_amount' => $discountAmount,
-            'sub_total' => $amount - $discountAmount,
             'total_amount' => $amount - $discountAmount,
             'grand_total' => ($cart->grand_total ?? $amount) - $discountAmount
         ]);
-       
     }
 
     public function removeCoupon(Request $request)
@@ -383,9 +379,20 @@ class CartController extends Controller
         $id = $request->id;
         $type = $request->type;
 
-        $model = $type === 'Cart' ? Cart::findOrFail($id) : CartItems::findOrFail($id);
+        if ($type === 'Cart') {
+            $model = Cart::find($id);
+        } else {
+            $model = \App\Models\CartItems::find($id);
+        }
 
-        $originalSubTotal = $model->sub_total + $model->discount_amount;
+        if (!$model) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid cart or item ID.'
+            ], 404);
+        }
+
+        $originalSubTotal = $model->total_amount + $model->discount_amount;
         $originalGrandTotal = $model->grand_total + $model->discount_amount;
 
         $model->update([
@@ -394,21 +401,58 @@ class CartController extends Controller
             'discount_type' => null,
             'discount_value' => null,
             'discount_amount' => 0,
-            'sub_total' => $originalSubTotal,
             'total_amount' => $originalSubTotal,
             'grand_total' => $originalGrandTotal
         ]);
 
-        $cart = $type === 'Cart' ? $model : $model->cart;
+        $cart = $type === 'Cart' ? $model : ($model->cart ?? null);
+
+        if (!$cart) {
+            return response()->json(['success' => false, 'message' => 'Cart not found.'], 404);
+        }
+
         $this->calculateTotal($cart->id);
 
         return response()->json([
             'success' => true,
-            'message' => 'Coupon removed successfully',
             'cart' => $cart->fresh(),
             'discountType' => $this->checkIfCouponApplied($cart)
         ]);
     }
+
+    public function removeCoupons(Request $request)
+    {
+        $id = $request->id;
+        $type = $request->type;
+
+        $model =  Cart::where('discount_id', $id)->first();
+
+        if (!$model) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid cart or item ID.'
+            ], 404);
+        }
+
+        $originalSubTotal = $model->total_amount + $model->discount_amount;
+        $originalGrandTotal = $model->grand_total + $model->discount_amount;
+
+        $model->update([
+            'discount_id' => null,
+            'discount_code' => null,
+            'discount_type' => null,
+            'discount_value' => null,
+            'discount_amount' => 0,
+            'total_amount' => $originalSubTotal,
+            'grand_total' => $originalGrandTotal
+        ]);
+
+        $cart =  $model;
+        $this->calculateTotal($cart->id);
+
+        return redirect()->back()->with('message', 'Coupon Removed successfully');
+    }
+
 
     public function checkIfCouponApplied($cart): ?array
     {

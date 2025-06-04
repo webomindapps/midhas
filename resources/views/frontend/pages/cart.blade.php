@@ -103,24 +103,36 @@
                                                 class="btn theme_btn rounded-0 text-white">Apply</button>
                                         </div>
                                         <p class="ms-1 mt-1" style="font-size:13px;color:red;" id="coupon_err"></p>
-
-                                        <div id="applied_coupon">
-                                            @if ($cart?->discount_code)
-                                                <div class="mt-2 applied_coupon text-end">
-                                                    <p class="mb-0">
-                                                        Applied Coupon:
-                                                        <span class="coupon-applied">
-                                                            {{ $cart->discount_code }}
-                                                            <a href="javascript:void(0);"
+                                        <div id="applied_coupon"
+                                            class="{{ $cart?->discount_code ? 'd-block' : 'd-none' }}">
+                                            <div class="mt-2 applied_coupon text-end">
+                                                <p class="mb-0">
+                                                    Applied Coupon:
+                                                    <span class="coupon-applied">
+                                                        {{ $cart->discount_code }}
+                                                        @if ($cart?->discount_code)
+                                                            {{-- If coupon exists on load, use route --}}
+                                                            <a href="{{ route('coupons.remove', $cart->discount_id) }}"
                                                                 class="remove-coupon ms-1 text-danger"
-                                                                data-id="{{ $cart->id }}" data-type="Cart">
+                                                                data-id="{{ $cart->id }}" data-type="Cart"
+                                                                data-method="route">
                                                                 <i class='bx bx-x'></i>
                                                             </a>
-                                                        </span>
-                                                    </p>
-                                                </div>
-                                            @endif
+                                                        @else
+                                                            {{-- This anchor will be added dynamically by JS if applied later --}}
+                                                            <a href="javascript:void(0);"
+                                                                class="remove-coupon ms-1 text-danger"
+                                                                data-id="{{ $cart->id }}" data-type="Cart"
+                                                                data-method="ajax">
+                                                                <i class='bx bx-x'></i>
+                                                            </a>
+                                                        @endif
+                                                    </span>
+                                                </p>
+                                            </div>
                                         </div>
+
+
 
                                     </div>
                                 @endif
@@ -287,6 +299,64 @@
                     }
                 });
             });
+            $(document).on('click', '#coupon_apply', function() {
+                var coupon = $('#coupon_code').val().trim();
+
+                if (coupon === '') {
+                    $('#coupon_err').html("Coupon field cannot be empty.");
+                    return;
+                }
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ url('coupon/apply') }}",
+                    data: {
+                        coupon: coupon,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        if (response.success && response.data) {
+                            $('#coupon_err').html('');
+
+                            $('#coupon')
+                                .val(response.data.name || '')
+                                .attr('data-discount_type', response.data.discount_type)
+                                .attr('data-discountvalue', response.data.discount_value);
+
+                            calculate(response.cart);
+
+                            $('#applied_coupon').html(`
+                    <div class="mt-2 applied_coupon text-end">
+                        <p class="mb-0">
+                            Applied Coupon:
+                            <span class="coupon-applied">
+                                ${response.data.name}
+                                <a href="javascript:void(0);" class="remove-coupon ms-1 text-danger"
+                                    data-id="${response.cart.id}" data-type="Cart">
+                                    <i class='bx bx-x'></i>
+                                </a>
+                            </span>
+                        </p>
+                    </div>
+                `).removeClass('d-none').addClass('d-block');
+
+                            window.FlashMessage.success('Coupon Added Successfully', {
+                                timeout: 5000,
+                                pauseOnHover: true,
+                                progress: true
+                            });
+
+                            $('#coupon_code').val('');
+                        } else {
+                            $('#coupon_err').html(response.error || "Invalid coupon.");
+                        }
+                    },
+                    error: function(xhr) {
+                        $('#coupon_err').html("Something went wrong. Please try again.");
+                    }
+                });
+            });
+
 
             function calculate(cart) {
                 $('#sub_total').html('$' + cart.total_amount.toFixed(2));
@@ -299,18 +369,13 @@
                 if (coupon) {
                     var type = $('#coupon').data('discount_type');
                     var discountValue = $('#coupon').data('discountvalue');
-                    // var limit = $('#coupon').data('discount_limit');
                     var sub_total = parseFloat($('#sub_total').text().replace('$', '')) || 0;
                     var tax_total = parseFloat($('#tax_total').text().replace('$', '')) || 0;
                     console.log('comming', sub_total);
 
                     if (type == 2) {
                         var discount_amt = sub_total * (discountValue / 100);
-                        console.log('comming', limit);
-
-                        // if (limit && discount_amt > limit) {
-                        //     discount_amt = limit;
-                        // }
+                       
                         console.log('comming', discount_amt);
                         var grand_total = sub_total - discount_amt;
                         grand_total += tax_total;
@@ -336,97 +401,56 @@
                     $('.minimum-msg').show();
                 }
             }
-
-            $(document).on('click', '#coupon_apply', function() {
-                var coupon = $('#coupon_code').val().trim();
-
-                if (coupon === '') {
-                    $('#coupon_err').html("Coupon field cannot be empty.");
-                    return;
-                }
-
-                console.log("Applying coupon:", coupon); // DEBUG
-
-                $.ajax({
-                    type: 'POST',
-                    url: "{{ url('coupon/apply') }}",
-                    data: {
-                        coupon: coupon,
-                        _token: "{{ csrf_token() }}"
-                    },
-                    success: function(response) {
-                        console.log("AJAX response:", response); // DEBUG
-
-                        if (response.success && response.data) {
-                            $('#coupon_err').html('');
-
-                            console.log("Coupon Data:", response.data); // DEBUG
-
-                            $('#coupon')
-                                .val(response.data.name || '')
-                                .attr('data-discount_type', response.data.discount_type)
-                                .attr('data-discountvalue', response.data.discount_value);
-
-                            console.log("Calling calculate() with cart:", response.cart); // DEBUG
-
-                            calculate(response.cart);
-
-                            $('#applied_coupon').html(`
-                    <div class="applied_coupon">
-                        <p>Applied Coupon:- 
-                            <span class="coupon-applied">${response.data.name}
-                                <a class="remove-coupon" href="javascript:void(0);">
-                                    <i class="bx bx-x"></i>
-                                </a>
-                            </span>
-                        </p>
-                    </div>
-                `);
-
-                            $('#coupon_code').val('');
-                        } else {
-                            console.log("Coupon error:", response.error); // DEBUG
-                            $('#coupon_err').html(response.error || "Invalid coupon.");
-                        }
-                    },
-                    error: function(xhr) {
-                        console.error("AJAX error:", xhr.responseText); // DEBUG
-                        $('#coupon_err').html("Something went wrong. Please try again.");
-                    }
-                });
-            });
         </script>
         <script>
             $(document).on('click', '.remove-coupon', function(e) {
                 e.preventDefault();
 
-                let id = $(this).data('id');
-                let type = $(this).data('type');
+                const $this = $(this);
+                const method = $this.data('method');
 
-                $.ajax({
-                    type: 'POST',
-                    url: "{{ route('coupon.remove') }}",
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        id: id,
-                        type: type
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            // Clear coupon-related elements
-                            $('#applied_coupon').remove();
-                            $('#coupon_code').val('');
-                            $('#coupon-discount').html('$0.00');
-                            $('#grand-total').html('$' + response.cart.grand_total.toFixed(2));
-                            $('#coupon_err').html('');
-                        } else {
-                            $('#coupon_err').html(response.message || 'Unable to remove coupon.');
+                if (method === 'route') {
+                    window.location.href = $this.attr('href');
+                } else {
+                    const id = $this.data('id');
+                    const type = $this.data('type');
+
+                    console.log("coming", id, type);
+                    $.ajax({
+                        type: 'POST',
+                        url: "{{ url('coupon/remove') }}",
+                        data: {
+                            id: id,
+                            type: type,
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                $('#applied_coupon').removeClass('d-block').addClass('d-none');
+
+                               
+                                $('#coupon').val('');
+                                $('#coupon').removeData('discount_type')
+                                    .removeData('discountvalue')
+                                    .removeData('discount_limit');
+
+                                calculate(response.cart); 
+                                window.FlashMessage?.success('Coupon removed successfully', {
+                                    timeout: 3000,
+                                    pauseOnHover: true,
+                                    progress: true
+                                });
+                            } else {
+                                window.FlashMessage?.warning(response.message || 'Could not remove coupon');
+                            }
+                        },
+
+                        error: function(xhr) {
+                            console.error(xhr.responseText);
+                            window.FlashMessage?.error('Something went wrong. Please try again.');
                         }
-                    },
-                    error: function() {
-                        $('#coupon_err').html("Something went wrong. Try again.");
-                    }
-                });
+                    });
+                }
             });
         </script>
     </x-slot:scripts>
