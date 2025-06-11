@@ -9,25 +9,42 @@ use App\Models\Orders;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\DeliveryCity;
 use App\Models\OrderAddress;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class CheckoutController extends Controller
 {
     public function index()
     {
-        if (Auth::check()) {
-            $cart = Auth::user()->cart;
+         $customer = Auth::user();
+        if ($customer) {
+            $cart = Cart::where('customer_id', $customer->id)->latest()->first();
         } else {
-            $cart_id = session('cart_id');
-            $cart = $cart_id ? Cart::find($cart_id) : null;
+            $cart_id = Session::get('cart_id');
+            if ($cart_id) {
+                $cart = $this->findBy('id', $cart_id);
+            } else {
+                $cart = null;
+            }
         }
 
         if (is_null($cart)) {
-            return to_route('home');
+            return redirect()->route('cart');
+        }
+        if ($cart && $cart->total_amount < 0 && $cart->type == 'delivery') {
+            return redirect()->route('cart')->with('error', 'For delivery minimum amount should 50$');
+        }
+        $delivery_city = '';
+        if ($cart->type == 'delivery') {
+            $city = DeliveryCity::find($cart->city);
+            $delivery_city = $city->city;
+        } else {
+            $delivery_city = 'Midhas';
         }
 
-        return view('frontend.pages.checkout.index', compact('cart'));
+        return view('frontend.pages.checkout.index', compact('cart','delivery_city'));
     }
 
 

@@ -102,6 +102,8 @@
                                 <x-tabs.item id="descriptions" title="Overview" is_active="{{ true }}" />
                                 <x-tabs.item id="specifications" title="Specifications" />
                                 <x-tabs.item id="manuals" title="Assembly Manuals" />
+                                <x-tabs.item id="manuals" title="Financing" />
+
                             </x-slot>
 
                             <x-tabs.content id="descriptions" is_active="{{ true }}">
@@ -109,8 +111,8 @@
                                     <x-forms.textarea label="Product Details" name="product_details" id="editor-1"
                                         :required="true" size="col-lg-12" :editor="true" />
 
-                                    <x-forms.textarea label="Product Description" name="product_description" id="editor-3"
-                                        :required="true" size="col-lg-12 mb-2" :editor="true" />
+                                    <x-forms.textarea label="Product Description" name="product_description"
+                                        id="editor-3" :required="true" size="col-lg-12 mb-2" :editor="true" />
 
                                     <x-forms.textarea label="Payment & security" name="payment_security"
                                         id="editor-2" :editor="true" :required="true" size="col-lg-12" />
@@ -123,6 +125,11 @@
 
                             <x-tabs.content id="manuals">
                                 <div class="row" id="admin-app-manuals">
+                                    <multiple-item />
+                                </div>
+                            </x-tabs.content>
+                            <x-tabs.content id="financing">
+                                <div class="row" id="admin-app-finance">
                                     <multiple-item />
                                 </div>
                             </x-tabs.content>

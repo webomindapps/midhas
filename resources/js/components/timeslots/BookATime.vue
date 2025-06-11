@@ -71,7 +71,7 @@
                                 <button
                                     type="submit"
                                     name="action"
-                                    class="btn btn-success m-2"
+                                    class="book-time btn btn-success m-2"
                                     @click="previousDays"
                                 >
                                     <i class="material-icons left"></i>
@@ -81,7 +81,7 @@
                                     @click="nextDays"
                                     type="submit"
                                     name="action"
-                                    class="btn btn-primary"
+                                    class="book-time btn btn-primary"
                                 >
                                     <span>Next</span> <i class="material-icons"></i>
                                 </button>
@@ -428,6 +428,8 @@ const getPrices = () => {
 }
 th{
     white-space: nowrap;
+     background-color: #f58b33;
+     color: white;
 }
 
 @media screen and (max-width: 768px) {
@@ -437,5 +439,13 @@ th{
     .deliveryType {
     font-size: 18px
 }
+}
+.book-time{
+    background-color: #f58b33;
+    border-radius: 18px;
+    border: 1px solid #f58b33;
+}
+.tr-divide{
+    background-color: rgba(0, 0, 0, 0.125);
 }
 </style>

@@ -26,7 +26,41 @@
         <div class="container">
             <form method="POST" action="{{ route('checkout.store') }}">
                 @csrf
-
+                <div class="row">
+                    @if ($cart->type == 'delivery')
+                        <div class="col-md-4">
+                            <div class="col-4 mb-3">
+                                <label class="mb-1">Delivery City</label>
+                                <input type="text" class="form-control" name="delivery_city"
+                                    value="{{ $delivery_city }}" id="delivery_city" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="mb-1">Delivery price ($)</label>
+                                <input type="text" class="form-control" name="delivery_price"
+                                    value="{{ $cart->price }}" readonly>
+                            </div>
+                        </div>
+                    @else
+                        <div class="col-md-8">
+                            <div class="col-3 mb-3">
+                                <label class="mb-1">Pickup Location</label>
+                                <input type="text" class="form-control" value="{{ $cart->city }}" readonly>
+                            </div>
+                        </div>
+                    @endif
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <label class="mb-1">Booked date & time</label>
+                                <a href="{{ route('book-time') }}">Change Time</a>
+                            </div>
+                            <input type="text" class="form-control" name="delivery_city"
+                                value="{{ $cart->time }} , {{ date('d-m-Y', strtotime($cart->date)) }}" readonly>
+                        </div>
+                    </div>
+                </div>
                 <!-- Shipping Information -->
                 <div class="form_wrapper bg-light">
                     <h3 class="text_inter">Shipping Information</h3>
@@ -80,8 +114,8 @@
                             </div>
                             <div class="col-md-6 text-start a-d-name">
                                 <label class="radio-button custom-radio">
-                                    <input class="b-a-radio" type="radio" id="optionba2" name="isShippingInformation"
-                                        value="0">
+                                    <input class="b-a-radio" type="radio" id="optionba2"
+                                        name="isShippingInformation" value="0">
                                     <span class="checkmark"></span>
                                     Use the information below
                                 </label>
