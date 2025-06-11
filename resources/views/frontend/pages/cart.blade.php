@@ -205,7 +205,7 @@
                                 <div class="d-flex mt-4 justify-content-md-end justify-content-center">
                                     <a href="{{ route('home') }}" class="dark_btn text-white me-4"> Continue
                                         Shopping</a>
-                                    <a href="{{ route('checkout.index') }}" class="theme_btn text-white">
+                                    <a href="{{ route('book-time') }}" class="theme_btn text-white">
                                         Checkout</a>
                                 </div>
 

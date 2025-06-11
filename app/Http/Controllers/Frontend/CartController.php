@@ -487,5 +487,20 @@ class CartController extends Controller
     //     return false;
     // }
 
-
+    public function deliveryLocation(Request $request)
+    {
+        $customer = Auth::user();
+        $cart = Cart::where('customer_id', $customer->id)->first();
+        $cart->update([
+            'type' => $request->type,
+            'city' => $request->city,
+            'date' => $request->date,
+            'time' => $request->time,
+            'price' => $request->price,
+            'min_price' => $request->min_price,
+        ]);
+        return response()->json([
+            'success' => true,
+        ], 200);
+    }
 }

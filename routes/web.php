@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Frontend\BookTimeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Frontend\CartController;
@@ -39,6 +40,8 @@ Route::post('/coupon/apply', [CartController::class, 'applyCoupon'])->name('coup
 Route::post('/coupon/remove', [CartController::class, 'removeCoupon']);
 Route::get('/coupon/remove/{id}', [CartController::class, 'removeCoupons'])->name('coupons.remove');
 
+Route::get('book-a-time', [BookTimeController::class, 'index'])->name('book-time');
+Route::post('/update-delivery-locations', [CartController::class, 'deliveryLocation']);
 
 
 //checkout

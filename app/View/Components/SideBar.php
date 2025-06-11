@@ -110,6 +110,11 @@ class SideBar extends Component
                     'icon' => 'bx bx-chevron-right',
                     'route' => 'admin.settings.filters.index',
                 ],
+                [
+                    'title' => 'Delivery City',
+                    'icon' => 'bx bx-chevron-right',
+                    'route' => 'admin.settings.delivery-city.index',
+                ],
             ]
         ],
         [

@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DeliveryCityController;
 use App\Http\Controllers\Admin\SpecificationController;
 use App\Http\Controllers\Admin\Setting\FilterController;
 
@@ -51,11 +52,12 @@ Route::middleware('auth:admin')->group(function () {
             'pages' => PageController::class,
             'sliders' => SliderController::class,
         ]);
-
     });
     Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
         Route::resources([
-            'filters' => FilterController::class
+            'filters' => FilterController::class,
+            'delivery-city' => DeliveryCityController::class,
+
         ]);
     });
 
@@ -67,4 +69,3 @@ Route::middleware('auth:admin')->group(function () {
 });
 Route::post('deleteProductImage', [AjaxController::class, 'deleteImage']);
 Route::get('getSubCategories', [AjaxController::class, 'getSubCategories']);
-

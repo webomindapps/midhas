@@ -29,6 +29,12 @@ class Cart extends Model
         'discount_amount',
         'grand_total',
         'plans',
+        'type',
+        'date',
+        'time',
+        'price',
+        'min_price',
+        'city'
     ];
     protected $with = [
         'items',

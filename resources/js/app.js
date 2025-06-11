@@ -1,8 +1,19 @@
 import './bootstrap';
 import './admin';
 
-import Alpine from 'alpinejs';
+import { createApp, defineComponent } from "vue";
 
-window.Alpine = Alpine;
 
-Alpine.start();
+import BookATime from "./components/timeslots/BookATime.vue";
+
+// Root vue component
+const root = defineComponent({});
+
+//Create the app
+const app = createApp(root);
+
+
+app.component("book-time",BookATime);
+
+app.mount("#book-a-time");
+

@@ -21,7 +21,8 @@
     <link href="{{ asset('frontend/flash.min.css') }}" rel="stylesheet">
 
     @stack('css')
-    @vite(['resources/js/frontend.js'])
+    @vite(['resources/js/frontend.js','resources/js/app.js'])
+
 </head>
 
 <body>
