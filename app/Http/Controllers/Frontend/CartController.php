@@ -25,7 +25,7 @@ class CartController extends Controller
     public function cartView()
     {
         $customer = Auth::user();
-
+        $discountType = $this->checkIfCouponApplied();
         if ($customer) {
             $cartItems = Cart::where('customer_id', $customer->id)->get();
         } else {
@@ -37,7 +37,7 @@ class CartController extends Controller
             }
         }
 
-        return view('frontend.pages.cart', compact('cartItems'));
+        return view('frontend.pages.cart', compact('cartItems', 'discountType'));
     }
 
     public function findBy($type, $value)
@@ -158,7 +158,7 @@ class CartController extends Controller
         $item_qty = 0;
         $total_amount = 0;
         $tax_total = 0;
-        $discount = $cart->discount_amount ?? 0;
+        $discountAmount = $cart->discount_amount ?? 0;
         $grand_total = 0;
 
         if (!is_null($cart)) {
@@ -166,17 +166,16 @@ class CartController extends Controller
                 $item_qty += $item->quantity;
                 $total_amount += $item->total_amount;
                 $tax_total += $item->tax_amount;
-                $discount += $item->discount_amount;
                 $grand_total += $item->total_amount + $item->tax_amount;
             }
 
             $cart->update([
                 'items_qty' => $item_qty,
                 'total_amount' => round($total_amount, 2),
-                'discount_amount' => round($discount, 2),
+                'discount_amount' => $discountAmount,
                 'tax_total' => round($tax_total, 2),
                 'tax' => round($tax_total, 2),
-                'grand_total' => round($grand_total - $discount, 2),
+                'grand_total' => round($grand_total - $discountAmount, 2),
             ]);
         }
     }
@@ -198,18 +197,11 @@ class CartController extends Controller
         }
         DB::beginTransaction();
         try {
-            $discount_amount = 0;
             $cart_item->quantity = $qty;
             $total_amount = $price * $qty;
-            $sub_total = $cart->total_amount;
-            if ($cart->discount_type == 2) {
-                $discount_amount = ($sub_total * $cart->discount_value) / 100;
-            } elseif ($cart->discount_type == 1) {
+            $cart->total_amount = $total_amount;
 
-                $discount_amount = $cart->discount_value ?? 0;
-            }
 
-            $cart->discount_amount = $discount_amount;
 
             if ($cart_item->tax_percent) {
                 $new_tax_amount = $total_amount * ($cart_item->tax_percent / 100);
@@ -217,6 +209,7 @@ class CartController extends Controller
             }
 
             $cart_item->total_amount = $total_amount;
+            //  dd(  $cart_item->total_amount);
             $cart_item->save();
             // $cart->save();
             $this->calculateTotal($cart->id);
@@ -231,16 +224,25 @@ class CartController extends Controller
             'success' => true,
             'data' => $cart_item,
             'cart' => $cart,
+            'discountType' => $this->checkIfCouponApplied()
         ], 200);
     }
     public function destroy($item_id)
     {
         $cart_item = CartItems::findOrFail($item_id);
         $cart_item->delete();
+
         $cart = Cart::find($cart_item->cart_id);
         $this->calculateTotal($cart->id);
-        return back()->with('error', 'item was removed successfully from the cart');
+
+        $discountType = $this->checkIfCouponApplied();
+
+        return back()->with([
+            'error' => 'Item was removed successfully from the cart',
+            'discountType' => $discountType
+        ]);
     }
+
 
     public function minicartItems()
     {
@@ -265,197 +267,14 @@ class CartController extends Controller
         ];
     }
 
-    // public function miniCartItems()
-    // {
-    //     $cartItems = session()->get('cart', []);
-    //     $count = count($cartItems);
-    //     $html = view('partials.minicart-items', compact('cartItems'))->render();
-
-    //     return response()->json([
-    //         'count' => $count,
-    //         'html' => $html,
-    //     ]);
-    // }
-
-    public function applyCoupon(Request $request)
+    public function checkIfCouponApplied(): array|null
     {
-        $code = $request->coupon;
-        $coupon = Discount::where('code', $code)->first();
+        $customer = Auth::user();
 
-        if (!$coupon) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Coupon not found'
-            ]);
+        if (!$customer) {
+            return null;
         }
-
-        $cart = Auth::check()
-            ? Cart::where('customer_id', Auth::id())->latest()->first()
-            : Cart::find(Session::get('cart_id'));
-
-        if (!$cart) {
-            return response()->json([
-                'error' => true,
-                'message' => 'Cart not found'
-            ]);
-        }
-        if (!$this->checkCouponValidity($coupon)) {
-            return response()->json([
-                'error' => true,
-                'message' => 'Coupon expired or not active'
-            ]);
-        }
-
-        if ($coupon->limit > 0) {
-            $used = Cart::where('discount_code', $coupon->code)->count();
-            if ($used >= $coupon->limit) {
-                return response()->json([
-                    'error' => true,
-                    'message' => 'Coupon usage limit reached'
-                ]);
-            }
-        }
-        if ($coupon->applicable_for == 2 && !empty($coupon->sku)) {
-            $skuList = explode(',', $coupon->sku);
-            $matchedItem = $cart->items->firstWhere(fn($item) => in_array($item->sku, $skuList));
-
-            if ($matchedItem) {
-                $this->applyDiscount($matchedItem, $coupon);
-            } else {
-                return response()->json([
-                    'error' => true,
-                    'message' => 'Coupon is not applicable for items in your cart'
-                ]);
-            }
-        } else {
-            $this->applyDiscount($cart, $coupon);
-        }
-
-        $this->calculateTotal($cart->id);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Coupon applied successfully',
-            'data' => [ // <-- THIS is what your JS expects
-                'name' => $coupon->code,
-                'discount_type' => $coupon->type,
-                'discount_value' => $coupon->value,
-                'discount_limit' => $coupon->limit
-
-            ],
-            'cart' => $cart->fresh(),
-            'discountType' => $this->checkIfCouponApplied($cart)
-        ]);
-    }
-
-    public function checkCouponValidity(Discount $coupon): bool
-    {
-        $now = Carbon::now();
-        $from = $coupon->from ? Carbon::parse($coupon->from) : null;
-        $to = $coupon->expiry_date ? Carbon::parse($coupon->expiry_date) : null;
-
-        return (!$from || $now->gte($from)) && (!$to || $now->lte($to));
-    }
-
-
-    public function applyDiscount($cart, Discount $coupon): void
-    {
-        $amount = $cart->total_amount;
-        $discountAmount = $coupon->type == 2 ? round(($coupon->value / 100) * $amount, 2) : $coupon->value;
-
-        $cart->update([
-            'discount_id' => $coupon->id,
-            'discount_code' => $coupon->code,
-            'discount_type' => $coupon->type,
-            'discount_value' => $coupon->value,
-            'discount_amount' => $discountAmount,
-            'total_amount' => $amount - $discountAmount,
-            'grand_total' => ($cart->grand_total ?? $amount) - $discountAmount
-        ]);
-    }
-
-    public function removeCoupon(Request $request)
-    {
-        $id = $request->id;
-        $type = $request->type;
-
-        if ($type === 'Cart') {
-            $model = Cart::find($id);
-        } else {
-            $model = \App\Models\CartItems::find($id);
-        }
-
-        if (!$model) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid cart or item ID.'
-            ], 404);
-        }
-
-        $originalSubTotal = $model->total_amount + $model->discount_amount;
-        $originalGrandTotal = $model->grand_total + $model->discount_amount;
-
-        $model->update([
-            'discount_id' => null,
-            'discount_code' => null,
-            'discount_type' => null,
-            'discount_value' => null,
-            'discount_amount' => 0,
-            'total_amount' => $originalSubTotal,
-            'grand_total' => $originalGrandTotal
-        ]);
-
-        $cart = $type === 'Cart' ? $model : ($model->cart ?? null);
-
-        if (!$cart) {
-            return response()->json(['success' => false, 'message' => 'Cart not found.'], 404);
-        }
-
-        $this->calculateTotal($cart->id);
-
-        return response()->json([
-            'success' => true,
-            'cart' => $cart->fresh(),
-            'discountType' => $this->checkIfCouponApplied($cart)
-        ]);
-    }
-
-    public function removeCoupons(Request $request)
-    {
-        $id = $request->id;
-        $type = $request->type;
-
-        $model =  Cart::where('discount_id', $id)->first();
-
-        if (!$model) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid cart or item ID.'
-            ], 404);
-        }
-
-        $originalSubTotal = $model->total_amount + $model->discount_amount;
-        $originalGrandTotal = $model->grand_total + $model->discount_amount;
-
-        $model->update([
-            'discount_id' => null,
-            'discount_code' => null,
-            'discount_type' => null,
-            'discount_value' => null,
-            'discount_amount' => 0,
-            'total_amount' => $originalSubTotal,
-            'grand_total' => $originalGrandTotal
-        ]);
-
-        $cart =  $model;
-        $this->calculateTotal($cart->id);
-
-        return redirect()->back()->with('message', 'Coupon Removed successfully');
-    }
-
-
-    public function checkIfCouponApplied($cart): ?array
-    {
+        $cart = $customer->cart;
         if ($cart && $cart->discount_id) {
             return [
                 'code' => $cart->discount_code,
@@ -465,27 +284,196 @@ class CartController extends Controller
             ];
         }
 
-        // $cartItem = $cart?->items()->whereNotNull('discount_id')->first();
-        // if ($cartItem) {
-        //     return [
-        //         'code' => $cartItem->discount_code,
-        //         'type' => 'CartItem',
-        //         'id' => $cartItem->id,
-        //         'amount' => $cartItem->discount_amount
-        //     ];
-        // }
+        $cartItem = $cart?->items()->whereNotNull('discount_id')->first();
+        if ($cartItem?->discount_id) {
+            return [
+                'code' => $cartItem->discount_code,
+                'type' => 'CartItem',
+                'id' => $cartItem->id,
+                'amount' => $cartItem->discount_amount
+            ];
+        }
 
         return null;
     }
-    // public function checkCoupon(Discount $coupon)
-    // {
-    //     if ($coupon && $coupon->expiry_date) {
-    //         $today = Carbon::today();
-    //         $expiry = Carbon::parse($coupon->expiry_date);
-    //         return $today->lessThanOrEqualTo($expiry);
-    //     }
-    //     return false;
-    // }
+
+    public function applyCoupon()
+    {
+        $code = request()->input('coupon');
+        // $code = $request->input('coupon_code'); 
+        $customer = Auth::user();
+        // dd($code);
+
+        if (!$customer) {
+            return null;
+        }
+        $cart = $customer->cart;
+
+        //check code exist or not
+        $checkIfExist = Discount::where('code', $code)->first();
+        // dd($checkIfExist);
+        if (is_null($checkIfExist)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Coupon code does not exist'
+            ]);
+        }
+
+        //check if code is expired or not 
+        if ($checkIfExist->expiry_date) {
+
+            $currentDate = Carbon::now();
+            $startDate = Carbon::parse($checkIfExist->start_date);
+            $couponDate = Carbon::parse($checkIfExist->expiry_date);
+
+            if (!$currentDate->gte($startDate) && !$currentDate->lte($couponDate)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Coupon code has expired'
+                ]);
+            }
+        }
+
+        //check for specific products
+        if ($checkIfExist->applicable_for == 2) {
+            $sku = explode(",", trim($checkIfExist->sku));
+            return $this->handleDiscountCartItem($cart, 'sku', $sku, $checkIfExist);
+        }
+
+        $response = $this->applyDiscount($checkIfExist, $cart);
+        return response()->json([
+            'success' => $response['success'],
+            'message' => $response['message'],
+            'cart' => $customer->cart,
+            'discountType' => $this->checkIfCouponApplied(),
+            'data' => [
+                'name' => $checkIfExist->code
+            ]
+        ]);
+
+    }
+
+    public function removeCoupon()
+    {
+        $customer = Auth::user();
+
+        if (!$customer) {
+            return null;
+        }
+        //remove code and calculate the amount again
+        $id = request()->id;
+        $type = request()->type;
+
+        $item = $type == 'Cart' ? Cart::find($id) : CartItems::find($id);
+
+        $discountAmount = $item->discount_amount;
+        $subTotal = $item->total_amount;
+        $grandTotal = $item->grand_total + $discountAmount;
+
+        $item->update([
+            'discount_id' => null,
+            'discount_code' => null,
+            'discount_type' => null,
+            'discount_value' => null,
+            'discount_amount' => 0,
+            'total_amount' => $subTotal,
+            'grand_total' => $grandTotal
+        ]);
+
+        if ($item->cart) {
+            $cart = $item->cart;
+            $cart->update([
+                'discount_amount' => 0,
+                'total_amount' => $cart->total_amount,
+                'grand_total' => $cart->grand_total + $discountAmount
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Discount coupon removed successfully',
+            'cart' => $customer->cart,
+            'discountType' => $this->checkIfCouponApplied()
+        ]);
+    }
+
+
+    public function applyDiscount($discount, $type): array
+    {
+        $discountValue = $discount->value;
+        // dd($discountValue);
+        $amount = $type->total_amount;
+        // dd($discount->type);
+
+        $discountAmount = 0;
+
+        if ($discount->type == 2) {
+            $discountAmount = $discountValue * $amount / 100;
+        } else {
+            $discountAmount = $discountValue;
+        }
+
+
+        $subTotal = $amount;
+        $grandTotal = $type->grand_total - $discountAmount;
+
+        $type->update([
+            'discount_id' => $discount->id,
+            'discount_code' => $discount->code,
+            'discount_type' => $discount->type,
+            'discount_value' => $discount->value,
+            'discount_amount' => $discountAmount,
+            'total_amount' => $subTotal,
+            'grand_total' => $grandTotal
+        ]);
+        // dd($type);
+        if ($type->cart) {
+            $cart = $type->cart;
+            $cart->update([
+                'discount_amount' => $discountAmount,
+                'total_amount' => $cart->total_amount,
+                'grand_total' => $cart->grand_total - $discountAmount
+            ]);
+        }
+
+        return [
+            'success' => true,
+            'message' => 'Discount coupon has been added successfully'
+        ];
+    }
+
+    public function handleDiscountCartItem($cart, $column, $find, $discount)
+    {
+        $customer = Auth::user();
+
+        if (!$customer) {
+            return null;
+        }
+        $cartItem = null;
+        foreach ($cart->items as $item) {
+            if (in_array($item[$column], $find)) {
+                $cartItem = $item->id;
+                break;
+            }
+        }
+        if ($cartItem) {
+            //update discount values
+            $response = $this->applyDiscount($discount, CartItems::find($cartItem));
+            return response()->json([
+                'success' => $response['success'],
+                'message' => $response['message'],
+                'cart' => $customer->cart,
+                'discountType' => $this->checkIfCouponApplied(),
+                'data' => [   
+                    'name' => $discount->code
+                ]
+            ]);
+        }
+        return response()->json([
+            'success' => false,
+            'message' => 'Coupon code is not applicable for the added products'
+        ]);
+    }
 
     public function deliveryLocation(Request $request)
     {

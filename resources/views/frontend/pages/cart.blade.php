@@ -67,7 +67,7 @@
                                             <li class="text-md-center text-start total">
                                                 <span class="d-md-none d-inline-block fw-bold">Total:</span>
                                                 <span class="fw-bold d-md-block d-inline-block px-1 item-total">
-                                                    ${{ number_format($item->total_amount ?? $item->price * $item->quantity, 2) }}
+                                                    ${{ number_format($item->price * $item->quantity, 2) }}
                                                 </span>
                                             </li>
                                             <li class="text-md-center text-start total">
@@ -92,50 +92,36 @@
                             @endphp
                             <div class="form_wrapper position-sticky top-0 bg-light pickup_opt">
                                 <h3 class="text_inter">Delivery/Pickup Options</h3>
-
-                                @if (!is_null($cart) && count($cart?->items) != 0)
-                                    <div class="coupon-section mt-4">
-                                        <div class="d-flex gap-2">
-                                            <input type="text" class="form-control" id="coupon_code"
-                                                placeholder="Enter coupon code"
-                                                value="{{ $cart->discount_code ?? '' }}">
-                                            <button id="coupon_apply"
-                                                class="btn theme_btn rounded-0 text-white">Apply</button>
-                                        </div>
-                                        <p class="ms-1 mt-1" style="font-size:13px;color:red;" id="coupon_err"></p>
-                                        <div id="applied_coupon"
-                                            class="{{ $cart?->discount_code ? 'd-block' : 'd-none' }}">
-                                            <div class="mt-2 applied_coupon text-end">
-                                                <p class="mb-0">
-                                                    Applied Coupon:
-                                                    <span class="coupon-applied">
-                                                        {{ $cart->discount_code }}
-                                                        @if ($cart?->discount_code)
-                                                            {{-- If coupon exists on load, use route --}}
-                                                            <a href="{{ route('coupons.remove', $cart->discount_id) }}"
-                                                                class="remove-coupon ms-1 text-danger"
-                                                                data-id="{{ $cart->id }}" data-type="Cart"
-                                                                data-method="route">
-                                                                <i class='bx bx-x'></i>
-                                                            </a>
-                                                        @else
-                                                            {{-- This anchor will be added dynamically by JS if applied later --}}
-                                                            <a href="javascript:void(0);"
-                                                                class="remove-coupon ms-1 text-danger"
-                                                                data-id="{{ $cart->id }}" data-type="Cart"
-                                                                data-method="ajax">
-                                                                <i class='bx bx-x'></i>
-                                                            </a>
-                                                        @endif
-                                                    </span>
-                                                </p>
-                                            </div>
-                                        </div>
-
-
-
+                                <div id="discount-section">
+                                    <div class="coupon-section mt-4 d-flex">
+                                        <input type="text" class="form-control text-uppercase" id="coupon_code"
+                                            placeholder="Enter Coupon Code" style="text-transform: uppercase;"
+                                            {{ !empty($cart->coupon) ? 'readonly' : '' }} />
+                                        <button id="coupon_apply" class="btn theme_btn rounded-0 text-white"
+                                            type="button" {{ !empty($cart->coupon) ? 'disabled' : '' }}>
+                                            Apply
+                                        </button>
+                                        {{-- {{ dd($cart) }} --}}
                                     </div>
-                                @endif
+
+                                    <small id="coupon_err" class="text-danger"></small>
+
+                                    <div id="applied_coupon"
+                                        class="{{ !empty($cart->discount_code) ? 'd-block' : 'd-none' }} mt-3 p-2 border rounded bg-light text-end">
+                                        @if (!empty($cart->discount_code))
+                                            <p class="mb-0">
+                                                Applied Coupon:
+                                                <span class="coupon-applied" style="text-transform: uppercase;">
+                                                    {{ $cart->discount_code }}
+                                                    <a href="javascript:void(0);" class="remove-coupon ms-1 text-danger"
+                                                        data-id="{{ $cart->id }}" data-type="Cart">
+                                                        <i class='bx bx-x'></i>
+                                                    </a>
+                                                </span>
+                                            </p>
+                                        @endif
+                                    </div>
+                                </div>
 
                                 <div class="order-summary mb-4">
                                     <div class="d-flex pt-0 justify-content-between">
@@ -164,15 +150,10 @@
                                 </div>
                                 <h3 class="text_inter">Order Summary</h3>
                                 <div class="order-summary mt-4">
-                                    @if (!is_null($cart))
-                                        <input type="hidden" id="coupon" name="coupon"
-                                            value="{{ $cart->coupon?->code }}"
-                                            data-discountvalue="{{ $cart->coupon?->value }}"
-                                            data-discount_type="{{ $cart->coupon?->type }}">
-                                    @endif
+                                    
                                     <div class="d-flex pt-0 justify-content-between">
                                         <div class="col-text-start">Order sub-total</div>
-                                        <div class="col-text-end" id="sub_total">
+                                        <div class="col-text-end" id="total_amount">
                                             {{-- {{dd($cart)}} --}}
                                             <b>${{ number_format($cart->total_amount, 2) }}
                                             </b>
@@ -191,6 +172,7 @@
                                         <div class="col-text-end" id="coupon-discount">
                                             <b>${{ number_format($cart->discount_amount, 2) }}
                                             </b>
+                                            {{-- {{dd($cart->discount_amount)}} --}}
                                         </div>
                                     </div>
                                     <div class="total d-flex justify-content-between">
@@ -299,9 +281,10 @@
                     }
                 });
             });
+
             $(document).on('click', '#coupon_apply', function() {
                 var coupon = $('#coupon_code').val().trim();
-
+                console.log($('#coupon_code').val());
                 if (coupon === '') {
                     $('#coupon_err').html("Coupon field cannot be empty.");
                     return;
@@ -318,29 +301,28 @@
                         if (response.success && response.data) {
                             $('#coupon_err').html('');
 
-                            $('#coupon')
+                            $('#coupon_code')
                                 .val(response.data.name || '')
-                                .attr('data-discount_type', response.data.discount_type)
-                                .attr('data-discountvalue', response.data.discount_value);
+                                .attr('readonly', true);
+
+                            $('#coupon_apply').prop('disabled', true);
+
+                            $('#applied_coupon').html(`
+                    <p class="mb-0">
+                        Applied Coupon:
+                        <span class="coupon-applied">
+                            ${response.data.name}
+                            <a href="javascript:void(0);" class="remove-coupon ms-1 text-danger"
+                                data-id="${response.cart.id}" data-type="Cart">
+                                <i class='bx bx-x'></i>
+                            </a>
+                        </span>
+                    </p>
+                `).removeClass('d-none').addClass('d-block');
 
                             calculate(response.cart);
 
-                            $('#applied_coupon').html(`
-                    <div class="mt-2 applied_coupon text-end">
-                        <p class="mb-0">
-                            Applied Coupon:
-                            <span class="coupon-applied">
-                                ${response.data.name}
-                                <a href="javascript:void(0);" class="remove-coupon ms-1 text-danger"
-                                    data-id="${response.cart.id}" data-type="Cart">
-                                    <i class='bx bx-x'></i>
-                                </a>
-                            </span>
-                        </p>
-                    </div>
-                `).removeClass('d-none').addClass('d-block');
-
-                            window.FlashMessage.success('Coupon Added Successfully', {
+                            window.FlashMessage?.success('Coupon Added Successfully', {
                                 timeout: 5000,
                                 pauseOnHover: true,
                                 progress: true
@@ -351,47 +333,54 @@
                             $('#coupon_err').html(response.error || "Invalid coupon.");
                         }
                     },
-                    error: function(xhr) {
+                    error: function() {
                         $('#coupon_err').html("Something went wrong. Please try again.");
                     }
                 });
             });
 
+            $(document).on('click', '.remove-coupon', function(e) {
+                e.preventDefault();
+                const id = $(this).data('id');
+                const type = $(this).data('type');
 
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ url('coupon/remove') }}",
+                    data: {
+                        id: id,
+                        type: type,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $('#applied_coupon').removeClass('d-block').addClass('d-none');
+                            $('#coupon_code').val('').removeAttr('readonly');
+                            $('#coupon_apply').prop('disabled', false);
+                            calculate(response.cart);
+
+                            window.FlashMessage?.success('Coupon removed successfully', {
+                                timeout: 3000,
+                                pauseOnHover: true,
+                                progress: true
+                            });
+                        } else {
+                            window.FlashMessage?.warning(response.message || 'Could not remove coupon');
+                        }
+                    },
+                    error: function() {
+                        window.FlashMessage?.error('Something went wrong. Please try again.');
+                    }
+                });
+            });
+
+            // Same calculate() function as earlier
             function calculate(cart) {
-                $('#sub_total').html('$' + cart.total_amount.toFixed(2));
-                $('#tax_total').html(' $' + cart.tax_total.toFixed(2));
+                $('#total_amount').html('$' + cart.total_amount.toFixed(2));
+                $('#tax_total').html('$' + cart.tax_total.toFixed(2));
                 $('#coupon-discount').html('$' + cart.discount_amount.toFixed(2));
                 $('#grand_total').html('$' + cart.grand_total.toFixed(2));
                 $('#tax').html('$' + cart.tax.toFixed(2));
-                var coupon = $('#coupon').val();
-
-                if (coupon) {
-                    var type = $('#coupon').data('discount_type');
-                    var discountValue = $('#coupon').data('discountvalue');
-                    var sub_total = parseFloat($('#sub_total').text().replace('$', '')) || 0;
-                    var tax_total = parseFloat($('#tax_total').text().replace('$', '')) || 0;
-                    console.log('comming', sub_total);
-
-                    if (type == 2) {
-                        var discount_amt = sub_total * (discountValue / 100);
-                       
-                        console.log('comming', discount_amt);
-                        var grand_total = sub_total - discount_amt;
-                        grand_total += tax_total;
-                        discount_amt = discount_amt.toFixed(2);
-                        grand_total = grand_total.toFixed(2);
-                        $('#coupon-discount').html('$' + discount_amt);
-                        $('#grand-total').html('$' + grand_total);
-                    } else {
-                        var grand_total = sub_total - discountValue;
-                        grand_total += tax_total;
-                        grand_total = grand_total.toFixed(2);
-                        $('#coupon-discount').html('$' + discountValue.toFixed(2));
-                        $('#grand-total').html('$' + grand_total.toFixed(2));
-                    }
-                }
-
 
                 if (cart.total_amount > 1) {
                     $('.checkout-btn').removeClass('disabled');
@@ -402,56 +391,6 @@
                 }
             }
         </script>
-        <script>
-            $(document).on('click', '.remove-coupon', function(e) {
-                e.preventDefault();
 
-                const $this = $(this);
-                const method = $this.data('method');
-
-                if (method === 'route') {
-                    window.location.href = $this.attr('href');
-                } else {
-                    const id = $this.data('id');
-                    const type = $this.data('type');
-
-                    console.log("coming", id, type);
-                    $.ajax({
-                        type: 'POST',
-                        url: "{{ url('coupon/remove') }}",
-                        data: {
-                            id: id,
-                            type: type,
-                            _token: "{{ csrf_token() }}"
-                        },
-                        success: function(response) {
-                            if (response.success) {
-                                $('#applied_coupon').removeClass('d-block').addClass('d-none');
-
-                               
-                                $('#coupon').val('');
-                                $('#coupon').removeData('discount_type')
-                                    .removeData('discountvalue')
-                                    .removeData('discount_limit');
-
-                                calculate(response.cart); 
-                                window.FlashMessage?.success('Coupon removed successfully', {
-                                    timeout: 3000,
-                                    pauseOnHover: true,
-                                    progress: true
-                                });
-                            } else {
-                                window.FlashMessage?.warning(response.message || 'Could not remove coupon');
-                            }
-                        },
-
-                        error: function(xhr) {
-                            console.error(xhr.responseText);
-                            window.FlashMessage?.error('Something went wrong. Please try again.');
-                        }
-                    });
-                }
-            });
-        </script>
     </x-slot:scripts>
 </x-frontend.page>
