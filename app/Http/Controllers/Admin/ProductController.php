@@ -6,6 +6,7 @@ use App\Facades\Midhas;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use App\Models\Product\Product;
+use App\Models\Product\ProductFinance;
 use App\Models\Product\ProductManual;
 use App\Models\Product\ProductPrice;
 use App\Models\Product\ProductStock;
@@ -82,6 +83,7 @@ class ProductController extends Controller
             $this->addVariants($product, $request);
             $this->addSpecifications($product, $request);
             $this->addManuals($product, $request);
+            $this->addFinancing($product, $request);
 
             //add seo contest
             Midhas::addSeo($product, request()->only(['meta_title', 'meta_description', 'meta_keywords']));
@@ -142,6 +144,7 @@ class ProductController extends Controller
             $this->addVariants($product, $request);
             $this->addSpecifications($product, $request);
             $this->addManuals($product, $request);
+            $this->addFinancing($product, $request);
 
             //add seo contest
             Midhas::addSeo($product, request()->only(['meta_title', 'meta_description', 'meta_keywords']), $product->seo?->id);
@@ -382,29 +385,29 @@ class ProductController extends Controller
         }
 
         // 2. Process incoming manuals
-        if($names && count($names) > 0) {
+        if ($names && count($names) > 0) {
             foreach ($names as $index => $name) {
                 if (!$name) continue;
-    
+
                 $id = $ids[$index] ?? null;
                 $file = $files[$index] ?? null;
                 $link = $links[$index] ?? null;
                 $filePath = null;
-    
+
                 // Upload file if available
                 if ($file) {
                     $filePath = Midhas::upload($file, $this->folder . $product->id . "/manuals/");
                 }
-    
+
                 if ($id) {
                     // Update existing manual
                     $manual = ProductManual::find($id);
                     if (!$manual) continue;
-    
+
                     if (!$filePath && $manual->uploaded_file) {
                         $filePath = $manual->uploaded_file; // Keep existing file
                     }
-    
+
                     $manual->update([
                         'name' => $name,
                         'uploaded_file' => $filePath,
@@ -417,6 +420,39 @@ class ProductController extends Controller
                         'uploaded_file' => $filePath,
                         'file_link' => $link,
                     ]);
+                }
+            }
+        }
+    }
+
+    public function addFinancing($product, $request): void
+    {
+        //financing
+        $ids = $request->financing_multiple_item_ids;
+        $names = $request->financing_name;
+        $no_of_months = $request->financing_no_of_months;
+        $interest_per_month = $request->financing_interest_per_month;
+        $financing_fee = $request->financing_fee;
+
+        if ($names && count($names) > 0) {
+            foreach ($names as $key => $name) {
+                $id = $ids && isset($ids[$key]) && !is_null($ids[$key]);
+                if ($names[$key] != '' && $no_of_months[$key] && $interest_per_month[$key] != '') {
+                    if ($id) {
+                        ProductFinance::find($ids[$key])->update([
+                            'name' => $names[$key],
+                            'no_of_months' => $no_of_months[$key],
+                            'interest_per_month' => $interest_per_month[$key],
+                            'price' => $financing_fee[$key]
+                        ]);
+                    } else {
+                        $product->finances()->create([
+                            'name' => $names[$key],
+                            'no_of_months' => $no_of_months[$key],
+                            'interest_per_month' => $interest_per_month[$key],
+                            'price' => $financing_fee[$key]
+                        ]);
+                    }
                 }
             }
         }

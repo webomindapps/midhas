@@ -243,6 +243,10 @@
                     <a class="nav-link" id="pills-review-tab" data-bs-toggle="pill" href="#pills-review"
                         role="tab" aria-controls="pills-review" aria-selected="false">REVIEWS</a>
                 </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="pills-finance-tab" data-bs-toggle="pill" href="#pills-finance"
+                        role="tab" aria-controls="pills-finance" aria-selected="false">FINANCING</a>
+                </li>
             </ul>
             <div class="tab-content" id="pills-tabContent">
                 <div class="tab-pane fade show active" id="pills-details" role="tabpanel"
@@ -303,6 +307,66 @@
                             @endauth
                         </x-frontend.review.section>
                     </ul>
+                </div>
+                <div class="tab-pane fade" id="pills-finance" role="tabpanel" aria-labelledby="pills-finance-tab">
+                    @if (count($product->finances) > 0)
+                        <div class="row">
+                            <div class="col-lg-9 mx-auto text-center">
+                                <div class="fin_wrap">
+                                    <!-- Tab Navigation -->
+                                    <ul class="nav nav-pills mb-3" id="pills-tab-financing" role="tablist">
+                                        @foreach ($product->finances as $index => $finance)
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link fin_icon nav-link-finance"
+                                                    id="pill-financing-{{ $finance->id }}" data-bs-toggle="pill"
+                                                    data-bs-target="#pills-financing-{{ $finance->id }}"
+                                                    type="button" role="tab"
+                                                    aria-controls="pills-financing-{{ $finance->id }}"
+                                                    aria-selected="{{ $loop->first ? 'true' : 'false' }}">
+                                                    {{ $finance->name }}
+                                                </button>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+
+                                    <!-- Tab Content -->
+                                    <div class="tab-content" id="pills-tabFinancingContent">
+                                        @foreach ($product->finances as $finance)
+                                            <div class="tab-pane fade" id="pills-financing-{{ $finance->id }}"
+                                                role="tabpanel" aria-labelledby="pill-financing-{{ $finance->id }}">
+                                                <div class="row border-top border-bottom py-lg-5 py-4">
+                                                    <div class="col-lg-4">
+                                                        <div class="financing-payment">
+                                                            <span>${{ Midhas::formatPrice($finance->pricePerMonth()) }}</span>
+                                                            <span>per month</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <div class="financing-payment">
+                                                            <span>${{ $finance->interest_per_month }}</span>
+                                                            <span>interest</span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-4">
+                                                        <div class="financing-payment">
+                                                            <span>${{ Midhas::formatPrice($finance->financingPrice()) }}</span>
+                                                            <span>financing fee</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <div class="row">
+                            <div class="col-lg-9 mx-auto text-center">
+                                Not Available
+                            </div>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -467,4 +531,24 @@
             });
         </script>
     </x-slot:scripts>
+    <style>
+        .fin_wrap .fin_icon {
+            height: 120px;
+            width: 120px !important;
+            border-radius: 50% !important;
+            background-color: #004ea5;
+            color: #fff !important;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: auto;
+        }
+
+        .fin_wrap .nav-pills .nav-link.active,
+        .fin_wrap .nav-pills .show>.nav-link {
+            color: #000 !important;
+            background-color: #fff !important;
+            border: 2px solid #064083;
+        }
+    </style>
 </x-frontend.page>
