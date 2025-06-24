@@ -531,24 +531,4 @@
             });
         </script>
     </x-slot:scripts>
-    <style>
-        .fin_wrap .fin_icon {
-            height: 120px;
-            width: 120px !important;
-            border-radius: 50% !important;
-            background-color: #004ea5;
-            color: #fff !important;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: auto;
-        }
-
-        .fin_wrap .nav-pills .nav-link.active,
-        .fin_wrap .nav-pills .show>.nav-link {
-            color: #000 !important;
-            background-color: #fff !important;
-            border: 2px solid #064083;
-        }
-    </style>
 </x-frontend.page>
