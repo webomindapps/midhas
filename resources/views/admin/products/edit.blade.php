@@ -117,6 +117,7 @@
                                 <x-tabs.item id="descriptions" title="Overview" is_active="{{ true }}" />
                                 <x-tabs.item id="specifications" title="Specifications" />
                                 <x-tabs.item id="manuals" title="Assembly Manuals" />
+                                <x-tabs.item id="finance" title="Financing" />
                             </x-slot>
 
                             <x-tabs.content id="descriptions" is_active="{{ true }}">
@@ -141,6 +142,13 @@
                             <x-tabs.content id="manuals">
                                 <div class="row" id="admin-app-manuals">
                                     <multiple-item :existing="{{ json_encode($product->manuals) }}" />
+                                </div>
+                            </x-tabs.content>
+                            <x-tabs.content id="finance">
+                                <div class="row">
+                                    <div class="row" id="admin-app-financing">
+                                        <finance-section :existing="{{ json_encode($product->finances) }}" />
+                                    </div>
                                 </div>
                             </x-tabs.content>
                         </x-tabs.section>

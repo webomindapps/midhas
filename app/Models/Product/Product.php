@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product\ProductEnquiry;
+use App\Models\Product\ProductFinance;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -96,6 +97,10 @@ class Product extends Model
     {
         return $this->hasMany(ProductManual::class);
     }
+    public function finances(): HasMany
+    {
+        return $this->hasMany(ProductFinance::class);
+    }
 
 
     /**
@@ -126,9 +131,9 @@ class Product extends Model
         if (count($this->prices) > 0) {
             if (
                 $price = $this->prices()
-                    ->whereDate('start_date', '<=', $currentDate)
-                    ->whereDate('end_date', '>=', $currentDate)
-                    ->first()
+                ->whereDate('start_date', '<=', $currentDate)
+                ->whereDate('end_date', '>=', $currentDate)
+                ->first()
             ) {
                 return $price->price;
             }
@@ -176,5 +181,4 @@ class Product extends Model
     {
         return $this->morphMany(Review::class, 'reviewable')->where('status', true);
     }
-    
 }

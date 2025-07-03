@@ -12,8 +12,7 @@ const root = defineComponent({});
 //Create the app
 const app = createApp(root);
 
-
-app.component("book-time",BookATime);
+app.component("book-time", BookATime);
 
 app.mount("#book-a-time");
 
