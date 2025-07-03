@@ -10,6 +10,7 @@ use App\Http\Controllers\Frontend\OrderController;
 use App\Http\Controllers\Frontend\ReviewController;
 use App\Http\Controllers\Frontend\EnquiryController;
 use App\Http\Controllers\Frontend\CheckoutController;
+use App\Http\Controllers\Frontend\CustomerController;
 use App\Http\Controllers\Frontend\WishListController;
 use App\Http\Controllers\Frontend\PasswordResetController;
 
@@ -63,7 +64,20 @@ Route::group(['prefix' => 'my-profiles'], function () {
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('order.show');
     Route::post('cart/{product}', [ReviewController::class, 'store'])->name('review.store');
+
+    Route::get('/profile',[CustomerController::class,'viewprofile'])->name('customer.profile');
+    Route::get('/profile/details',[CustomerController::class,'details'])->name('customer.details');
+    Route::post('/profile/details',[CustomerController::class,'storedetails']);
+    Route::get('/change-password',[CustomerController::class,'forgotpassword'])->name('customer.resetpassword');
+    Route::post('/change-password',[CustomerController::class,'resetpassword']);
+
+    Route::get('/address-book',[Customercontroller::class,'addressbook'])->name('customer.address');
+    Route::get('/address-book/edit/{id}',[CustomerController::class,'editaddress'])->name('customer.edit.address');
+    Route::post('/address-book/edit/{id}',[CustomerController::class,'updateaddress']);
+    Route::get('/address-book/delete/{id}',[CustomerController::class,'deleteaddress'])->name('customer.delete.address');
 });
+
+
 
 //pages
 Route::get('page/{page}', [ShopController::class, 'pageDetails'])->name('page.view');

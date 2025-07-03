@@ -2399,10 +2399,63 @@ section.section.login_form {
 .star-rating label:hover~label {
     color: #ffc107;
 }
+
 .book-table .table thead tr th {
     background-color: #212121;
     color: #fff !important;
     font-size: 14px;
     padding: 12px 10px;
     border-right: 1px solid #434242;
+}
+
+p {
+    margin-bottom: 4px;
+}
+
+.img-thumbnail {
+    height: 100px;
+}
+
+.Order-btn {
+    padding: 10px;
+    color: #fff;
+    font-size: 15px;
+    background: var(--orange);
+    transition: all 0.3s;
+    line-height: 1;
+    border: 1px solid var(--orange);
+    text-align: center;
+    width: 100%;
+}
+
+.Order-btn:hover {
+    background: #000;
+    border: 1px solid #000;
+    color: #fff;
+}
+
+.overview-sec a {
+    color: rgb(0 0 0 / 65%) !important;
+}
+
+.overview-sec a:hover {
+    color: #f58b33 !important;
+}
+
+
+.overview-sec li i {
+    color: #f58b33 !important;
+}
+
+.list-sec {
+    position: sticky;
+    top: 50px;
+}
+.apply_btn{
+    width: 90px;
+    padding: 5px;
+    background-color: #f58b33;
+    color: white;
+    border-radius: 39px;
+    border: 1px solid #f58b33;
 }

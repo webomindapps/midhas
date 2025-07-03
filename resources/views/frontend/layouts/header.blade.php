@@ -73,7 +73,7 @@
                                     @else
                                         <ul class="no-bullet account__ul">
                                             <li class="account__ul--li">
-                                                <a href="#" class="">
+                                                <a href="{{route('customer.profile')}}" class="">
                                                     <i class='bx bxs-user'></i>
                                                     <span class="dropdown__text"> Profile </span>
                                                 </a>

@@ -76,6 +76,10 @@ class CheckoutController extends Controller
                 'sub_total' => $cart->total_amount,
                 'tax_total' => $cart->tax_total,
                 'grand_total' => $cart->grand_total,
+                'delivery_date'=>$cart->date,
+                'delivery_time'=>$cart->time,
+                'delivery_city'=>$request->delivery_city,
+                'delivery_price'=>$request->price,
             ]);
 
 
@@ -120,6 +124,7 @@ class CheckoutController extends Controller
 
     private function addAddress($type, $order, $request): void
     {
+        $customer_id=Auth::user()->id;
         $address_type = $type;
 
         if ($request->isShippingInformation == '1' || $request->isShippingInformation == 1) {
@@ -128,6 +133,7 @@ class CheckoutController extends Controller
 
         $address = $order->addresses()->create([
             'address_type' => $address_type,
+            'customer_id'=>$customer_id,
             'first_name' => $request[$type . '_first_name'],
             'last_name' => $request[$type . '_last_name'],
             'email' => $request[$type . '_email'],

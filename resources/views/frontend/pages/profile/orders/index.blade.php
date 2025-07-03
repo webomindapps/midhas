@@ -1,4 +1,5 @@
 <x-frontend.page>
+
     <x-frontend.my-profile>
         <div class="row">
             <div class="col-lg-6">
@@ -21,13 +22,20 @@
                         <div class="item-select">
                             <label for="">Items Per Page</label>
                             <select name="paginate" class="form-select">
-                                <option @if ($paginate == '10') selected @endif value="10"> 10 </option>
-                                <option @if ($paginate == '20') selected @endif value="20"> 20 </option>
-                                <option @if ($paginate == '30') selected @endif value="30"> 30 </option>
-                                <option @if ($paginate == '40') selected @endif value="40"> 40 </option>
-                                <option @if ($paginate == '50') selected @endif value="50"> 50 </option>
-                                <option @if ($paginate == '100') selected @endif value="100"> 100 </option>
-                                <option @if ($paginate == '500') selected @endif value="500"> 500 </option>
+                                <option @if ($paginate == '10') selected @endif value="10"> 10
+                                </option>
+                                <option @if ($paginate == '20') selected @endif value="20"> 20
+                                </option>
+                                <option @if ($paginate == '30') selected @endif value="30"> 30
+                                </option>
+                                <option @if ($paginate == '40') selected @endif value="40"> 40
+                                </option>
+                                <option @if ($paginate == '50') selected @endif value="50"> 50
+                                </option>
+                                <option @if ($paginate == '100') selected @endif value="100"> 100
+                                </option>
+                                <option @if ($paginate == '500') selected @endif value="500"> 500
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -89,4 +97,5 @@
             </div>
         </div>
     </x-frontend.my-profile>
+
 </x-frontend.page>

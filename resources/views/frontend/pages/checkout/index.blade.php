@@ -27,157 +27,161 @@
             <form method="POST" action="{{ route('checkout.store') }}">
                 @csrf
                 <div class="row">
-                    @if ($cart->type == 'delivery')
-                        <div class="col-md-4">
-                            <div class="col-4 mb-3">
-                                <label class="mb-1">Delivery City</label>
-                                <input type="text" class="form-control" name="delivery_city"
-                                    value="{{ $delivery_city }}" id="delivery_city" readonly>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label class="mb-1">Delivery price ($)</label>
-                                <input type="text" class="form-control" name="delivery_price"
-                                    value="{{ $cart->price }}" readonly>
-                            </div>
-                        </div>
-                    @else
-                        <div class="col-md-8">
-                            <div class="col-3 mb-3">
-                                <label class="mb-1">Pickup Location</label>
-                                <input type="text" class="form-control" value="{{ $cart->city }}" readonly>
-                            </div>
-                        </div>
-                    @endif
-                    <div class="col-md-4">
-                        <div class="mb-3">
-                            <div class="d-flex justify-content-between">
-                                <label class="mb-1">Booked date & time</label>
-                                <a href="{{ route('book-time') }}">Change Time</a>
-                            </div>
-                            <input type="text" class="form-control" name="delivery_city"
-                                value="{{ $cart->time }} , {{ date('d-m-Y', strtotime($cart->date)) }}" readonly>
-                        </div>
-                    </div>
-                </div>
-                <!-- Shipping Information -->
-                <div class="form_wrapper bg-light">
-                    <h3 class="text_inter">Shipping Information</h3>
-                    <div class="d-block mt-4" aria-labelledby="form-title">
-                        <h2 id="form-title" class="visually-hidden">Form for Shipping Information</h2>
-                        <x-frontend.checkout />
-                    </div>
-                </div>
-
-                <!-- Location Type -->
-                <div class="form_wrapper bg-light">
-                    <h3 class="text_inter">Location Type</h3>
-                    <div class="d-block mt-4" aria-labelledby="form-title">
-                        <h2 id="form-title" class="visually-hidden">Form for Location Type</h2>
-
-                        <div class="row">
-                            <div class="col-md-6 a-d-name text-center">
-                                <div class="radio-button">
-                                    <input class="l-t-radio" type="radio" id="option1" name="location_type"
-                                        value="residential" checked>
-                                    <label class="l-t-label" for="option1"><i class="fas fa-home"></i>&nbsp;
-                                        Residential</label>
-                                </div>
-                            </div>
-                            <div class="col-md-6 text-center a-d-name">
-                                <div class="radio-button">
-                                    <input class="l-t-radio" type="radio" id="option2" name="location_type"
-                                        value="commercial">
-                                    <label class="l-t-label" for="option2"><i class="fas fa-building"></i>&nbsp;
-                                        Commercial</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Billing Address -->
-                <div class="form_wrapper bg-light">
-                    <h3 class="text_inter">Billing Address</h3>
-                    <div class="d-block mt-4" aria-labelledby="form-title">
-                        <h2 id="form-title" class="visually-hidden">Form for Billing Address</h2>
-
-                        <div class="row">
-                            <div class="col-md-6 a-d-name text-start">
-                                <label class="radio-button custom-radio">
-                                    <input class="b-a-radio" type="radio" id="optionba1" name="isShippingInformation"
-                                        value="1" checked>
-                                    <span class="checkmark"></span>
-                                    Use Shipping information
-                                </label>
-                            </div>
-                            <div class="col-md-6 text-start a-d-name">
-                                <label class="radio-button custom-radio">
-                                    <input class="b-a-radio" type="radio" id="optionba2"
-                                        name="isShippingInformation" value="0">
-                                    <span class="checkmark"></span>
-                                    Use the information below
-                                </label>
-                            </div>
-                        </div>
 
 
-                        <div id="billing-address" class="mt-3" style="display: none;">
-                            <x-frontend.checkout prefix="billing" />
-                        </div>
-                    </div>
-                </div>
+                    <!-- Shipping Information -->
+                    <div class="form_wrapper bg-light p-4 rounded shadow-sm">
+                        <h3 class="text_inter mb-4">Shipping Information</h3>
 
-                <!-- Delivery Date and Order Summary -->
-                <div class="form_wrapper bg-light">
-                    <div class="col-md-12">
-                        <div class="row justify-content-between">
-                            <div class="col-lg-4 col-md-6">
-                                <h3 class="text_inter">Choose Delivery Date</h3>
-                                <div class="d-block mt-4" aria-labelledby="form-title">
-                                    <h2 id="form-title" class="visually-hidden">Form for choose delivery date</h2>
-                                    <input type="date" class="form-control" name="delivery_date"
-                                        placeholder="Delivery Date" required>
-                                </div>
-                            </div>
+                        <div class="d-block" aria-labelledby="form-title">
+                            <h2 id="form-title" class="visually-hidden">Form for Shipping Information</h2>
 
-                            <div class="col-lg-5 col-md-6">
-                                <h3 class="text_inter">Order Summary</h3>
-                                <div class="order-summary mt-4">
-                                    <div class="d-flex pt-0 justify-content-between">
-                                        <div class="col-text-start">Shipping Cost</div>
-                                        <div class="col-text-end"><b>$00 CAD</b></div>
+                            <div class="row">
+                                @if ($cart->type == 'delivery')
+                                    <div class="col-md-4 mb-3">
+                                        <label class="mb-1">Delivery City</label>
+                                        <input type="text" class="form-control" name="delivery_city"
+                                            value="{{ $delivery_city ?? '' }}" id="delivery_city" readonly>
                                     </div>
-                                    <div class="d-flex justify-content-between">
-                                        <div class="col-text-start">Order sub-total</div>
-                                        <div class="col-text-end">
-                                            <b>${{ Midhas::formatPrice($cart->total_amount, 2) }}</b>
+
+                                    <div class="col-md-4 mb-3">
+                                        <label class="mb-1">Delivery Price ($)</label>
+                                        <input type="text" class="form-control" name="delivery_price"
+                                            value="{{ $cart->price }}" readonly>
+                                    </div>
+                                @else
+                                    <div class="col-md-4 mb-3">
+                                        <label class="mb-1">Pickup Location</label>
+                                        <input type="text" class="form-control" name="pickup_location" value="{{ $cart->city }}" readonly>
+                                    </div>
+                                @endif
+
+                                <div class="col-md-4 mb-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <label class="mb-1">Booked Date & Time</label>
+                                        <a href="{{ route('book-time') }}">Change Time</a>
+                                    </div>
+                                    <input type="text" class="form-control"
+                                        value="{{ $cart->time }} , {{ date('d-m-Y', strtotime($cart->date)) }}"
+                                        readonly>
+                                </div>
+                            </div>
+
+                            {{-- Include Checkout Component --}}
+                            <x-frontend.checkout     />
+                        </div>
+                    </div>
+
+
+                    <!-- Location Type -->
+                    <div class="form_wrapper bg-light">
+                        <h3 class="text_inter">Location Type</h3>
+                        <div class="d-block mt-4" aria-labelledby="form-title">
+                            <h2 id="form-title" class="visually-hidden">Form for Location Type</h2>
+
+                            <div class="row">
+                                <div class="col-md-6 a-d-name text-center">
+                                    <div class="radio-button">
+                                        <input class="l-t-radio" type="radio" id="option1" name="location_type"
+                                            value="residential" checked>
+                                        <label class="l-t-label" for="option1"><i class="fas fa-home"></i>&nbsp;
+                                            Residential</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 text-center a-d-name">
+                                    <div class="radio-button">
+                                        <input class="l-t-radio" type="radio" id="option2" name="location_type"
+                                            value="commercial">
+                                        <label class="l-t-label" for="option2"><i class="fas fa-building"></i>&nbsp;
+                                            Commercial</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Billing Address -->
+                    <div class="form_wrapper bg-light">
+                        <h3 class="text_inter">Billing Address</h3>
+                        <div class="d-block mt-4" aria-labelledby="form-title">
+                            <h2 id="form-title" class="visually-hidden">Form for Billing Address</h2>
+
+                            <div class="row">
+                                <div class="col-md-6 a-d-name text-start">
+                                    <label class="radio-button custom-radio">
+                                        <input class="b-a-radio" type="radio" id="optionba1"
+                                            name="isShippingInformation" value="1" checked>
+                                        <span class="checkmark"></span>
+                                        Use Shipping information
+                                    </label>
+                                </div>
+                                <div class="col-md-6 text-start a-d-name">
+                                    <label class="radio-button custom-radio">
+                                        <input class="b-a-radio" type="radio" id="optionba2"
+                                            name="isShippingInformation" value="0">
+                                        <span class="checkmark"></span>
+                                        Use the information below
+                                    </label>
+                                </div>
+                            </div>
+
+
+                            <div id="billing-address" class="mt-3" style="display: none;">
+                                <x-frontend.checkout prefix="billing" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delivery Date and Order Summary -->
+                    <div class="form_wrapper bg-light">
+                        <div class="col-md-12">
+                            <div class="row justify-content-between">
+                                {{-- <div class="col-lg-4 col-md-6">
+                                    <h3 class="text_inter">Choose Delivery Date</h3>
+                                    <div class="d-block mt-4" aria-labelledby="form-title">
+                                        <h2 id="form-title" class="visually-hidden">Form for choose delivery date
+                                        </h2>
+                                        <input type="date" class="form-control" name="delivery_date"
+                                            placeholder="Delivery Date" required>
+                                    </div>
+                                </div> --}}
+
+                                <div class="col-lg-5 col-md-6 ms-auto content-align-right">
+                                    <h3 class="text_inter">Order Summary</h3>
+                                    <div class="order-summary mt-4">
+                                        <div class="d-flex pt-0 justify-content-between">
+                                            <div class="col-text-start">Shipping Cost</div>
+                                            <div class="col-text-end"><b>$00 CAD</b></div>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <div class="col-text-start">Order sub-total</div>
+                                            <div class="col-text-end">
+                                                <b>${{ Midhas::formatPrice($cart->total_amount, 2) }}</b>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex justify-content-between">
+                                            <div class="col-text-start">Tax</div>
+                                            <div class="col-text-end"><b>
+                                                    ${{ Midhas::formatPrice($cart->tax_total, 2) }}</b>
+                                            </div>
+                                        </div>
+                                        <div class="total d-flex justify-content-between">
+                                            <div class="col-text-start fs-2x fw-bold">Order Total</div>
+                                            <div class="col-text-end">
+                                                <b>${{ Midhas::formatPrice($cart->grand_total, 2) }}</b>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="d-flex justify-content-between">
-                                        <div class="col-text-start">Tax</div>
-                                        <div class="col-text-end"><b>
-                                                ${{ Midhas::formatPrice($cart->tax_total, 2) }}</b>
-                                        </div>
-                                    </div>
-                                    <div class="total d-flex justify-content-between">
-                                        <div class="col-text-start fs-2x fw-bold">Order Total</div>
-                                        <div class="col-text-end">
-                                            <b>${{ Midhas::formatPrice($cart->grand_total, 2) }}</b>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Form Buttons -->
-                <div class="d-flex justify-content-md-end justify-content-center mt-4">
-                    <a href="{{ route('cart') }}" class="dark_btn text-white me-4">Back</a>
-                    <button type="submit" class="theme_btn text-white">Continue</button>
-                </div>
+                    <!-- Form Buttons -->
+                    <div class="d-flex justify-content-md-end justify-content-center mt-4">
+                        <a href="{{ route('cart') }}" class="dark_btn text-white me-4">Back</a>
+                        <button type="submit" class="theme_btn text-white">Continue</button>
+                    </div>
             </form>
         </div>
 
