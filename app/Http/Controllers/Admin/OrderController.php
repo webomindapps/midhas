@@ -59,4 +59,13 @@ class OrderController extends Controller
         return response()->json(['success' => true, 'message' => 'Bulk operation is completed']);
     }
 
+    public function update(Request $request, Orders $order)
+    {
+        $order->update([
+            'status' => $request->status,
+            'comments' => $request->comments
+        ]);
+
+        return to_route('admin.orders.index')->with('success', 'Order updated successfully');
+    }
 }

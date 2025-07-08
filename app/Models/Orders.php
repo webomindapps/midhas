@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use App\Models\User;
+use App\Models\Invoice;
+use App\Models\Shipment;
+use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Carbon;
 
 class Orders extends Model
 {
@@ -67,12 +70,12 @@ class Orders extends Model
      */
     public function addresses(): HasMany
     {
-        return $this->hasMany(OrderAddress::class,'order_id');
+        return $this->hasMany(OrderAddress::class, 'order_id');
     }
 
     public function address($type): ?OrderAddress
     {
-        return $this->addresses()->where('address_type', $type)->first();
+        return OrderAddress::where('order_id', $this->order_id)->where('address_type', $type)->first();
     }
 
 
@@ -82,4 +85,15 @@ class Orders extends Model
             get: fn(string|null $value) => $value ? Carbon::parse($value)->format('d-m-Y') : '',
         );
     }
+
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class);
+    }
+
+    public function shipment()
+    {
+        return $this->hasOne(Shipment::class);
+    }
+
 }
