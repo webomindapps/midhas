@@ -9,13 +9,16 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\StoreController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\CancelController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\EnquiryController;
+use App\Http\Controllers\Admin\InvoiceController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DiscountController;
+use App\Http\Controllers\Admin\ShipmentController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DeliveryCityController;
 use App\Http\Controllers\Admin\SpecificationController;
@@ -41,6 +44,13 @@ Route::middleware('auth:admin')->group(function () {
 
 
     ]);
+    Route::post('order/{order}/cancel', CancelController::class)->name('order.cancel');
+
+    Route::get('invoice/{order}/create', [InvoiceController::class, 'create'])->name('invoice.create');
+    Route::post('invoice/{order}', [InvoiceController::class, 'store'])->name('invoice.store');
+
+    Route::get('shipment/{order}/create', [ShipmentController::class, 'create'])->name('shipment.create');
+    Route::post('shipment/{order}', [ShipmentController::class, 'store'])->name('shipment.store');
 
     Route::group(['prefix' => 'masters', 'as' => 'masters.'], function () {
         Route::resources([

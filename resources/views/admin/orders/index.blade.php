@@ -59,11 +59,7 @@
                 <td>{{ $item->tax_total }}</td>
                 <td>{{ $item->grand_total }}</td>
                 <td>
-                    @if ($item->status)
-                        <span class="badge rounded-pill sactive">Active</span>
-                    @else
-                        <span class="badge rounded-pill deactive">In-Active</span>
-                    @endif
+                    <span class="badge rounded-pill {{ $item->status }}">{{ $item->status }}</span>
                 </td>
                 <td>
                     <x-actions :item="$item" :options="$actions" />
