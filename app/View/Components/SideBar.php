@@ -100,6 +100,13 @@ class SideBar extends Component
             ]
         ],
         [
+            'title' => 'Newsletters',
+            'icon' => 'fas fa-newspaper',
+            'route' => 'admin.newsletters.index',
+            'isSubMenu' => false,
+            'name' => 'newsletters',
+        ],
+        [
             'title' => 'Settings',
             'icon' => 'fal fa-cogs',
             'isSubMenu' => true,
@@ -127,6 +134,11 @@ class SideBar extends Component
                     'title' => 'Banners',
                     'icon' => 'bx bx-chevron-right',
                     'route' => 'admin.cms.banners.index',
+                ],
+                [
+                    'title' => 'Blogs',
+                    'icon' => 'bx bx-chevron-right',
+                    'route' => 'admin.cms.blogs.index',
                 ],
                 [
                     'title' => 'Pages',

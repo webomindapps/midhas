@@ -54,7 +54,7 @@
                                 <!-- Slider main container -->
                                 <div class="swiper-container gallery-top">
                                     <!-- Additional required wrapper -->
-                                    <div class="swiper-wrapper">
+                                    <div class="swiper-wrapper" id="variantSwiperWrapper">
                                         <!-- Slides -->
                                         @foreach ($product->images as $image)
                                             <div class="swiper-slide">
@@ -105,11 +105,15 @@
 
 
                                 <div class="color_selector d-flex justify-content-start">
-                                    @foreach ($product->variants as $variant)
-                                        <span class="product_variant" style="--color:{{ $variant->value }};"
-                                            data-variant-id="{{ $variant->id }}">
+                                    @foreach ($product->variants as $index => $variant)
+                                        <span class="product_variant"
+                                            style="--color:{{ $variant->value }}; background-color: {{ $variant->value }};"
+                                            data-variant-id="{{ $variant->id }}"
+                                            data-slide-index="{{ $index }}"
+                                            data-images='@json([asset("storage/" . $variant->thumbnail)])'>
                                         </span>
                                     @endforeach
+
                                 </div>
 
                             </div>
@@ -199,7 +203,17 @@
                             <div class="d-flex align-items-center other_actions">
                                 <button class="btn text-uppercase">ask a question</button>
                                 <button class="btn text-uppercase">Tell a friend</button>
-                                <button class="btn text-uppercase">add to compare</button>
+                                <button
+                                    class="btn text-uppercase prdCompares {{ $product->isAddedToCompare() ? 'active' : '' }}"
+                                    data-product-id="{{ $product->id }}">
+                                    <i class="{{ $product->isAddedToCompare() ? 'fas fa-check' : 'fas fa-balance-scale' }} me-2 compare-icon"
+                                        style="color: {{ $product->isAddedToCompare() ? 'green' : '#000' }};"></i>
+                                    <span class="compare-text">
+                                        {{ $product->isAddedToCompare() ? 'Remove from Compare' : 'Add to Compare' }}
+                                    </span>
+                                </button>
+
+
                             </div>
                             <div class="d-block w-100 more_actions">
                                 <button class="btn d-block w-100 text-uppercase">View all cortez</button>
@@ -397,10 +411,36 @@
             $(function() {
                 $('.color_selector').each(function(index, element) {
                     $(element).find('span').click(function() {
+                        // Remove active class and apply to selected
                         $(element).find('span').removeClass('active');
                         $(this).addClass('active');
+
+                        // Get variant-specific images
+                        const images = $(this).data('images'); // should be an array of URLs
+
+                        if (images && Array.isArray(images)) {
+                            const wrapper = $('#variantSwiperWrapper');
+
+                            // Clear current slides
+                            wrapper.html('');
+
+                            // Add new slides
+                            images.forEach(function(url) {
+                                const slide = `
+                    <div class="swiper-slide">
+                        <img src="${url}" class="w-100 img-fluid" />
+                    </div>
+                `;
+                                wrapper.append(slide);
+                            });
+
+                            // Reinitialize Swiper with new content
+                            galleryTop.update();
+                            galleryTop.slideTo(0); // jump to first new slide
+                        }
                     });
                 });
+
 
                 function checkDesktop() {
                     return window.innerWidth < 990;

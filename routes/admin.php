@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\LoginController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\StoreController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\EnquiryController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DeliveryCityController;
 use App\Http\Controllers\Admin\SpecificationController;
 use App\Http\Controllers\Admin\Setting\FilterController;
+use App\Http\Controllers\NewsletterController;
 
 Route::get('login', [LoginController::class, 'index']);
 Route::post('login', [LoginController::class, 'store'])->name('login');
@@ -51,6 +53,7 @@ Route::middleware('auth:admin')->group(function () {
             'banners' => BannerController::class,
             'pages' => PageController::class,
             'sliders' => SliderController::class,
+            'blogs'=>BlogController::class,
         ]);
     });
     Route::group(['prefix' => 'settings', 'as' => 'settings.'], function () {
@@ -65,6 +68,9 @@ Route::middleware('auth:admin')->group(function () {
         Route::resources([
             'discounts' => DiscountController::class,
         ]);
+    });
+    Route::group(['prefix' =>'newsletters'],function(){
+        Route::get('/',[NewsletterController::class,'index'])->name('newsletters.index');
     });
 });
 Route::post('deleteProductImage', [AjaxController::class, 'deleteImage']);

@@ -62,4 +62,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Review::class);
     }
+     public function compares(): HasMany
+    {
+        return $this->hasMany(Compare::class);
+    }
 }
