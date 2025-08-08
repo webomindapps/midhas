@@ -9,8 +9,10 @@ use App\Models\Product\Product;
 use App\Models\Product\ProductFinance;
 use App\Models\Product\ProductManual;
 use App\Models\Product\ProductPrice;
+use App\Models\Product\ProductSize;
 use App\Models\Product\ProductStock;
 use App\Models\Product\ProductVariant;
+use App\Models\ProductAccessories;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -84,6 +86,8 @@ class ProductController extends Controller
             $this->addSpecifications($product, $request);
             $this->addManuals($product, $request);
             $this->addFinancing($product, $request);
+            $this->addSizes($product, $request);
+            $this->addAccessories($product, $request);
 
             //add seo contest
             Midhas::addSeo($product, request()->only(['meta_title', 'meta_description', 'meta_keywords']));
@@ -145,7 +149,8 @@ class ProductController extends Controller
             $this->addSpecifications($product, $request);
             $this->addManuals($product, $request);
             $this->addFinancing($product, $request);
-
+            $this->addSizes($product, $request);
+            $this->addAccessories($product, $request);
             //add seo contest
             Midhas::addSeo($product, request()->only(['meta_title', 'meta_description', 'meta_keywords']), $product->seo?->id);
 
@@ -475,5 +480,82 @@ class ProductController extends Controller
             }
         }
         return redirect()->back()->with('success', 'Price updated successfully');
+    }
+    public function addSizes($product, $request)
+    {
+        $ids = $request->tv_size_ids;
+        $sizes = $request->tv_sizes;
+        $category_ids = $request->tv_size_category_id;
+        $product_ids = $request->tv_size_product_id;
+        $product_skus = $request->tv_size_sku;
+
+        $deleted_ids = json_decode($request->deleted_product_tv_sizes);
+        if ($deleted_ids && count($deleted_ids) > 0) {
+            foreach ($deleted_ids as $id) {
+                ProductSize::find($id)->delete();
+            }
+        }
+
+        if ($product_ids && count($product_ids) > 0) {
+            foreach ($product_ids as $key => $product_id) {
+                $id = $ids && isset($ids[$key]) && !is_null($ids[$key]);
+
+                if ($product_ids[$key] != '') {
+                    if ($id) {
+                        ProductSize::find($ids[$key])->update([
+                            'size' => $sizes[$key],
+                            'size_category_id' => $category_ids[$key],
+                            'size_product_id' => $product_ids[$key],
+                            'sku' => $product_skus[$key],
+                        ]);
+                    } else {
+                        $product->sizes()->create([
+                            'size' => $sizes[$key],
+                            'size_category_id' => $category_ids[$key],
+                            'size_product_id' => $product_ids[$key],
+                            'sku' => $product_skus[$key],
+                        ]);
+                    }
+                }
+            }
+        }
+    }
+    public function addAccessories($product, Request $request)
+    {
+        $names = $request->accessories_name;
+        $prices = $request->accessories_price;
+        $ids = $request->accessories_ids;
+
+        // Delete accessories
+        $deleted_ids = json_decode($request->deleted_product_accessories);
+        if (is_array($deleted_ids) && count($deleted_ids) > 0) {
+            foreach ($deleted_ids as $id) {
+                ProductAccessories::where('id', $id)->where('product_id', $product->id)->delete();
+            }
+        }
+
+        // Add or update accessories
+        if ($names && count($names) > 0) {
+            foreach ($names as $key => $name) {
+                if (!empty($name)) {
+                    $data = [
+                        'name' => $name,
+                        'price' => $prices[$key] ?? 0,
+                    ];
+
+                    $idExists = $ids && isset($ids[$key]) && !is_null($ids[$key]);
+
+                    if ($idExists) {
+                        // Update existing accessory
+                        ProductAccessories::where('id', $ids[$key])
+                            ->where('product_id', $product->id)
+                            ->update($data);
+                    } else {
+                        // Create new accessory
+                        $product->accessories()->create($data);
+                    }
+                }
+            }
+        }
     }
 }

@@ -12,6 +12,7 @@ use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product\ProductEnquiry;
 use App\Models\Product\ProductFinance;
+use App\Models\ProductAccessories;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -182,7 +183,7 @@ class Product extends Model
     {
         return $this->morphMany(Review::class, 'reviewable')->where('status', true);
     }
-     public function isAddedToCompare(): bool
+    public function isAddedToCompare(): bool
     {
         $user = Auth::check();
 
@@ -195,5 +196,13 @@ class Product extends Model
         }
 
         return false;
+    }
+    public function sizes(): HasMany
+    {
+        return $this->hasMany(ProductSize::class);
+    }
+    public function accessories(): HasMany
+    {
+        return $this->hasMany(ProductAccessories::class);
     }
 }

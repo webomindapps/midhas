@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Blog extends Model
 {
-    public $table="blogs";
+    public $table = "blogs";
     protected $fillable = [
+        'category_id',
         'blog_title',
         'blog_date',
         'blog_description',
@@ -16,8 +17,12 @@ class Blog extends Model
         'status'
     ];
 
-     public function seo(): MorphOne
+    public function seo(): MorphOne
     {
         return $this->morphOne(Seo::class, 'seoable');
+    }
+    public function blogcategory()
+    {
+        return $this->belongsTo(Category::class,'category_id');
     }
 }

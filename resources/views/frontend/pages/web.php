@@ -14,9 +14,6 @@ use App\Http\Controllers\Frontend\CompareController;
 use App\Http\Controllers\Frontend\CustomerController;
 use App\Http\Controllers\Frontend\WishListController;
 use App\Http\Controllers\Frontend\PasswordResetController;
-use App\Http\Controllers\Frontend\QuestionController;
-use App\Http\Controllers\Frontend\TellaFriendController;
-use App\Http\Controllers\NewsletterController;
 
 Route::get('/', [ShopController::class, 'index'])->name('home');
 Route::post('serarch-products', [ShopController::class, 'searchProduct'])->name('search.products');
@@ -31,9 +28,6 @@ Route::get('customer/email-verify', [LoginController::class, 'verify'])->name('c
 Route::post('customer/email-verify', [LoginController::class, 'sendVerifyMail']);
 Route::get('customer/email-verified', [LoginController::class, 'verifyEmail'])->name('customer.email.verified');
 
-Route::get('/blog-view/{id}', [ShopController::class, 'viewblog'])->name('blog.view');
-Route::get('/blog-list/{id}', [ShopController::class, 'bloglist'])->name('blog.list');
-
 //logout
 Route::get('/customer-logout', [LoginController::class, 'logout'])->name('customer.logout');
 
@@ -44,14 +38,11 @@ Route::get('add/cart/{id}', [CartController::class, 'storeQty1']);
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart-update');
 Route::get('cart-item/delete/{id}', [CartController::class, 'destroy'])->name('delete-cart');
 Route::get('/minicart-items', [CartController::class, 'minicartItems'])->name('minicart.items');
+Route::get('book-a-time', [BookTimeController::class, 'index'])->name('book-time');
+Route::post('/update-delivery-locations', [CartController::class, 'deliveryLocation']);
 Route::post('/coupon/apply', [CartController::class, 'applyCoupon'])->name('coupon.apply');
 Route::post('/coupon/remove', [CartController::class, 'removeCoupon']);
 Route::get('/coupon/remove/{id}', [CartController::class, 'removeCoupons'])->name('coupons.remove');
-
-Route::get('book-a-time', [BookTimeController::class, 'index'])->name('book-time');
-Route::post('/update-delivery-locations', [CartController::class, 'deliveryLocation']);
-
-
 //checkout
 Route::group(['prefix' => 'checkout', 'middleware' => ['auth', 'verified']], function () {
     Route::get('/', [CheckoutController::class, 'index'])->name('checkout.index');
@@ -65,13 +56,12 @@ Route::group(['prefix' => 'wishlists'], function () {
     Route::post('add', [WishListController::class, 'store']);
     Route::get('/{id}/delete', [WishListController::class, 'destroy'])->name('wishlist.destroy');
 });
+
 Route::group(['prefix' => 'compares'], function () {
     Route::get('/', [CompareController::class, 'index'])->name('compare.index');
     Route::post('add', [CompareController::class, 'store']);
     Route::get('/{id}/delete', [CompareController::class, 'destroy'])->name('compare.destroy');
 });
-
-
 //my_profiles
 Route::group(['prefix' => 'my-profiles'], function () {
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
@@ -90,15 +80,6 @@ Route::group(['prefix' => 'my-profiles'], function () {
     Route::get('/address-book/delete/{id}', [CustomerController::class, 'deleteaddress'])->name('customer.delete.address');
 });
 
-Route::group(['prefix' => 'newsletters'], function () {
-    Route::get('/store', [NewsletterController::class, 'store'])->name('newsletter.store');
-});
-Route::group(['prefix' => 'Questions'], function () {
-    Route::post('/store', [QuestionController::class, 'store'])->name('questions.store');
-});
-Route::group(['prefix' => 'Tellafriend'], function () {
-    Route::post('/store', [TellaFriendController::class, 'store'])->name('tellafriend.store');
-});
 //pages
 Route::get('page/{page}', [ShopController::class, 'pageDetails'])->name('page.view');
 

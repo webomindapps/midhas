@@ -53,6 +53,7 @@ class BlogController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
+            'category_id'=>'required',
             'blog_title'       => 'required|string|max:255',
             'blog_date'        => 'required|date',
             'blog_description' => 'required|string',
@@ -101,6 +102,7 @@ class BlogController extends Controller
         $blog = $this->blog->findOrFail($id);
 
         $validatedData = $request->validate([
+            'category_id'=>'required',
             'blog_title'       => 'required|string|max:255',
             'blog_date'        => 'required|date',
             'blog_description' => 'required|string',

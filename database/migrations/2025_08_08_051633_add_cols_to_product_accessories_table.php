@@ -4,15 +4,15 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::table('order_addresses', function (Blueprint $table) {
-              $table->unsignedBigInteger('customer_id')->after('order_id');
-        
+        Schema::table('product_accessories', function (Blueprint $table) {
+            $table->unsignedBigInteger('cart_item_id')->nullable()->after('product_id');
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('order_addresses', function (Blueprint $table) {
-            $table->dropColumn('customer_id');
+        Schema::table('product_accessories', function (Blueprint $table) {
+            $table->dropColumn('cart_item_id');
         });
     }
 };

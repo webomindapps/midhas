@@ -68,24 +68,34 @@ const hideMiniCart = () => {
 $(document).on("click", ".addToCart", function () {
     let product_id = $(this).data("id");
     let qty = parseInt($(`#quantity-${product_id}`).val()) || 1;
+    let variant = $(this).data("variant");
+    console.log(variant);
 
     if (qty <= 0) {
         alert("Please enter a valid quantity");
         return;
     }
     console.log("Adding to cart:", product_id, qty);
-    addToCart(product_id, qty);
+    addToCart(product_id, qty, variant);
 });
 
 
-const addToCart = (id, qty) => {
+const addToCart = (id, qty, variant) => {
     let url = window.location.origin + "/add/cart";
+    let accessorySelect = document.getElementById('accessorySelect');
+    let accessoryPrice = 0;
+
     console.log(url);
+    if (accessorySelect && accessorySelect.selectedIndex > 0) {
+        accessoryPrice = parseFloat(accessorySelect.options[accessorySelect.selectedIndex].getAttribute('data-price')) || 0;
+    }
     $.ajax({
         type: "POST",
         url: url,
         data: {
             product_id: id,
+            variant_id: variant,
+            accessory_price: accessoryPrice,
             qty: qty,
             _token: document.querySelector('meta[name="csrf-token"]').content,
         },

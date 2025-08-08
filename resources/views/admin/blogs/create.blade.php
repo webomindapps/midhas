@@ -16,6 +16,8 @@
                     <x-forms.input label="Blog Image" type="file" name="blog_image" id="blog_image" :required="false"
                         size="col-lg-6 mt-4 mb-4" :value="old('blog_image')" :multiple="false" class="image-file multiple-images"
                         :image="true" />
+                    <x-forms.select label="Select Category" name="category_id" id="category_id" :required="true"
+                        size="col-lg-4 mt-4" :options="Midhas::getAllCategories()" />
 
                     <x-admin.seo-form />
 
@@ -26,4 +28,5 @@
             </form>
         </div>
     </div>
+    
 </x-page-content>

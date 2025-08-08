@@ -6,10 +6,12 @@ import Variant from "./admin/products/Variant.vue";
 import MultipleItem from "./admin/MultipleItem.vue";
 import Filter from "./admin/Filter.vue";
 import Finance from "./admin/products/Finance.vue";
+import Size from "./admin/products/RelatedSize.vue";
+import Accessories from "./admin/products/Accessories.vue";
 
 const root = defineComponent({});
 
-const multipleApps = ["one", "two", "manuals", "variants", "financing"];
+const multipleApps = ["one", "two", "manuals", "variants", "financing","tv-size","accessories"];
 
 multipleApps.map((item) => {
     let appName = item;
@@ -21,5 +23,7 @@ multipleApps.map((item) => {
     appName.component("image-uploader", ImageUploader);
     appName.component("filter-section", Filter);
     appName.component("finance-section", Finance);
+    appName.component('tv-size', Size);
+    appName.component('accessories',Accessories);
     appName.mount(`#admin-app-${item}`);
 });

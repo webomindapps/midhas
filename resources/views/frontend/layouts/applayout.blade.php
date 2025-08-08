@@ -9,8 +9,10 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/photoswipe@5/dist/photoswipe.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.8.4/swiper-bundle.min.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,9 +21,10 @@
         rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('frontend/css/style.css') }}">
     <link href="{{ asset('frontend/flash.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('frontend/css/magnify.css') }}" rel="stylesheet">
 
     @stack('css')
-    @vite(['resources/js/frontend.js','resources/js/app.js'])
+    @vite(['resources/js/frontend.js', 'resources/js/app.js'])
 
 </head>
 
@@ -41,7 +44,17 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/6.8.4/swiper-bundle.min.js"></script>
     <script src="{{ asset('frontend/flash.min.js') }}"></script>
     <script src="{{ asset('frontend/js/cart.js') }}"></script>
+    <script src="{{ asset('frontend/js/jquery.magnify.js') }}"></script>
+    <script src="{{ asset('frontend/js/jquery.exzoom.js') }}"></script>
+    <script src="https://unpkg.com/imagesloaded@4/imagesloaded.pkgd.min.js"></script>
+    <link href="{{ asset('frontend/css/jquery.exzoom.css') }}" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+    <script src="https://cdn.rawgit.com/igorlino/elevatezoom-plus/1.1.6/src/jquery.ez-plus.js"></script>
+    <script src="https://unpkg.com/photoswipe@5/dist/photoswipe-lightbox.esm.min.js" type="module"></script>
+
+
+    </script>
+
 
     @stack('scripts')
     <script>

@@ -23,6 +23,8 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DeliveryCityController;
 use App\Http\Controllers\Admin\SpecificationController;
 use App\Http\Controllers\Admin\Setting\FilterController;
+use App\Http\Controllers\Frontend\QuestionController;
+use App\Http\Controllers\Frontend\TellaFriendController;
 use App\Http\Controllers\NewsletterController;
 
 Route::get('login', [LoginController::class, 'index']);
@@ -41,6 +43,8 @@ Route::middleware('auth:admin')->group(function () {
         'orders' => OrderController::class,
         'enquiries' => EnquiryController::class,
         'reviews' => ReviewController::class,
+        'askquestions'=>QuestionController::class,
+        'tellafriend'=>TellaFriendController::class,
 
 
     ]);
@@ -85,3 +89,5 @@ Route::middleware('auth:admin')->group(function () {
 });
 Route::post('deleteProductImage', [AjaxController::class, 'deleteImage']);
 Route::get('getSubCategories', [AjaxController::class, 'getSubCategories']);
+Route::get('getProducts', [AjaxController::class, 'getProducts']);
+

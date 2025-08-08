@@ -209,7 +209,7 @@
         <div class="container d-flex text-uppercase fw-bold">
             <div class="col">
                 <a href=""><img src="{{ asset('frontend/images/truck.svg') }}" alt=""
-                        class="img-fluid">Free Delivery on orders over £150</a>
+                        class="img-fluid">Free Delivery on orders over $150.00</a>
             </div>
             <div class="col d-sm-inline-block d-none">
                 <a href=""><img src="{{ asset('frontend/images/star.svg') }}" alt=""

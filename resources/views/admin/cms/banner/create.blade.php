@@ -23,6 +23,8 @@
                         multiple />
 
                     <div class="row mt-2" id="image-preview-container"></div>
+                    <x-forms.select label="Select Catagory" name="category_id" id="category_id" :required="true"
+                        size="col-lg-4 mt-4" :options="Midhas::getAllCategories()" />
 
                 </div>
                 <button type="submit" class="submit-btn submitBtn">Submit</button>
@@ -40,14 +42,14 @@
                     const selectedType = parseInt(type.value);
                     const selectedFiles = event.target.files;
 
-                    container.innerHTML = ''; 
+                    container.innerHTML = '';
                     if (selectedFiles.length > selectedType) {
                         alert(`You can upload a maximum of ${selectedType} image(s) for this banner type.`);
-                        imageInput.value = ''; 
-                        return; 
+                        imageInput.value = '';
+                        return;
                     }
 
-                    
+
                     Array.from(selectedFiles).forEach(file => {
                         const reader = new FileReader();
                         reader.onload = function(e) {
