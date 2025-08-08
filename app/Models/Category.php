@@ -67,4 +67,19 @@ class Category extends Model
     {
         return $this->belongsToMany(Product::class)->where('status', true);
     }
+    public function getSelfAndChildrenId()
+    {
+        $ids = collect([$this->id]);
+
+        $fetchChildren = function ($category) use (&$ids, &$fetchChildren) {
+            foreach ($category->children as $child) {
+                $ids->push($child->id);
+                $fetchChildren($child);
+            }
+        };
+
+        $fetchChildren($this);
+
+        return $ids;
+    }
 }

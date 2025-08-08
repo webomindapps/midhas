@@ -75,9 +75,26 @@ class SideBar extends Component
         [
             'title' => 'Enquiries',
             'icon' => 'fal fa-user-headset',
-            'route' => 'admin.enquiries.index',
-            'isSubMenu' => false,
+            'isSubMenu' => true,
             'name' => 'enquiries',
+             'subMenus' => [
+                [
+                    'title' => 'Enquiry',
+                    'icon' => 'bx bx-chevron-right',
+                    'route' => 'admin.enquiries.index',
+
+                ],
+                [
+                    'title' => 'Ask a Question',
+                    'icon' => 'bx bx-chevron-right',
+                    'route' => 'admin.askquestions.index',
+                ],
+                 [
+                    'title' => 'Tell a Friend',
+                    'icon' => 'bx bx-chevron-right',
+                    'route' => 'admin.tellafriend.index',
+                ],
+            ],
         ],
         [
             'title' => 'Reviews',
@@ -98,6 +115,13 @@ class SideBar extends Component
                     'route' => 'admin.discounts.index',
                 ],
             ]
+        ],
+        [
+            'title' => 'Newsletters',
+            'icon' => 'fas fa-newspaper',
+            'route' => 'admin.newsletters.index',
+            'isSubMenu' => false,
+            'name' => 'newsletters',
         ],
         [
             'title' => 'Settings',
@@ -127,6 +151,11 @@ class SideBar extends Component
                     'title' => 'Banners',
                     'icon' => 'bx bx-chevron-right',
                     'route' => 'admin.cms.banners.index',
+                ],
+                [
+                    'title' => 'Blogs',
+                    'icon' => 'bx bx-chevron-right',
+                    'route' => 'admin.cms.blogs.index',
                 ],
                 [
                     'title' => 'Pages',

@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Product\ProductSpecification;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Specification extends Model
 {
@@ -12,4 +14,9 @@ class Specification extends Model
         'status',
         'is_filtrable',
     ];
+     public function products(): HasMany
+    {
+        return $this->hasMany(ProductSpecification::class);
+    }
+
 }

@@ -241,12 +241,12 @@
                             <tr>
                                 <td>{{ $item->sku }}</td>
                                 <td>{{ $item->name }}</td>
-                                <td>{{ $item->price }}</td>
+                                <td>${{ number_format($item->price, 2) }}</td>
                                 <td>{{ $item->qty }}</td>
-                                <td>{{ $item->sub_total }}</td>
-                                <td>{{ $item->tax_percent }}</td>
-                                <td>{{ $item->tax_amount }}</td>
-                                <td>{{ $item->grand_total }}</td>
+                                <td>${{ number_format($item->sub_total, 2) }}</td>
+                                <td>${{ number_format($item->tax_percent, 2) }}</td>
+                                <td>${{ number_format($item->tax_amount, 2) }}</td>
+                                <td>${{ number_format($item->grand_total, 2) }}</td>
                             </tr>
                         @endforeach
 
@@ -279,17 +279,17 @@
                             <tr class="border-bottom">
                                 <td>Tax 13%</td>
                                 <td>-</td>
-                                <td>${{ $order->tax_total }}</td>
+                                <td>${{ number_format($order->tax_total,2) }}</td>
                             </tr>
                             <tr class="fw-bold pt-2">
                                 <td>Grand Total</td>
                                 <td>-</td>
-                                <td>${{ $order->grand_total }}</td>
+                                <td>${{ number_format($order->grand_total,2) }}</td>
                             </tr>
                             <tr class="fw-bold">
                                 <td>Total Paid</td>
                                 <td>-</td>
-                                <td>${{ $order->grand_total }}</td>
+                                <td>${{ number_format($order->grand_total,2) }}</td>
                             </tr>
                             <tr class="fw-bold">
                                 <td>Total Refunded</td>
@@ -299,7 +299,7 @@
                             <tr class="fw-bold">
                                 <td>Total Due</td>
                                 <td>-</td>
-                                <td>$0</td>
+                                <td>$0.00</td>
                             </tr>
                         </tbody>
                     </table>

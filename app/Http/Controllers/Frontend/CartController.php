@@ -51,6 +51,8 @@ class CartController extends Controller
         try {
             $customer = Auth::user();
             $product_id = $request->product_id;
+            $variant_id = $request->variant_id;
+            $accessory_price = $request->accessory_price;
             $qty = $request->qty;
 
 
@@ -87,7 +89,7 @@ class CartController extends Controller
                     'message' => 'Insufficient stock available.',
                 ], 200);
             }
-            $cart_item = $this->cartItemCreate($cart, $product_id, $qty);
+            $cart_item = $this->cartItemCreate($cart, $product_id, $qty, $variant_id, $accessory_price);
             DB::commit();
 
             $this->calculateTotal($cart->id);
@@ -106,10 +108,17 @@ class CartController extends Controller
         }
     }
 
-    public function cartItemCreate($cart, $product_id, $qty)
+    public function cartItemCreate($cart, $product_id, $qty, $variant_id = null, $accessory_price = null)
     {
         $product = Product::findOrFail($product_id);
-        $price = $product->msrp;
+        $price = $product->currentPrice();
+        if ($variant_id) {
+            $variant = $product->variants()->find($variant_id);
+            if ($variant) {
+                $price = $variant->price;
+            }
+        }
+        $price += floatval($accessory_price);
         $total_amount = $price * $qty;
 
         $cart_item = CartItems::where('product_id', $product_id)
@@ -130,6 +139,7 @@ class CartController extends Controller
         }
 
         if ($cart_item) {
+            $data['variant_id'] = $variant_id;
             $data['quantity'] = $cart_item->quantity + $qty;
             $data['total_amount'] = round($cart_item->total_amount + $total_amount, 2);
 
@@ -141,6 +151,7 @@ class CartController extends Controller
             $cart_item->update($data);
             return $cart_item;
         } else {
+            $data['variant_id'] = $variant_id;
             $data['product_id'] = $product->id;
             $data['sku'] = $product->sku;
             $data['name'] = $product->title;
@@ -188,7 +199,10 @@ class CartController extends Controller
         $cart_item = CartItems::find($item_id);
         $cart = Cart::find($cart_item->cart_id);
         $product = Product::find($cart_item->product_id);
-        $price = $product->msrp;
+        $price = $product->currentPrice();
+        if ($cart_item->variant) {
+            $price = $cart_item->variant?->price;
+        }
         if ($product->total_stock < $qty) {
             return response()->json([
                 'error' => true,
@@ -350,7 +364,6 @@ class CartController extends Controller
                 'name' => $checkIfExist->code
             ]
         ]);
-
     }
 
     public function removeCoupon()
@@ -464,7 +477,7 @@ class CartController extends Controller
                 'message' => $response['message'],
                 'cart' => $customer->cart,
                 'discountType' => $this->checkIfCouponApplied(),
-                'data' => [   
+                'data' => [
                     'name' => $discount->code
                 ]
             ]);

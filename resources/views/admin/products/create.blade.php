@@ -29,15 +29,18 @@
                         size="col-lg-3 mt-4" :value="old('upc_code')" />
 
                     <x-forms.select label="Brand" name="brand_id" id="brand_id" :required="false" size="col-lg-3 mt-4"
-                        :options="Midhas::getBrands()" :value="1" />
+                        :options="Midhas::getBrands()" :value="old('brand_id', 1)" />
+
                     <x-forms.select label="Order Type" name="order_type" id="order_type" :required="true"
-                        size="col-lg-3 mt-4" :options="Midhas::getOrderType()" :value="1" />
+                        size="col-lg-3 mt-4" :options="Midhas::getOrderType()" :value="old('order_type', 1)" />
+
                 </div>
 
                 <x-accordion.group>
                     <x-accordion.item id="category" title="Category">
                         <div class="row">
                             <x-admin.category />
+
                         </div>
                     </x-accordion.item>
                     <x-accordion.item id="pricing" title="Pricing">
@@ -91,6 +94,16 @@
                             <product-variant :types="{{ Midhas::getVariants() }}" />
                         </div>
                     </x-accordion.item>
+                    <x-accordion.item id="tv_sizes" title="Sizes">
+                        <div class="row" id="admin-app-tv-size">
+                            <tv-size :categories="{{ Midhas::getCategories() }}" />
+                        </div>
+                    </x-accordion.item>
+                    <x-accordion.item id="accesories" title="Accessories">
+                        <div class="row" id="admin-app-accessories">
+                            <accessories />
+                        </div>
+                    </x-accordion.item>
 
                     <x-admin.seo-form />
 
@@ -109,15 +122,18 @@
                             <x-tabs.content id="descriptions" is_active="{{ true }}">
                                 <div class="row">
                                     <x-forms.textarea label="Product Details" name="product_details" id="editor-1"
-                                        :required="true" size="col-lg-12" :editor="true" />
+                                        required size="col-lg-12" :editor="true" :value="old('product_details', $product->product_details ?? '')" />
 
                                     <x-forms.textarea label="Product Description" name="product_description"
-                                        id="editor-3" :required="true" size="col-lg-12 mb-2" :editor="true" />
+                                        id="editor-3" required size="col-lg-12 mb-2" :editor="true"
+                                        :value="old('product_description', $product->product_description ?? '')" />
 
-                                    <x-forms.textarea label="Payment & security" name="payment_security"
-                                        id="editor-2" :editor="true" :required="true" size="col-lg-12" />
+                                    <x-forms.textarea label="Payment & Security" name="payment_security"
+                                        id="editor-2" :editor="true"  size="col-lg-12"
+                                        :value="old('payment_security', $product->payment_security ?? '')" />
                                 </div>
                             </x-tabs.content>
+
 
                             <x-tabs.content id="specifications">
                                 <x-admin.product-specification />

@@ -125,7 +125,7 @@ class CategoryController extends Controller
         foreach ($selectedItems as $item) {
             $category = $this->category->find($item);
             if ($type == 1) {
-                $category->deleteMany();
+                $category->delete();
             } else if ($type == 2) {
                 $category->update(['status' => $status]);
             }

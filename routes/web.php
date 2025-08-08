@@ -10,8 +10,13 @@ use App\Http\Controllers\Frontend\OrderController;
 use App\Http\Controllers\Frontend\ReviewController;
 use App\Http\Controllers\Frontend\EnquiryController;
 use App\Http\Controllers\Frontend\CheckoutController;
+use App\Http\Controllers\Frontend\CompareController;
+use App\Http\Controllers\Frontend\CustomerController;
 use App\Http\Controllers\Frontend\WishListController;
 use App\Http\Controllers\Frontend\PasswordResetController;
+use App\Http\Controllers\Frontend\QuestionController;
+use App\Http\Controllers\Frontend\TellaFriendController;
+use App\Http\Controllers\NewsletterController;
 
 Route::get('/', [ShopController::class, 'index'])->name('home');
 Route::post('serarch-products', [ShopController::class, 'searchProduct'])->name('search.products');
@@ -25,6 +30,9 @@ Route::post('/customer-signup', [LoginController::class, 'store']);
 Route::get('customer/email-verify', [LoginController::class, 'verify'])->name('customer.verify');
 Route::post('customer/email-verify', [LoginController::class, 'sendVerifyMail']);
 Route::get('customer/email-verified', [LoginController::class, 'verifyEmail'])->name('customer.email.verified');
+
+Route::get('/blog-view/{id}', [ShopController::class, 'viewblog'])->name('blog.view');
+Route::get('/blog-list/{id}', [ShopController::class, 'bloglist'])->name('blog.list');
 
 //logout
 Route::get('/customer-logout', [LoginController::class, 'logout'])->name('customer.logout');
@@ -57,14 +65,40 @@ Route::group(['prefix' => 'wishlists'], function () {
     Route::post('add', [WishListController::class, 'store']);
     Route::get('/{id}/delete', [WishListController::class, 'destroy'])->name('wishlist.destroy');
 });
+Route::group(['prefix' => 'compares'], function () {
+    Route::get('/', [CompareController::class, 'index'])->name('compare.index');
+    Route::post('add', [CompareController::class, 'store']);
+    Route::get('/{id}/delete', [CompareController::class, 'destroy'])->name('compare.destroy');
+});
+
 
 //my_profiles
 Route::group(['prefix' => 'my-profiles'], function () {
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('order.show');
     Route::post('cart/{product}', [ReviewController::class, 'store'])->name('review.store');
+
+    Route::get('/profile', [CustomerController::class, 'viewprofile'])->name('customer.profile');
+    Route::get('/profile/details', [CustomerController::class, 'details'])->name('customer.details');
+    Route::post('/profile/details', [CustomerController::class, 'storedetails']);
+    Route::get('/change-password', [CustomerController::class, 'forgotpassword'])->name('customer.resetpassword');
+    Route::post('/change-password', [CustomerController::class, 'resetpassword']);
+
+    Route::get('/address-book', [Customercontroller::class, 'addressbook'])->name('customer.address');
+    Route::get('/address-book/edit/{id}', [CustomerController::class, 'editaddress'])->name('customer.edit.address');
+    Route::post('/address-book/edit/{id}', [CustomerController::class, 'updateaddress']);
+    Route::get('/address-book/delete/{id}', [CustomerController::class, 'deleteaddress'])->name('customer.delete.address');
 });
 
+Route::group(['prefix' => 'newsletters'], function () {
+    Route::get('/store', [NewsletterController::class, 'store'])->name('newsletter.store');
+});
+Route::group(['prefix' => 'Questions'], function () {
+    Route::post('/store', [QuestionController::class, 'store'])->name('questions.store');
+});
+Route::group(['prefix' => 'Tellafriend'], function () {
+    Route::post('/store', [TellaFriendController::class, 'store'])->name('tellafriend.store');
+});
 //pages
 Route::get('page/{page}', [ShopController::class, 'pageDetails'])->name('page.view');
 

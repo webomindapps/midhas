@@ -1,14 +1,27 @@
 <x-page-content :title="'#' . $order->id" :isBack="true">
     <x-slot:breadcrumb>
-        <button type="submit" class="submit-btn bg-danger mx-1 mt-0">
-            <i class="fas fa-times me-2"></i>Cancel
-        </button>
-        <button type="submit" class="submit-btn bg-success mx-1 mt-0">
-            <i class="fas fa-file-invoice me-2"></i>Invoice
-        </button>
-        <button type="submit" class="submit-btn bg-warning mx-1 mt-0">
-            <i class="fas fa-shipping-timed me-2"></i>Ship
-        </button>
+        @if ($order->status == 'pending')
+            <form method="POST" onsubmit="return confirm('Are you sure you want to cancel the order?')"
+                action="{{ route('admin.order.cancel', ['order' => $order->id]) }}">
+                @csrf
+                <button class="submit-btn bg-danger mx-1 mt-0">
+                    <i class="fas fa-times me-2"></i>Cancel
+                </button>
+            </form>
+        @endif
+        @if (!$order->invoice)
+            <a href="{{ route('admin.invoice.create', ['order' => $order->id]) }}"
+                class="submit-btn bg-success mx-1 mt-0">
+                <i class="fas fa-file-invoice me-2"></i>Invoice
+            </a>
+        @endif
+
+        @if (!$order->shipment)
+            <a href="{{ route('admin.shipment.create', ['order' => $order->id]) }}"
+                class="submit-btn bg-warning mx-1 mt-0">
+                <i class="fas fa-shipping-timed me-2"></i>Shipment
+            </a>
+        @endif
     </x-slot:breadcrumb>
 
     <div class="col-lg-12">
@@ -35,11 +48,11 @@
                                 data-bs-target="#pills-Shipments" type="button" role="tab"
                                 aria-controls="pills-Shipments" aria-selected="false">Shipments</button>
                         </li>
-                        <li class="nav-item" role="presentation">
+                        {{-- <li class="nav-item" role="presentation">
                             <button class="nav-link" data-page="fds" id="pills-Refunds-tab" data-bs-toggle="pill"
                                 data-bs-target="#pills-Refunds" type="button" role="tab"
                                 aria-controls="pills-Refunds" aria-selected="false">Refunds</button>
-                        </li>
+                        </li> --}}
 
 
 
@@ -47,7 +60,7 @@
 
 
                     <div class="tab-content product-description-tab" id="pills-tabContent">
-                        <div class="tab-pane fade show active" id="pills-Information" role="tabpanel"
+                        {{-- <div class="tab-pane fade show active" id="pills-Information" role="tabpanel"
                             aria-labelledby="pills-Information-tab">
                             <div class="accordion" id="accordionExample">
                                 <div class="accordion-item">
@@ -377,21 +390,70 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="tab-pane fade" id="pills-Invoices" role="tabpanel"
+                        </div> --}}
+                        {{-- <div class="tab-pane fade" id="pills-Invoices" role="tabpanel"
                             aria-labelledby="pills-Invoices-tab">
                             <label for=""> Invoices</label>
 
+                        </div> --}}
+                        <div class="tab-pane fade show active" id="pills-Information" role="tabpanel"
+                            aria-labelledby="pills-Information-tab">
+                            <x-orders.details :order="$order" id="order" />
+                        </div>
+                        <div class="tab-pane fade" id="pills-Invoices" role="tabpanel"
+                            aria-labelledby="pills-Invoices-tab">
+                            @if ($order->invoice)
+                                <x-orders.details :order="$order" id="invoice">
+                                    <x-slot:orderSection>
+                                        <div>
+                                            <label for="">Comments</label>
+                                            <p>{{ ($order->invoice?->comments) }}</p>
+                                        </div>
+                                    </x-slot:orderSection>
+                                </x-orders.details>
+                            @else
+                                <label for=""> No Invoice found</label>
+                            @endif
                         </div>
                         <div class="tab-pane fade" id="pills-Shipments" role="tabpanel"
                             aria-labelledby="pills-Shipments-tab">
-                            <label for="">Shipments</label>
+                            {{-- <label for="">Shipments</label> --}}
+                            @if ($order->shipment)
+                                <x-orders.details :order="$order" id="shipment">
+                                    <x-slot:addressSection>
+                                        @php
+                                            $shipment = $order->shipment;
+                                        @endphp
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <label for="">Shipment Name</label>
+                                                <p>{{ $shipment->shipment_name }}</p>
+                                            </div>
+
+                                            <div class="col-lg-4">
+                                                <label for="">Tracking Id</label>
+                                                <p>{{ $shipment->tracking_id }}</p>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <label for="">Shipment Date</label>
+                                                <p>{{ $shipment->shipment_date }}</p>
+                                            </div>
+                                            <div class="col-lg-12">
+                                                <label for="">comments</label>
+                                                <p>{{ $shipment->comments }}</p>
+                                            </div>
+                                        </div>
+                                    </x-slot:addressSection>
+                                </x-orders.details>
+                            @else
+                                <label for=""> No Shipment found</label>
+                            @endif
                         </div>
-                        <div class="tab-pane fade" id="pills-Refunds" role="tabpanel"
+                        {{-- <div class="tab-pane fade" id="pills-Refunds" role="tabpanel"
                             aria-labelledby="pills-Refunds-tab">
                             <label for="">Refunds</label>
 
-                        </div>
+                        </div> --}}
 
                     </div>
 

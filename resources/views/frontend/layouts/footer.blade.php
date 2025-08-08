@@ -56,14 +56,18 @@
                     <div class="col-lg-4 px-lg-0">
                         <div class="row">
                             <h2 class="text-uppercase">NEWSLETTER SIGNUP</h2>
-                            <form class="d-flex" aria-labelledby="form-title">
+                            <form class="d-flex" action="{{ route('newsletter.store') }}" aria-labelledby="form-title">
                                 <!-- Form Title (for accessibility) -->
                                 <h2 id="form-title" class="visually-hidden">Form for Newsletter SignUp</h2>
 
                                 <!-- Input field with aria-label for better accessibility -->
-                                <input type="text" class="form-control text-white bg-transparent border-end-0"
-                                    placeholder="Enter text" id="input-text" aria-label="Text input field"
-                                    aria-required="true" aria-describedby="input-text-description">
+                                <input type="email" name="email"
+                                    class="form-control text-white bg-transparent border-end-0" placeholder="Enter text"
+                                    id="input-text" aria-label="Text input field" aria-required="true"
+                                    aria-describedby="input-text-description">
+                                @error('email')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
 
                                 <!-- Description for input field (for accessibility) -->
                                 <p id="input-text-description" class="visually-hidden">Please enter your email ID</p>

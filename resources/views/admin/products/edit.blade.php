@@ -105,6 +105,18 @@
                                 :existing="{{ $product->variants }}" />
                         </div>
                     </x-accordion.item>
+                    <x-accordion.item id="tv_sizes" title="Sizes">
+                        <div class="row" id="admin-app-tv-size">
+                            <tv-size :categories="{{ Midhas::getCategories() }}"
+                                :existing="{{ $product->sizes }}" />
+                        </div>
+                    </x-accordion.item>
+
+                    <x-accordion.item id="accesories" title="Accessories">
+                        <div class="row" id="admin-app-accessories">
+                            <accessories :existing="{{ $product->accessories }}" />
+                        </div>
+                    </x-accordion.item>
 
                     <x-admin.seo-form :existing="$product->seo" />
 

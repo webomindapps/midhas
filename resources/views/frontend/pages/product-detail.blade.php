@@ -1,13 +1,17 @@
 <x-frontend.page>
-
-
-
     @push('scripts')
         <script>
             $(document).ready(function() {
                 $('.color_selector .product_variant').on('click', function() {
                     var variantId = $(this).data('variant-id');
+                    var price = $(this).data('variant-price');
+
                     $('.addToCart').data('variant', variantId);
+
+                    let formattedPrice = '$' + parseFloat(price).toFixed(2);
+
+                    // ✅ Replace only the price value
+                    $('.prd_price').text(formattedPrice);
                 });
             });
         </script>
@@ -31,28 +35,32 @@
                             <!-- Slider main wrapper -->
                             <div class="swiper-container-wrapper">
                                 <!-- Slider thumbnail container -->
-                                <div class="thumb_with_navs position-relative">
-                                    <div class="swiper-container gallery-thumbs">
-                                        <!-- Additional required wrapper -->
-                                        <div class="swiper-wrapper">
-                                            <!-- Slides -->
-                                            @foreach ($product->images as $image)
-                                                <div class="swiper-slide">
-                                                    <img src="{{ asset($image->url) }}" alt=""
-                                                        class="w-100 img-fluid">
-                                                </div>
-                                            @endforeach
-
-                                        </div>
-                                    </div>
-                                    <!-- Add Arrows -->
-                                    <div class="swiper-Tbutton-next position-absolute text-center bottom-0 w-100"><i
-                                            class="fa-solid fa-chevron-down"></i></div>
-                                    <div class="swiper-Tbutton-prev position-absolute text-center top-0 w-100"><i
-                                            class="fa-solid fa-chevron-up"></i></div>
-                                </div>
                                 <!-- Slider main container -->
-                                <div class="swiper-container gallery-top">
+
+                                <div class="swiper-container gallery-top" id="my-gallery">
+                                    <div class="swiper-wrapper">
+                                        @foreach ($product->images as $index => $image)
+                                            @php
+                                                $imageUrl = asset($image->url);
+                                                $width = 1200;
+                                                $height = 900;
+                                            @endphp
+                                            <div class="swiper-slide">
+                                                <a href="{{ $imageUrl }}" data-pswp-width="{{ $width }}"
+                                                    data-pswp-height="{{ $height }}"
+                                                    data-index="{{ $index }}">
+                                                    <img src="{{ $imageUrl }}" class="img-fluid" />
+                                                </a>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <div class="swiper-button-next"></div>
+                                    <div class="swiper-button-prev"></div>
+                                </div>
+
+                            </div>
+                            <div class="thumb_with_navs position-relative mt-3">
+                                <div class="swiper-container gallery-thumbs">
                                     <!-- Additional required wrapper -->
                                     <div class="swiper-wrapper">
                                         <!-- Slides -->
@@ -64,14 +72,16 @@
                                         @endforeach
 
                                     </div>
-                                    <!-- Add Arrows -->
-                                    <div class="swiper-button-next"></div>
-                                    <div class="swiper-button-prev"></div>
                                 </div>
+                                <!-- Add Arrows -->
+                                <div class="swiper-Tbutton-prev position-absolute start-0 top-50"><i
+                                        class="fa-solid fa-chevron-left"></i></div>
+                                <div class="swiper-Tbutton-next position-absolute end-0 top-50"><i
+                                        class="fa-solid fa-chevron-right"></i></div>
                             </div>
 
                             <div class="share_icons text_inter">
-                                <p>Code: COFOR cortz coffee Table</p>
+
                                 <div class="share_on d-flex align-items-center text-uppercase fw-bold">
                                     <h3 class="mb-0">Share</h3>
                                     <ul class="d-flex list_styled">
@@ -87,10 +97,30 @@
                     <div class="col-md-5">
                         <div class="product_info text_inter">
                             <h2 class="prod_title fw-bold text_hind">{{ $product->title }}</h2>
-                            <p class="mb-0 prod_price text-uppercase text_inter">From <span>${{ $product->msrp }}</span>
+                            <p class="mb-0 prod_price text-uppercase text_inter">From
+                                <span id="dynamicPriceWrapper">
+                                    @if ($product->currentPrice() == $product->msrp)
+                                        <div class="prd_price fw-bold text_hind mt-4 mb-4">
+                                            <span
+                                                id="displayBasePrice">${{ Midhas::formatPrice($product->currentPrice()) }}</span>
+                                        </div>
+                                    @else
+                                        <div class="prd_price fw-bold text_hind mt-4 mb-4">
+                                            <span class="scratch_price">
+                                                <s>${{ Midhas::formatPrice($product->msrp) }}</s>
+                                            </span>
+                                            <span
+                                                id="displayBasePrice">${{ Midhas::formatPrice($product->currentPrice()) }}</span>
+                                        </div>
+                                    @endif
+                                </span>
                             </p>
-                            <div class="payment d-flex align-items-center"><img src="images/PayPal.webp" alt=""
-                                    class="img-fluid"><strong> SKU:{{ $product->sku }}</strong></div>
+
+                            <!-- Hidden base price for JS -->
+                            <input type="hidden" id="baseProductPrice" value="{{ $product->currentPrice() }}">
+
+                            <div class="payment d-flex align-items-center"><strong> SKU:{{ $product->sku }}</strong>
+                            </div>
                             <div class="stock d-flex align-items-center"><span class="text_orange">
                                     @if ($product->is_outof_stock == 1)
                                         Out Of Stock
@@ -105,13 +135,56 @@
 
 
                                 <div class="color_selector d-flex justify-content-start">
-                                    @foreach ($product->variants as $variant)
-                                        <span class="product_variant" style="--color:{{ $variant->value }};"
-                                            data-variant-id="{{ $variant->id }}">
+                                    @foreach ($product->variants as $index => $variant)
+                                        <span class="product_variant"
+                                            style="--color:{{ $variant->value }}; background-color: {{ $variant->value }};"
+                                            data-variant-id="{{ $variant->id }}"
+                                            data-variant-price="{{ $variant->price }}"
+                                            data-slide-index="{{ $index }}"
+                                            data-images='@json([asset('storage/' . $variant->thumbnail)])'>
                                         </span>
                                     @endforeach
+
                                 </div>
 
+                            </div>
+                            <div class="row mt-4 mb-4">
+                                {{-- Size Dropdown --}}
+                                @if ($sizes && $sizes->count())
+                                    <div class="col-md-6 mb-2">
+                                        <label for="sizeSelect" class="form-label fw-bold">Choose Size</label>
+                                        <select class="form-select w-100" id="sizeSelect"
+                                            onchange="redirectToProduct(this)">
+                                            <option value="">Select Size</option>
+                                            @foreach ($sizes as $size)
+                                                <option value="{{ route('productByCategory', $size->product?->slug) }}"
+                                                    {{ $size->product?->id === $product->id ? 'selected' : '' }}>
+                                                    {{ $size->size }} -
+                                                    ${{ Midhas::formatPrice($size->product?->currentPrice()) }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
+
+                                {{-- Accessory Dropdown --}}
+                                @if ($product->accessories && $product->accessories->count())
+                                    <div class="col-md-6 mb-2">
+                                        <label for="accessorySelect" class="form-label fw-bold">
+                                            Add Extra {{ $product->accessories->first()->name }}
+                                        </label>
+                                        <select class="form-select w-100" id="accessorySelect" name="accessory_id">
+                                            <option value="" data-price="0">Select Accessory</option>
+                                            @foreach ($product->accessories as $accessory)
+                                                <option value="{{ $accessory->id }}"
+                                                    data-price="{{ $accessory->price }}">
+                                                    {{ $accessory->name }} +
+                                                    ${{ Midhas::formatPrice($accessory->price) }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endif
                             </div>
                             @if ($product->isEnquiry())
                                 <div class=" d-block text-center text-uppercase fw-bold">
@@ -142,7 +215,8 @@
                                                             required>
                                                     </div>
                                                     <div class="mb-3">
-                                                        <label for="exampleInputPhone" class="form-label">Phone</label>
+                                                        <label for="exampleInputPhone"
+                                                            class="form-label">Phone</label>
                                                         <input type="text" class="form-control" name="phone"
                                                             id="exampleInputPhone" value="" required>
                                                     </div>
@@ -197,16 +271,128 @@
                                 </span>
                             </a>
                             <div class="d-flex align-items-center other_actions">
-                                <button class="btn text-uppercase">ask a question</button>
-                                <button class="btn text-uppercase">Tell a friend</button>
-                                <button class="btn text-uppercase">add to compare</button>
+                                <button class="btn text-uppercase" data-bs-toggle="modal"
+                                    data-bs-target="#askaquestion">ask a question</button>
+                                <button class="btn text-uppercase"data-bs-toggle="modal"
+                                    data-bs-target="#tellafriend">Tell a friend</button>
+                                <button
+                                    class="btn text-uppercase prdCompares {{ $product->isAddedToCompare() ? 'active' : '' }}"
+                                    data-product-id="{{ $product->id }}">
+                                    <i class="{{ $product->isAddedToCompare() ? 'fas fa-check' : '' }} me-2 compare-icon"
+                                        style="color: {{ $product->isAddedToCompare() ? 'green' : '#000' }};"></i>
+                                    <span class="compare-text">
+                                        {{ $product->isAddedToCompare() ? 'Remove from Compare' : 'Add to Compare' }}
+                                    </span>
+                                </button>
                             </div>
                             <div class="d-block w-100 more_actions">
-                                <button class="btn d-block w-100 text-uppercase">View all cortez</button>
-                                <button class="btn d-block w-100 text-uppercase">View all living room</button>
-                                <button class="btn d-block w-100 text-uppercase">View all coffee tables</button>
+                                {{-- Brand --}}
+                                <a href="{{ route('productByCategory', ['any' => $product->categories->first()->slug]) }}?brand={{ $product->brand->id }}"
+                                    class="btn d-block w-100 text-uppercase">
+                                    View all {{ $product->brand->name }}
+                                </a>
+
+                                {{-- Main Category --}}
+                                <a href="{{ route('productByCategory', ['any' => $product->categories->first()->slug]) }}"
+                                    class="btn d-block w-100 text-uppercase">
+                                    View all {{ $product->categories->first()->name }}
+                                </a>
+
+                                {{-- Subcategory --}}
+                                @php
+                                    $subCategory = $product->categories->first()->children->first();
+                                @endphp
+
+                                @if ($subCategory)
+                                    <a href="{{ route('productByCategory', ['any' => $subCategory->slug]) }}"
+                                        class="btn d-block w-100 text-uppercase">
+                                        View all {{ $subCategory->name }}
+                                    </a>
+                                @endif
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="askaquestion" tabindex="-1" aria-labelledby="sendEnquiryLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Ask a Question</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ route('questions.store') }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="exampleInputName" class="form-label">Name</label>
+                                <input type="text" class="form-control" name="name" id="exampleInputName"
+                                    value="{{ auth()->user()?->name }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="exampleInputName" class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" id="exampleInputName"
+                                    value="{{ auth()->user()?->email }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="exampleInputPhone" class="form-label">Tele Phone</label>
+                                <input type="text" class="form-control" name="phone" id="exampleInputPhone"
+                                    value="" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="exampleInputMessage" class="form-label">Question</label>
+                                <textarea name="question" class="form-control" id="exampleInputMessage" cols="30" rows="5" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="tellafriend" tabindex="-1" aria-labelledby="sendEnquiryLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Tell a Friend</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{{ route('tellafriend.store') }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="exampleInputName" class="form-label">Name</label>
+                                <input type="text" class="form-control" name="name" id="exampleInputName"
+                                    value="{{ auth()->user()?->name }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="exampleInputName" class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" id="exampleInputName"
+                                    value="{{ auth()->user()?->email }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="exampleInputName" class="form-label"> Friend's Name</label>
+                                <input type="text" class="form-control" name="friends_name" id="exampleInputName"
+                                    required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="exampleInputName" class="form-label">Friend's Email</label>
+                                <input type="email" class="form-control" name="friends_email"
+                                    id="exampleInputName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="exampleInputMessage" class="form-label">Message</label>
+                                <textarea name="message" class="form-control" id="exampleInputMessage" cols="30" rows="3" required>
+                                Check out this product: {{ url()->current() }}
+                                </textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -261,7 +447,7 @@
 
                 </div>
                 <div class="tab-pane fade" id="pills-specs" role="tabpanel" aria-labelledby="pills-specs-tab">
-                    <div class="site-title text-center text-uppercase">Shoe Cabinet</div>
+                    {{-- <div class="site-title text-center text-uppercase">Shoe Cabinet</div> --}}
                     <table class="vertical-table">
                         <tbody>
                             @foreach ($product->specifications as $specs)
@@ -270,13 +456,19 @@
                                     <td data-th="assembly">{{ $specs->value }}</td>
                                 </tr>
                             @endforeach
-
                         </tbody>
                     </table>
                 </div>
                 <div class="tab-pane fade" id="pills-despcription" role="tabpanel"
                     aria-labelledby="pills-despcription-tab">
-                    <p>{{ $product->product_description }}</p>
+                    <ul>
+                        @foreach (explode("\n", $product->product_description) as $description)
+                            @if (trim($description) != '')
+                                <li>{{ $description }}</li>
+                            @endif
+                        @endforeach
+                    </ul>
+                    {{-- <p>{{ $product->product_description }}</p> --}}
                 </div>
                 <div class="tab-pane fade" id="pills-instructions" role="tabpanel"
                     aria-labelledby="pills-instructions-tab">
@@ -392,113 +584,90 @@
             </div>
         </div>
     </section>
+    <style>
+        .pswp__button--fullscreen-button {
+            color: white;
+            font-size: 20px;
+        }
+    </style>
     <x-slot:scripts>
         <script>
+            function redirectToProduct(select) {
+                const url = select.value;
+                if (url) {
+                    window.location.href = url;
+                }
+            }
+        </script>
+        <script>
+            let galleryTop, galleryThumbs;
+
             $(function() {
+                initGallerySwiper();
+
                 $('.color_selector').each(function(index, element) {
                     $(element).find('span').click(function() {
                         $(element).find('span').removeClass('active');
                         $(this).addClass('active');
+
+                        const images = $(this).data('images');
+                        if (images && Array.isArray(images)) {
+                            updateVariantGallery(images);
+                        }
                     });
                 });
+            });
 
-                function checkDesktop() {
-                    return window.innerWidth < 990;
-                }
-                if (checkDesktop()) {
-                    $('#search_collapse').removeClass('show');
-                }
+            function updateVariantGallery(images) {
+                if (galleryTop) galleryTop.destroy(true, true);
+                if (galleryThumbs) galleryThumbs.destroy(true, true);
 
-                //        --------------------------------------------------------------
-                // Initialize Swiper
-                const swiper = new Swiper('.M_products', {
-                    loop: false, // Enable loop
-                    slidesPerView: 1, // Default slides per view
-                    spaceBetween: 10, // Space between slides
+                const galleryTopWrapper = $('.gallery-top .swiper-wrapper');
+                const galleryThumbsWrapper = $('.gallery-thumbs .swiper-wrapper');
 
-                    // Breakpoints configuration
-                    breakpoints: {
-                        // When window width is >= 640px
-                        360: {
-                            slidesPerView: 2,
-                            spaceBetween: 0
-                        },
-                        // When window width is >= 768px
-                        768: {
-                            slidesPerView: 3,
-                            spaceBetween: 5
-                        },
-                        // When window width is >= 1024px
-                        1200: {
-                            slidesPerView: 4,
-                            spaceBetween: 5
-                        },
-                        // When window width is >= 1024px
-                        1440: {
-                            slidesPerView: 5,
-                            spaceBetween: 0
-                        }
-                    },
+                galleryTopWrapper.html('');
+                galleryThumbsWrapper.html('');
 
-                    // Custom navigation
-                    navigation: {
-                        nextEl: '.product-swiper-button-next', // Custom next button class
-                        prevEl: '.product-swiper-button-prev' // Custom previous button class
-                    }
+                images.forEach((url) => {
+                    galleryTopWrapper.append(`
+                <div class="swiper-slide">
+                    <div class="swiper-zoom-container">
+                        <img src="${url}" class="w-100 img-fluid" />
+                    </div>
+                </div>
+            `);
+                    galleryThumbsWrapper.append(`
+                <div class="swiper-slide">
+                    <img src="${url}" class="w-100 img-fluid" />
+                </div>
+            `);
                 });
 
+                initGallerySwiper();
+            }
 
-                // Disable navigation arrows when at the beginning or end
-                swiper.on('slideChange', function() {
-                    const prevButton = document.querySelector('.product-swiper-button-prev');
-                    const nextButton = document.querySelector('.product-swiper-button-next');
-
-                    // Disable "Previous" button if at the beginning
-                    if (swiper.isBeginning) {
-                        prevButton.classList.add('swiper-button-disabled');
-                    } else {
-                        prevButton.classList.remove('swiper-button-disabled');
-                    }
-
-                    // Disable "Next" button if at the end
-                    if (swiper.isEnd) {
-                        nextButton.classList.add('swiper-button-disabled');
-                    } else {
-                        nextButton.classList.remove('swiper-button-disabled');
-                    }
-                });
-
-                // Initialize the arrow states when the page loads
-                if (swiper.isBeginning) {
-                    document.querySelector('.product-swiper-button-prev').classList.add('swiper-button-disabled');
-                }
-
-                if (swiper.isEnd) {
-                    document.querySelector('.product-swiper-button-next').classList.add('swiper-button-disabled');
-                }
-                //        --------------------------------------------------------------
+            function initGallerySwiper() {
 
                 var galleryThumbs = new Swiper(".gallery-thumbs", {
-                    centeredSlides: true,
-                    centeredSlidesBounds: true,
-                    direction: "horizontal",
-                    spaceBetween: 15,
-                    slidesPerView: 3,
+                    direction: "horizontal", // Force horizontal thumbs
+                    spaceBetween: 10,
+                    slidesPerView: 4,
+                    watchSlidesVisibility: true,
+                    watchSlidesProgress: true,
                     navigation: {
                         nextEl: ".swiper-Tbutton-next",
                         prevEl: ".swiper-Tbutton-prev"
                     },
-                    freeMode: false,
-                    watchSlidesVisibility: true,
-                    watchSlidesProgress: true,
-                    watchOverflow: true,
                     breakpoints: {
+                        // Optional: vertically on small screens
                         680: {
-                            direction: "vertical",
-                            slidesPerView: 3
+                            direction: "horizontal",
+                            slidesPerView: 3,
                         }
                     }
                 });
+
+                // Initialize galleryTop and connect thumbs
                 var galleryTop = new Swiper(".gallery-top", {
                     direction: "horizontal",
                     spaceBetween: 10,
@@ -518,16 +687,72 @@
                     }
                 });
 
+                // Sync thumbs
                 galleryTop.on("slideChangeTransitionStart", function() {
                     galleryThumbs.slideTo(galleryTop.activeIndex);
                 });
+
                 galleryThumbs.on("transitionStart", function() {
                     galleryTop.slideTo(galleryThumbs.activeIndex);
                 });
+            }
+        </script>
 
-                //        --------------------------------------------------------------
+        <script type="module">
+            import PhotoSwipeLightbox from 'https://unpkg.com/photoswipe@5/dist/photoswipe-lightbox.esm.min.js';
+            import PhotoSwipe from 'https://unpkg.com/photoswipe@5/dist/photoswipe.esm.min.js';
 
+            const lightbox = new PhotoSwipeLightbox({
+                gallery: '#my-gallery',
+                children: 'a',
+                pswpModule: () => import('https://unpkg.com/photoswipe@5/dist/photoswipe.esm.min.js'),
+            });
 
+            lightbox.on('uiRegister', function() {
+                lightbox.pswp.ui.registerElement({
+                    name: 'fullscreen-button',
+                    order: 9,
+                    isButton: true,
+                    tagName: 'button',
+                    html: '⛶',
+                    className: 'pswp__button--fullscreen-button',
+                    onClick: (event, el, pswp) => {
+                        if (!document.fullscreenElement) {
+                            pswp.element.requestFullscreen();
+                        } else {
+                            document.exitFullscreen();
+                        }
+                    }
+                });
+            });
+
+            lightbox.init();
+
+            // new Swiper('.swiper-container', {
+            //     navigation: {
+            //         nextEl: '.swiper-button-next',
+            //         prevEl: '.swiper-button-prev',
+            //     },
+            //     zoom: {
+            //         maxRatio: 5,
+            //     },
+            // });
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const accessorySelect = document.getElementById('accessorySelect');
+                const displayBasePrice = document.getElementById('displayBasePrice');
+                const basePrice = parseFloat(document.getElementById('baseProductPrice').value);
+
+                accessorySelect.addEventListener('change', function() {
+                    const selectedOption = this.options[this.selectedIndex];
+                    const accessoryPrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+
+                    const totalPrice = basePrice + accessoryPrice;
+
+                    // Update only the visible price span
+                    displayBasePrice.textContent = '$' + totalPrice.toFixed(2);
+                });
             });
         </script>
     </x-slot:scripts>

@@ -9,6 +9,7 @@ use App\Models\Sliders;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Blog;
 use App\Models\Filter;
 use App\Models\FilterItem;
 use App\Models\Product\Product;
@@ -45,8 +46,9 @@ class ShopController extends Controller
                     ->where('end_date', '>=', $now);
             })
             ->get();
+        $blogs = Blog::where('status', 1)->get();
 
-        return view('frontend.pages.index', compact('categories', 'brands', 'banners', 'sliders', 'bestsellers', 'isnew', 'specialoffers'));
+        return view('frontend.pages.index', compact('categories', 'brands', 'banners', 'sliders', 'bestsellers', 'isnew', 'specialoffers', 'blogs'));
     }
     public function pageDetails($page)
     {
@@ -155,7 +157,8 @@ class ShopController extends Controller
                 array_push($recentIds, $product->id);
                 Session::put('recents', $recentIds);
                 $recentViewed = Product::whereIn('id', $recentIds)->where('id', '<>', $product->id)->get();
-                return view('frontend.pages.product-detail', compact('product', 'relatedProducts', 'recentViewed'));
+                $sizes = $product->sizes; 
+                return view('frontend.pages.product-detail', compact('product', 'relatedProducts', 'recentViewed','sizes'));
             } else {
                 abort(404, 'Page not found');
             }
@@ -257,5 +260,26 @@ class ShopController extends Controller
     {
         $brand_ids = $products->pluck('brand_id')->toArray();
         return Brand::whereIn('id', $brand_ids)->get();
+    }
+
+    public function viewblog($id)
+    {
+        $blogs = Blog::with('blogcategory')->findOrFail($id);
+
+        $recentPosts = Blog::latest()->where('id', '!=', $id)->take(5)->get();
+
+        $allCategories = Category::all();
+
+        return view('frontend.pages.blog-view', compact('blogs', 'recentPosts', 'allCategories'));
+    }
+    public function bloglist($categoryId)
+    {
+        $blogs = Blog::with('blogcategory')->where('category_id', $categoryId)->latest()->get();
+        $category = Category::findOrFail($categoryId);
+        $allCategories = Category::all();
+        $recentPosts = Blog::latest()->where('id', '!=', $categoryId)->take(5)->get();
+
+
+        return view('frontend.pages.blog-list', compact('blogs', 'category', 'allCategories', 'recentPosts'));
     }
 }

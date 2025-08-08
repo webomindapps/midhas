@@ -1,4 +1,4 @@
-const apiUrl = "https://www.furniturestore.to/staging/public";
+const apiUrl = window.location.origin;
 export const product_id = document.getElementById('product_id')?.value;
 
 //wishlists
@@ -55,3 +55,76 @@ document.querySelectorAll('.addToWishList').forEach(btn => {
 });
 
 
+export const addProductToCompare = (id, el) => {
+    const url = apiUrl + '/compares/add';
+
+    axios.post(url, { product_id: id }).then((res) => {
+        const isCompared = res.data?.compared;
+
+        // Show message
+        window.FlashMessage?.info?.(res.data?.message, {
+            timeout: 2000,
+            progress: true
+        });
+
+        // Animate button
+        el.classList.toggle('active', isCompared);
+        el.classList.add('animate');
+
+        // Icon
+        const icon = el.querySelector('.compare-icon');
+        if (icon) {
+            icon.className = isCompared
+                ? 'fas fa-check me-2 compare-icon'
+                : 'fas fa-balance-scale me-2 compare-icon';
+            icon.style.color = isCompared ? 'green' : '#000';
+        }
+
+        // Text
+        const text = el.querySelector('.compare-text');
+        if (text) {
+            text.textContent = isCompared ? 'Remove from compare' : 'Add to compare';
+        }
+
+        // Clear animation class
+        setTimeout(() => {
+            el.classList.remove('animate');
+        }, 500);
+
+    }).catch(() => {
+        window.FlashMessage?.error?.('Item not added to compare', {
+            timeout: 2000,
+            progress: true
+        });
+    });
+};
+
+// Attach click listeners
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.prdCompares').forEach((btn) => {
+        btn.addEventListener('click', function () {
+            const productId = this.dataset.productId;
+            addProductToCompare(productId, this);
+        });
+    });
+});
+
+//compare functionality
+const prdRemoveCompareBtn = document.querySelectorAll('.removeFromCompare');
+prdRemoveCompareBtn && prdRemoveCompareBtn.forEach((event) => {
+    event.addEventListener('click', function () {
+        if (confirm('Are you sure you want to remove this product from compare?')) {
+            var id = this.getAttribute('data-id');
+            const url = apiUrl + '/compares/' + id + '/delete';
+            axios.get(url).then((res) => {
+                window.FlashMessage?.info?.(res.data?.message, {
+                    timeout: 2000,
+                    progress: true
+                });
+                window.location.reload();
+            }).catch((e) => {
+                showFlashMessages('alert-danger', e)
+            });
+        }
+    })
+})

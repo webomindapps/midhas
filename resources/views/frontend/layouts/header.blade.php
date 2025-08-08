@@ -73,7 +73,7 @@
                                     @else
                                         <ul class="no-bullet account__ul">
                                             <li class="account__ul--li">
-                                                <a href="#" class="">
+                                                <a href="{{route('customer.profile')}}" class="">
                                                     <i class='bx bxs-user'></i>
                                                     <span class="dropdown__text"> Profile </span>
                                                 </a>
@@ -209,7 +209,7 @@
         <div class="container d-flex text-uppercase fw-bold">
             <div class="col">
                 <a href=""><img src="{{ asset('frontend/images/truck.svg') }}" alt=""
-                        class="img-fluid">Free Delivery on orders over £150</a>
+                        class="img-fluid">Free Delivery on orders over $150.00</a>
             </div>
             <div class="col d-sm-inline-block d-none">
                 <a href=""><img src="{{ asset('frontend/images/star.svg') }}" alt=""

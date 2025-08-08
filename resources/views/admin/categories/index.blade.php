@@ -57,7 +57,7 @@
                     ],
                     [
                         'code' => 'delete',
-                        'route' => null,
+                        'route' => route('admin.categories.destroy',$item->id),
                     ],
                     [
                         'code' => 'edit',

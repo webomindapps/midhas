@@ -7,10 +7,12 @@ use App\Models\Seo;
 use App\Models\Brand;
 use App\Models\Review;
 use App\Models\Category;
+use App\Models\Compare;
 use App\Models\Wishlist;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product\ProductEnquiry;
 use App\Models\Product\ProductFinance;
+use App\Models\ProductAccessories;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -180,5 +182,27 @@ class Product extends Model
     public function reviews(): MorphMany
     {
         return $this->morphMany(Review::class, 'reviewable')->where('status', true);
+    }
+    public function isAddedToCompare(): bool
+    {
+        $user = Auth::check();
+
+        if ($user) {
+            return auth()->user()->compares()->where('product_id', $this->id)->exists();
+        }
+
+        if (session()->has('compare_ids')) {
+            return Compare::whereIn('id', session('compare_ids'))->where('product_id', $this->id)->exists();
+        }
+
+        return false;
+    }
+    public function sizes(): HasMany
+    {
+        return $this->hasMany(ProductSize::class);
+    }
+    public function accessories(): HasMany
+    {
+        return $this->hasMany(ProductAccessories::class);
     }
 }

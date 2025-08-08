@@ -13,6 +13,7 @@ class OrderAddress extends Model
     protected $fillable = [
         'cart_id',
         'order_id',
+        'customer_id',
         'address_type',
         'first_name',
         'last_name',
