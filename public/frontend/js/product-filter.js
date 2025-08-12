@@ -5,6 +5,7 @@ var table = {
     price: "",
     sortBy: "",
     sortOrder: "",
+    outofstock: "",
     paginate: null,
     specifications: [],
 };
@@ -20,6 +21,7 @@ $(document).ready(function () {
     let sort = params.get("sort");
     let order = params.get("order");
     let specParam = params.get("specifications");
+    let outofstock = params.get("outofstock");
 
     // Set brand checkboxes
     if (brands) {
@@ -64,8 +66,14 @@ $(document).ready(function () {
     // Sorting
     if (sort && order && sort !== "" && order !== "") {
         $(".sorting").each(function () {
-            if ($(this).data("column") === sort && $(this).data("sort") === order) {
-                $(this).prop("checked", true);
+            if (
+                $(this).data("column") === sort &&
+                $(this).data("sort") === order
+            ) {
+                $(this).css("font-weight", "bold");
+                $("#selected_label").text($(this).text().trim());
+            }else{
+                $(this).css("font-weight", "normal");
             }
         });
         updateSortLabel();
@@ -76,8 +84,10 @@ $(document).ready(function () {
         try {
             let specs = JSON.parse(decodeURIComponent(specParam));
             table.specifications = specs;
-            specs.forEach(spec => {
-                console.log(`Filter ID: ${spec.id}, Values: ${spec.values.join(", ")}`);
+            specs.forEach((spec) => {
+                console.log(
+                    `Filter ID: ${spec.id}, Values: ${spec.values.join(", ")}`
+                );
                 spec.values.forEach(function (val) {
                     $(`.specifications[value="${val}"]`).each(function () {
                         let id = $(this).attr("id");
@@ -172,14 +182,34 @@ function filter(key, value) {
 function applyFilters() {
     let uri = window.location.href;
     let params = new URLSearchParams(window.location.search);
-    if (table.is_best_seller) params.set("is_best_seller", table.is_best_seller);
+    if (table.is_best_seller)
+        params.set("is_best_seller", table.is_best_seller);
     if (table.is_new) params.set("is_new", table.is_new);
     if (table.brand) params.set("brand", table.brand);
     if (table.price) params.set("price", table.price);
     if (table.sortOrder !== "") params.set("order", table.sortOrder);
     if (table.sortBy !== "") params.set("sort", table.sortBy);
     if (table.specifications.length > 0) {
-        params.set("specifications", encodeURIComponent(JSON.stringify(table.specifications)));
+        params.set(
+            "specifications",
+            encodeURIComponent(JSON.stringify(table.specifications))
+        );
     }
     window.location.href = uri.split("?")[0] + "?" + params.toString();
+}
+
+$(document).on("click", ".sorting", function () {
+    var column = $(this).data("column");
+    var sort = $(this).data("sort");
+    table.sortBy = column;
+    table.sortOrder = sort;
+    applyFilters();
+});
+$(document).on("click", "#outofstock", function () {
+    let outofstock = $(this).val();
+    table.outofstock = outofstock;
+    filter("outofstock", outofstock);
+});
+if(outofstock){
+    $('#outofstock').attr('checked',true);
 }

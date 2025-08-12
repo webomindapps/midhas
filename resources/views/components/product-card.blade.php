@@ -1,6 +1,40 @@
 @props(['product'])
 
 <div class="product_box">
+    @if (count($product->variants) > 0 || count($product->sizes) > 0)
+        <div class="variant-hov">
+            @if (count($product->variants) > 0)
+                <div class="product__details__holder__quick-view__group">
+                    <span class="product__details__holder__quick-view__group__subtitle">
+                        Colour
+                    </span>
+                    <ul class="product__details__holder no-bullet">
+                        @foreach ($product->variants as $variant)
+                            <li>
+                                <a href="{{ route('productByCategory', $product->slug) }}"> {{ $variant->value }}</a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            @if (count($product->sizes) > 0)
+                <div class="product__details__holder__quick-view__group">
+                    <span class="product__details__holder__quick-view__group__subtitle">
+                        Size
+                    </span>
+                    <ul class="product__details__holder no-bullet">
+                        @foreach ($product->sizes as $size)
+                            <li>
+                                <a href="{{ route('productByCategory', $size->product?->slug) }}">
+                                    {{ $size->size }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+        </div>
+    @endif
     <a href="{{ route('productByCategory', $product->slug) }}">
         <div class="prd_img">
             <img src="{{ $product->thumbnail }}" alt="{{ $product->title }}" class="w-100 img-fluid"
@@ -57,6 +91,59 @@
     </div>
 
 </div>
+<style>
+    .product_box {
+        position: relative;
+    }
+
+    .variant-hov {
+        text-align: left;
+        position: absolute;
+        z-index: 8;
+        background: rgba(242, 242, 242, 1);
+        top: 0;
+        left: 101%;
+        min-width: 80px;
+        height: auto;
+        padding: 8px 10px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .product_box:hover .variant-hov {
+        opacity: 1;
+    }
+
+    .variant-hov::before {
+        content: '';
+        position: absolute;
+        top: 5px;
+        /* adjust vertically */
+        left: -15px;
+        /* pull it left into the parent */
+        border-width: 8px;
+        border-style: solid;
+        border-color: transparent rgba(242, 242, 242, 1) transparent transparent;
+    }
+
+    .product__details__holder__quick-view__group__subtitle {
+        margin: 0;
+        color: #48555f;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .no-bullet {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .product__details__holder li {
+        font-size: 11px;
+        color: #48555f;
+    }
+</style>
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const colorVariants = document.querySelectorAll('.color_selector span');
