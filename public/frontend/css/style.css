@@ -2878,3 +2878,43 @@ p {
 .dropdown-menu.no-bullet li a {
     width: 100%;
 }
+.custom-select-multibox {
+    position: relative;
+    cursor: pointer;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 4px;
+}
+
+.custom-select-multibox .selected-placeholder {
+    display: block;
+}
+
+.custom-select-multibox .custom-options {
+    display: none;
+    position: absolute;
+    width: 100%;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-top: none;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.custom-select-multibox.open .custom-options {
+    display: block;
+}
+
+.custom-select-multibox .custom-options li {
+    padding: 8px 10px;
+    cursor: pointer;
+}
+
+.custom-select-multibox .custom-options li.selected {
+    background-color: #007bff;
+    color: white;
+}
