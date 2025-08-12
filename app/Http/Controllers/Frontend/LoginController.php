@@ -93,8 +93,16 @@ class LoginController extends Controller
                 //load session cart and add it to customer cart id
                 foreach ($cart->items as $item) {
 
-                    app(CartController::class)->cartItemCreate($customer->cart, $item->product_id, $item->quantity);
-
+                    foreach ($item->addons as $addon) {
+                        app(CartController::class)->cartItemCreate(
+                            $customer->cart,
+                            $item->product_id,
+                            $item->quantity,
+                            $item->variant_id, // pass correct variant ID
+                            $item->addons->pluck('price')->toArray(), // accessory prices
+                            $item->addons->pluck('id')->toArray(),    // accessory IDs
+                        );
+                    }
                     app(CartController::class)->destroy($item->id);
 
                     //update cart total 

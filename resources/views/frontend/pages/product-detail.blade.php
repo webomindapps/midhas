@@ -173,17 +173,30 @@
                                         <label for="accessorySelect" class="form-label fw-bold">
                                             Add Extra {{ $product->accessories->first()->name }}
                                         </label>
-                                        <select class="form-select w-100" id="accessorySelect" name="accessory_id">
-                                            <option value="" data-price="0">Select Accessory</option>
+
+                                        <div class="custom-select-multibox form-select w-100" id="accessorySelect"
+                                            tabindex="0">
+                                            <span class="selected-placeholder">Select Accessory</span>
+                                            <ul class="custom-options">
+                                                @foreach ($product->accessories as $accessory)
+                                                    <li class="accessory-option" data-id="{{ $accessory->id }}"
+                                                        data-price="{{ $accessory->price }}">
+                                                        {{ $accessory->name }} +
+                                                        ${{ Midhas::formatPrice($accessory->price) }}
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+
+                                        <!-- Hidden actual select for form submission -->
+                                        <select name="accessory_ids[]" multiple style="display: none;">
                                             @foreach ($product->accessories as $accessory)
-                                                <option value="{{ $accessory->id }}"
-                                                    data-price="{{ $accessory->price }}">
-                                                    {{ $accessory->name }} +
-                                                    ${{ Midhas::formatPrice($accessory->price) }}
-                                                </option>
+                                                <option value="{{ $accessory->id }}"></option>
                                             @endforeach
                                         </select>
                                     </div>
+
+
                                 @endif
                             </div>
                             @if ($product->isEnquiry())
@@ -739,19 +752,58 @@
             // });
         </script>
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const accessorySelect = document.getElementById('accessorySelect');
-                const displayBasePrice = document.getElementById('displayBasePrice');
-                const basePrice = parseFloat(document.getElementById('baseProductPrice').value);
+            $(document).ready(function() {
+                const box = $('#accessorySelect');
+                const hiddenSelect = $('select[name="accessory_ids[]"]');
+                const placeholder = box.find('.selected-placeholder');
+                const basePrice = parseFloat($('#baseProductPrice').val()) || 0;
+                const priceDisplay = $('#displayBasePrice');
 
-                accessorySelect.addEventListener('change', function() {
-                    const selectedOption = this.options[this.selectedIndex];
-                    const accessoryPrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+                // Function to update total price and placeholder
+                function updateSelections() {
+                    const selectedItems = box.find('li.selected');
+                    const selectedIds = [];
+                    const selectedNames = [];
+                    let totalAccessoryPrice = 0;
 
-                    const totalPrice = basePrice + accessoryPrice;
+                    selectedItems.each(function() {
+                        const price = parseFloat($(this).data('price')) || 0;
+                        totalAccessoryPrice += price;
+                        selectedIds.push($(this).data('id'));
+                        selectedNames.push($(this).text().trim());
+                    });
 
-                    // Update only the visible price span
-                    displayBasePrice.textContent = '$' + totalPrice.toFixed(2);
+                    // Update hidden select values
+                    hiddenSelect.find('option').prop('selected', false); // Reset all
+                    selectedIds.forEach(id => {
+                        hiddenSelect.find(`option[value="${id}"]`).prop('selected', true);
+                    });
+
+                    // Update placeholder text
+                    placeholder.text(selectedNames.length ? selectedNames.join(', ') : 'Select Accessory');
+
+                    // Update displayed total price
+                    const totalPrice = basePrice + totalAccessoryPrice;
+                    priceDisplay.text('$' + totalPrice.toFixed(2));
+                }
+
+                // Toggle dropdown open/close
+                box.on('click', function(e) {
+                    $(this).toggleClass('open');
+                });
+
+                // Handle selection toggle
+                box.find('li').on('click', function(e) {
+                    e.stopPropagation();
+                    $(this).toggleClass('selected');
+                    updateSelections();
+                });
+
+                // Close dropdown when clicking outside
+                $(document).on('click', function(e) {
+                    if (!$(e.target).closest('.custom-select-multibox').length) {
+                        box.removeClass('open');
+                    }
                 });
             });
         </script>

@@ -37,7 +37,15 @@
                                                 <img src="{{ asset($item->product->thumbnail) }}"
                                                     alt="{{ $item->name }}">
                                                 <div class="prd_name">
-                                                    <h3 class="mt-0 fw-bold">{{ $item->name }}</h3>
+                                                    <h3 class="mt-0 fw-bold">
+                                                        {{ $item->name }}
+                                                        @if ($item->addons && $item->addons->count())
+                                                            <small class="text-muted">(Addons:
+                                                                {{ $item->addons->pluck('name')->implode(', ') }}
+                                                                )</small>
+                                                        @endif
+                                                    </h3>
+
                                                     <span><b>SKU:</b> #{{ $item->sku }}</span>
                                                 </div>
                                             </li>
@@ -150,7 +158,7 @@
                                 </div>
                                 <h3 class="text_inter">Order Summary</h3>
                                 <div class="order-summary mt-4">
-                                    
+
                                     <div class="d-flex pt-0 justify-content-between">
                                         <div class="col-text-start">Order sub-total</div>
                                         <div class="col-text-end" id="total_amount">

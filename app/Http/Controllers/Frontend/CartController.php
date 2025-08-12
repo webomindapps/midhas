@@ -12,6 +12,7 @@ use App\Models\Product\Product;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Product\ProductStock;
+use App\Models\ProductAccessories;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use PhpParser\Node\Stmt\Return_;
@@ -52,6 +53,7 @@ class CartController extends Controller
             $customer = Auth::user();
             $product_id = $request->product_id;
             $variant_id = $request->variant_id;
+            $accessoryIds = $request->accessory_ids;
             $accessory_price = $request->accessory_price;
             $qty = $request->qty;
 
@@ -89,7 +91,8 @@ class CartController extends Controller
                     'message' => 'Insufficient stock available.',
                 ], 200);
             }
-            $cart_item = $this->cartItemCreate($cart, $product_id, $qty, $variant_id, $accessory_price);
+            $cart_item = $this->cartItemCreate($cart, $product_id, $qty, $variant_id, $accessory_price, $accessoryIds);
+            // dd($cart_item);
             DB::commit();
 
             $this->calculateTotal($cart->id);
@@ -108,7 +111,7 @@ class CartController extends Controller
         }
     }
 
-    public function cartItemCreate($cart, $product_id, $qty, $variant_id = null, $accessory_price = null)
+    public function cartItemCreate($cart, $product_id, $qty, $variant_id = null, $accessory_prices = [], $accessoryIds = [])
     {
         $product = Product::findOrFail($product_id);
         $price = $product->currentPrice();
@@ -118,7 +121,12 @@ class CartController extends Controller
                 $price = $variant->price;
             }
         }
-        $price += floatval($accessory_price);
+        if (is_array($accessory_prices)) {
+            $price += array_sum(array_map('floatval', $accessory_prices));
+        } elseif (!empty($accessory_prices)) {
+
+            $price += floatval($accessory_prices);
+        }
         $total_amount = $price * $qty;
 
         $cart_item = CartItems::where('product_id', $product_id)
@@ -149,17 +157,34 @@ class CartController extends Controller
             }
 
             $cart_item->update($data);
+            if (!empty($accessoryIds)) {
+                foreach ($accessoryIds as $accessoryId) {
+                    ProductAccessories::where('id', $accessoryId)
+                        ->update(['cart_item_id' => $cart_item->id]);
+                }
+            }
             return $cart_item;
         } else {
             $data['variant_id'] = $variant_id;
             $data['product_id'] = $product->id;
+            $data['price'] = $price;
             $data['sku'] = $product->sku;
             $data['name'] = $product->title;
             $data['quantity'] = $qty;
             $data['total_amount'] = round($total_amount, 2);
 
             $cart->increment('items_count');
-            return $cart->items()->create($data);
+            $cart_item = $cart->items()->create($data);
+
+
+            if (!empty($accessoryIds)) {
+                foreach ($accessoryIds as $accessoryId) {
+                    ProductAccessories::where('id', $accessoryId)
+                        ->update(['cart_item_id' => $cart_item->id]);
+                }
+            }
+
+            return $cart_item;
         }
     }
 
@@ -199,7 +224,9 @@ class CartController extends Controller
         $cart_item = CartItems::find($item_id);
         $cart = Cart::find($cart_item->cart_id);
         $product = Product::find($cart_item->product_id);
-        $price = $product->currentPrice();
+        $price = $cart_item->price;
+
+
         if ($cart_item->variant) {
             $price = $cart_item->variant?->price;
         }

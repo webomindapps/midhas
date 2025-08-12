@@ -81,21 +81,32 @@ $(document).on("click", ".addToCart", function () {
 
 
 const addToCart = (id, qty, variant) => {
-    let url = window.location.origin + "/add/cart";
-    let accessorySelect = document.getElementById('accessorySelect');
-    let accessoryPrice = 0;
+    const url = window.location.origin + "/add/cart";
 
-    console.log(url);
-    if (accessorySelect && accessorySelect.selectedIndex > 0) {
-        accessoryPrice = parseFloat(accessorySelect.options[accessorySelect.selectedIndex].getAttribute('data-price')) || 0;
-    }
+    let accessoryIds = [];
+    let accessoryPrices = [];
+
+    document.querySelectorAll('.accessory-option.selected').forEach(option => {
+        let accId = option.getAttribute('data-id');
+        let accPrice = option.getAttribute('data-price');
+
+        if (accId && accPrice) {
+            accessoryIds.push(parseInt(accId));
+            accessoryPrices.push(parseFloat(accPrice));
+        }
+    });
+
+    console.log("Accessory IDs:", accessoryIds);
+    console.log("Accessory Prices:", accessoryPrices);
+
     $.ajax({
         type: "POST",
         url: url,
         data: {
             product_id: id,
             variant_id: variant,
-            accessory_price: accessoryPrice,
+            accessory_ids: accessoryIds,
+            accessory_price: accessoryPrices,
             qty: qty,
             _token: document.querySelector('meta[name="csrf-token"]').content,
         },
