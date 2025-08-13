@@ -17,7 +17,7 @@
                      </div>
                      <div class="bag_prd_info text-start">
                          <div class="bag_prd_info_title">
-                             <a href="" class="d-inline-block pb-1">
+                             <a href="{{route('productByCategory',$item->product->slug)}}" class="d-inline-block pb-1">
                                  {{ $item->name }}
                              </a>
                              <p class="bag_prd_info_price mb-1">

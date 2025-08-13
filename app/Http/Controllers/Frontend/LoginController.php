@@ -88,25 +88,24 @@ class LoginController extends Controller
         if (!is_null($cart_id)) {
 
             $cart = Cart::find($cart_id);
-            //check if customer has already cart
             if ($customer->cart) {
-                //load session cart and add it to customer cart id
                 foreach ($cart->items as $item) {
 
-                    foreach ($item->addons as $addon) {
-                        app(CartController::class)->cartItemCreate(
-                            $customer->cart,
-                            $item->product_id,
-                            $item->quantity,
-                            $item->variant_id, // pass correct variant ID
-                            $item->addons->pluck('price')->toArray(), // accessory prices
-                            $item->addons->pluck('id')->toArray(),    // accessory IDs
-                        );
-                    }
-                    app(CartController::class)->destroy($item->id);
+                    $accessoryIds = $item->addons->pluck('accessory_id')->toArray();
+                    $accessoryPrices = $item->addons->pluck('accessory_price')->toArray();
 
-                    //update cart total 
+                    app(CartController::class)->cartItemCreate(
+                        $customer->cart,
+                        $item->product_id,
+                        $item->quantity,
+                        $item->variant_id,
+                        $accessoryPrices,
+                        $accessoryIds
+                    );
+
+                    app(CartController::class)->destroy($item->id);
                 }
+
                 $customer->cart()->update([
                     'items_qty' => $customer->cart->items_qty + $cart->items_qty,
                     'total_amount' => $customer->cart->total_amount + $cart->total_amount,
