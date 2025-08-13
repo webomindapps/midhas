@@ -32,7 +32,5 @@ class ProductAccessories extends Model
         return $this->belongsTo(Product::class, 'size_product_id');
     }
 
-    public function cartitems(){
-        return $this->belongsTo(CartItems::class, 'cart_item_id');
-    }
+   
 }

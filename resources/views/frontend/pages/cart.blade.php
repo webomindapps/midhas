@@ -41,7 +41,7 @@
                                                         {{ $item->name }}
                                                         @if ($item->addons && $item->addons->count())
                                                             <small class="text-muted">(Addons:
-                                                                {{ $item->addons->pluck('name')->implode(', ') }}
+                                                                {{ $item->addons->pluck('accessory_name')->implode(', ') }}
                                                                 )</small>
                                                         @endif
                                                     </h3>

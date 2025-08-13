@@ -248,8 +248,30 @@
                                 <div class="d-flex align-items-center detail-addtocart mb-4">
                                     <div class="number d-flex align-items-center ">
                                         <p class="d-inline mb-0 me-2 fw-bold">Qty</p>
+                                        @php
+                                            $qtyInCart = 1;
 
-                                        <x-qty-input :id="$product->id" />
+                                            if (auth()->check() && auth()->user()->cart) {
+                                                $cartId = auth()->user()->cart->id;
+                                            } elseif (session()->has('cart_id')) {
+                                                $cartId = session('cart_id');
+                                            } else {
+                                                $cartId = null;
+                                            }
+
+                                            if ($cartId) {
+                                                $cartItem = \App\Models\CartItems::where('cart_id', $cartId)
+                                                    ->where('product_id', $product->id)
+                                                    ->first();
+
+                                                if ($cartItem) {
+                                                    $qtyInCart = $cartItem->quantity;
+                                                }
+                                            }
+                                        @endphp
+
+                                        <x-qty-input :id="$product->id" :value="$qtyInCart" />
+
                                     </div>
                                     <div class="add-cart d-block text-center text-uppercase fw-bold">
 

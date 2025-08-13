@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Product\ProductStock;
 use App\Models\ProductAccessories;
+use App\Models\ProductAccessoryCart;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use PhpParser\Node\Stmt\Return_;
@@ -115,20 +116,25 @@ class CartController extends Controller
     {
         $product = Product::findOrFail($product_id);
         $price = $product->currentPrice();
+
+        // Variant price handling
         if ($variant_id) {
             $variant = $product->variants()->find($variant_id);
             if ($variant) {
                 $price = $variant->price;
             }
         }
+
+        // Add accessory prices
         if (is_array($accessory_prices)) {
             $price += array_sum(array_map('floatval', $accessory_prices));
         } elseif (!empty($accessory_prices)) {
-
             $price += floatval($accessory_prices);
         }
+
         $total_amount = $price * $qty;
 
+        // Check if the product already exists in cart
         $cart_item = CartItems::where('product_id', $product_id)
             ->where('cart_id', $cart->id)
             ->first();
@@ -137,6 +143,7 @@ class CartController extends Controller
             'price' => $price,
         ];
 
+        // Tax calculation
         if ($product->is_taxable == 1) {
             $tax_percent = $product->tax?->percent ?? 13;
             $data['tax_percent'] = $tax_percent;
@@ -147,6 +154,7 @@ class CartController extends Controller
         }
 
         if ($cart_item) {
+            // Update existing cart item
             $data['variant_id'] = $variant_id;
             $data['quantity'] = $cart_item->quantity + $qty;
             $data['total_amount'] = round($cart_item->total_amount + $total_amount, 2);
@@ -157,14 +165,9 @@ class CartController extends Controller
             }
 
             $cart_item->update($data);
-            if (!empty($accessoryIds)) {
-                foreach ($accessoryIds as $accessoryId) {
-                    ProductAccessories::where('id', $accessoryId)
-                        ->update(['cart_item_id' => $cart_item->id]);
-                }
-            }
-            return $cart_item;
+            $cartItemId = $cart_item->id;
         } else {
+            // Create new cart item
             $data['variant_id'] = $variant_id;
             $data['product_id'] = $product->id;
             $data['price'] = $price;
@@ -175,18 +178,28 @@ class CartController extends Controller
 
             $cart->increment('items_count');
             $cart_item = $cart->items()->create($data);
+            $cartItemId = $cart_item->id;
+        }
 
-
-            if (!empty($accessoryIds)) {
-                foreach ($accessoryIds as $accessoryId) {
-                    ProductAccessories::where('id', $accessoryId)
-                        ->update(['cart_item_id' => $cart_item->id]);
+        // Store accessories in product_accessory_cart
+        if (!empty($accessoryIds)) {
+            foreach ($accessoryIds as $accessoryId) {
+                $accessory = ProductAccessories::find($accessoryId);
+                if ($accessory) {
+                    ProductAccessoryCart::create([
+                        'product_id'      => $product->id,
+                        'cart_item_id'    => $cartItemId,
+                        'accessory_id'    => $accessory->id,
+                        'accessory_name'  => $accessory->name ?? null,
+                        'accessory_price' => $accessory->price ?? 0,
+                    ]);
                 }
             }
-
-            return $cart_item;
         }
+
+        return $cart_item;
     }
+
 
     public function calculateTotal($cart_id)
     {
@@ -272,6 +285,7 @@ class CartController extends Controller
     {
         $cart_item = CartItems::findOrFail($item_id);
         $cart_item->delete();
+        $cart_item->addons()->delete();
 
         $cart = Cart::find($cart_item->cart_id);
         $this->calculateTotal($cart->id);

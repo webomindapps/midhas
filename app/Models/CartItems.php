@@ -51,6 +51,6 @@ class CartItems extends Model
     // In CartItem.php
     public function addons()
     {
-        return $this->hasMany(ProductAccessories::class, 'cart_item_id', 'id');
+        return $this->hasMany(ProductAccessoryCart::class, 'cart_item_id', 'id');
     }
 }
