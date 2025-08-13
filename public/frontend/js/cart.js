@@ -113,7 +113,7 @@ const addToCart = (id, qty, variant) => {
         success: function (response) {
             if (response.success) {
                 hoverCartItems();
-                $(`#quantity-${id}`).val(1);
+                $(`#quantity-${id}`);
                 window.FlashMessage?.info?.('Item was successfully added to the cart', {
                     timeout: 2000,
                     progress: true

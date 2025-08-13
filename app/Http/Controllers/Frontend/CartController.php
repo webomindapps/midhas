@@ -116,16 +116,13 @@ class CartController extends Controller
     {
         $product = Product::findOrFail($product_id);
         $price = $product->currentPrice();
-
-        // Variant price handling
+        $variant = $product->variants()->find($variant_id);
+        $variant_name = $variant?->value;
         if ($variant_id) {
-            $variant = $product->variants()->find($variant_id);
             if ($variant) {
                 $price = $variant->price;
             }
         }
-
-        // Add accessory prices
         if (is_array($accessory_prices)) {
             $price += array_sum(array_map('floatval', $accessory_prices));
         } elseif (!empty($accessory_prices)) {
@@ -134,17 +131,17 @@ class CartController extends Controller
 
         $total_amount = $price * $qty;
 
-        // Check if the product already exists in cart
-        $cart_item = CartItems::where('product_id', $product_id)
-            ->where('cart_id', $cart->id)
+        $cart_item = CartItems::where('cart_id', $cart->id)
+            ->where('product_id', $product->id)
+            ->where('variant_id', $variant_id)
+            ->where('variant_name', $variant_name) 
             ->first();
 
         $data = [
             'price' => $price,
         ];
 
-        // Tax calculation
-        if ($product->is_taxable == 1) {
+        if ($product->tax_id) {
             $tax_percent = $product->tax?->percent ?? 13;
             $data['tax_percent'] = $tax_percent;
             $data['tax_amount'] = round($total_amount * ($tax_percent / 100), 2);
@@ -154,21 +151,47 @@ class CartController extends Controller
         }
 
         if ($cart_item) {
-            // Update existing cart item
+
             $data['variant_id'] = $variant_id;
             $data['quantity'] = $cart_item->quantity + $qty;
-            $data['total_amount'] = round($cart_item->total_amount + $total_amount, 2);
+            if (!empty($accessoryIds)) {
+                $data['price'] = $cart_item->price + $price;
+            } else {
+                $data['price'] = $price;
+            }
 
-            if ($product->is_taxable == 1) {
+            $data['total_amount'] = round($data['quantity'] * $price, 2);
+
+            if ($product->tax_id) {
                 $new_tax = $price * $qty * ($data['tax_percent'] / 100);
                 $data['tax_amount'] = round($cart_item->tax_amount + $new_tax, 2);
             }
 
             $cart_item->update($data);
-            $cartItemId = $cart_item->id;
+
+
+            $cart->total_amount = $cart->items->sum('total_amount');
+            $cart->save();
+
+            if (!empty($accessoryIds)) {
+                foreach ($accessoryIds as $accessoryId) {
+                    $accessory = ProductAccessories::find($accessoryId);
+                    if ($accessory) {
+                        ProductAccessoryCart::create([
+                            'product_id'      => $product->id,
+                            'cart_item_id'    => $cart_item->id,
+                            'accessory_id'    => $accessory->id,
+                            'accessory_name'  => $accessory->name ?? null,
+                            'accessory_price' => $accessory->price ?? 0,
+                        ]);
+                    }
+                }
+            }
+
+            return $cart_item;
         } else {
-            // Create new cart item
             $data['variant_id'] = $variant_id;
+            $data['variant_name'] = $variant_name;
             $data['product_id'] = $product->id;
             $data['price'] = $price;
             $data['sku'] = $product->sku;
@@ -178,17 +201,15 @@ class CartController extends Controller
 
             $cart->increment('items_count');
             $cart_item = $cart->items()->create($data);
-            $cartItemId = $cart_item->id;
         }
 
-        // Store accessories in product_accessory_cart
         if (!empty($accessoryIds)) {
             foreach ($accessoryIds as $accessoryId) {
                 $accessory = ProductAccessories::find($accessoryId);
                 if ($accessory) {
                     ProductAccessoryCart::create([
                         'product_id'      => $product->id,
-                        'cart_item_id'    => $cartItemId,
+                        'cart_item_id'    => $cart_item->id,
                         'accessory_id'    => $accessory->id,
                         'accessory_name'  => $accessory->name ?? null,
                         'accessory_price' => $accessory->price ?? 0,
@@ -196,6 +217,15 @@ class CartController extends Controller
                 }
             }
         }
+
+        $cart_total = $cart->items()->sum('total_amount');
+        $cart_tax   = $cart->items()->sum('tax_amount');
+
+        $cart->update([
+            'total_amount' => $cart_total,
+            'tax_amount'   => $cart_tax,
+            'grand_total'  => $cart_total + $cart_tax
+        ]);
 
         return $cart_item;
     }

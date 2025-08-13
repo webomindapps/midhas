@@ -41,9 +41,10 @@
                                                         {{ $item->name }}
                                                         @if ($item->addons && $item->addons->count())
                                                             <small class="text-muted">(Addons:
-                                                                {{ $item->addons->pluck('accessory_name')->implode(', ') }}
+                                                                {{ $item->addons->pluck('accessory_name')->unique()->implode(', ') }}
                                                                 )</small>
                                                         @endif
+
                                                     </h3>
 
                                                     <span><b>SKU:</b> #{{ $item->sku }}</span>
@@ -75,7 +76,7 @@
                                             <li class="text-md-center text-start total">
                                                 <span class="d-md-none d-inline-block fw-bold">Total:</span>
                                                 <span class="fw-bold d-md-block d-inline-block px-1 item-total">
-                                                    ${{ number_format($item->price * $item->quantity, 2) }}
+                                                    ${{ number_format($item->total_amount, 2) }}
                                                 </span>
                                             </li>
                                             <li class="text-md-center text-start total">
