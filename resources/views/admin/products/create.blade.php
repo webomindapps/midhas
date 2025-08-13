@@ -115,7 +115,7 @@
                                 <x-tabs.item id="descriptions" title="Overview" is_active="{{ true }}" />
                                 <x-tabs.item id="specifications" title="Specifications" />
                                 <x-tabs.item id="manuals" title="Assembly Manuals" />
-                                <x-tabs.item id="manuals" title="Financing" />
+                                <x-tabs.item id="finance" title="Financing" />
 
                             </x-slot>
 
@@ -144,9 +144,11 @@
                                     <multiple-item />
                                 </div>
                             </x-tabs.content>
-                            <x-tabs.content id="financing">
-                                <div class="row" id="admin-app-finance">
-                                    <multiple-item />
+                            <x-tabs.content id="finance">
+                                <div class="row">
+                                    <div class="row" id="admin-app-financing">
+                                        <finance-section />
+                                    </div>
                                 </div>
                             </x-tabs.content>
                         </x-tabs.section>

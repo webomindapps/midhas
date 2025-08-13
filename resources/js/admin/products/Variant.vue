@@ -130,7 +130,7 @@ const addRow = () => {
 const deleteRow = (index) => {
     if (confirm("Are you sure you want to delete this?")) {
         if (variantItems[index].id) {
-            deletedVariants.push(stockItems[index].id);
+            deletedVariants.push(variantItems[index].id);
         }
         variantItems.splice(index, 1);
     }
