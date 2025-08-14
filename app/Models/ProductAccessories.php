@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ProductAccessories extends Model
 {
-    
+
 
     protected $fillable = [
         'name',
@@ -32,5 +32,8 @@ class ProductAccessories extends Model
         return $this->belongsTo(Product::class, 'size_product_id');
     }
 
-   
+    public function accessory()
+    {
+        return $this->hasMany(ProductAccessoryCart::class, 'accessory_id');
+    }
 }

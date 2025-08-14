@@ -570,4 +570,44 @@ class CartController extends Controller
             'success' => true,
         ], 200);
     }
+    public function deleteaddons($id)
+    {
+        $addons = ProductAccessoryCart::findOrFail($id);
+
+        $cartId = $addons->cartitems->cart_id ?? null;
+
+        $addons->delete();
+
+        if ($cartId) {
+            $this->calculateTotal($cartId);
+        }
+
+        return redirect()->back()->with('message', 'Addons deleted Successfully');
+    }
+    public function updateAddonQuantity(Request $request)
+    {
+        $request->validate([
+            'addon_id' => 'required|integer',
+            'quantity' => 'required|integer|min:1'
+        ]);
+
+        $addon = ProductAccessoryCart::findOrFail($request->addon_id);
+
+        // Always use the accessory's base price (unit price)
+        $unitPrice = $addon->accessory->price;
+
+        // Update in DB
+        $addon->accesory_qty = $request->quantity;
+        $addon->accessory_price = $unitPrice * $request->quantity;
+        $addon->save();
+        $cartTotal = 0;
+        // Recalculate cart total
+        $cartTotal = $this->calculateTotal($addon->cartitems->cart_id);
+
+        return response()->json([
+            'success'      => true,
+            'addon_total'  => number_format($addon->accessory_price, 2),
+            'cart_total'   => $addon->cartitems->cart,
+        ]);
+    }
 }

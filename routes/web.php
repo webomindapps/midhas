@@ -47,6 +47,9 @@ Route::get('/minicart-items', [CartController::class, 'minicartItems'])->name('m
 Route::post('/coupon/apply', [CartController::class, 'applyCoupon'])->name('coupon.apply');
 Route::post('/coupon/remove', [CartController::class, 'removeCoupon']);
 Route::get('/coupon/remove/{id}', [CartController::class, 'removeCoupons'])->name('coupons.remove');
+Route::get('/addons-delete/{id}',[CartController::class,'deleteaddons'])->name('addons.delete');
+Route::post('/update-addon-quantity', [CartController::class, 'updateAddonQuantity'])->name('cart.updateAddonQuantity');
+
 
 Route::get('book-a-time', [BookTimeController::class, 'index'])->name('book-time');
 Route::post('/update-delivery-locations', [CartController::class, 'deliveryLocation']);
