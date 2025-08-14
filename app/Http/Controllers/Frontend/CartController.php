@@ -134,7 +134,7 @@ class CartController extends Controller
         $cart_item = CartItems::where('cart_id', $cart->id)
             ->where('product_id', $product->id)
             ->where('variant_id', $variant_id)
-            ->where('variant_name', $variant_name) 
+            ->where('variant_name', $variant_name)
             ->first();
 
         $data = [
@@ -155,12 +155,12 @@ class CartController extends Controller
             $data['variant_id'] = $variant_id;
             $data['quantity'] = $cart_item->quantity + $qty;
             if (!empty($accessoryIds)) {
-                $data['price'] = $cart_item->price + $price;
+                $data['price'] = $price;
             } else {
                 $data['price'] = $price;
             }
 
-            $data['total_amount'] = round($data['quantity'] * $price, 2);
+            $data['total_amount'] = round($data['quantity'] *  $data['price'], 2);
 
             if ($product->tax_id) {
                 $new_tax = $price * $qty * ($data['tax_percent'] / 100);
@@ -174,6 +174,7 @@ class CartController extends Controller
             $cart->save();
 
             if (!empty($accessoryIds)) {
+                ProductAccessoryCart::where('cart_item_id', $cart_item->id)->delete();
                 foreach ($accessoryIds as $accessoryId) {
                     $accessory = ProductAccessories::find($accessoryId);
                     if ($accessory) {

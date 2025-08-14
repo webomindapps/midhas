@@ -38,14 +38,18 @@
                                                     alt="{{ $item->name }}">
                                                 <div class="prd_name">
                                                     <h3 class="mt-0 fw-bold">
-                                                        {{ $item->name }}
-                                                        @if ($item->addons && $item->addons->count())
-                                                            <small class="text-muted">(Addons:
-                                                                {{ $item->addons->pluck('accessory_name')->unique()->implode(', ') }}
-                                                                )</small>
-                                                        @endif
-
+                                                        <a href="{{ route('productByCategory', $item->product->slug) }}"
+                                                            class="text-decoration-none text-dark">
+                                                            {{ $item->name }}
+                                                            @if ($item->addons && $item->addons->count())
+                                                                <small class="text-muted">
+                                                                    (Addons:
+                                                                    {{ $item->addons->pluck('accessory_name')->unique()->implode(', ') }})
+                                                                </small>
+                                                            @endif
+                                                        </a>
                                                     </h3>
+
 
                                                     <span><b>SKU:</b> #{{ $item->sku }}</span>
                                                 </div>
