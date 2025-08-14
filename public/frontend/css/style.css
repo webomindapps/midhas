@@ -2863,6 +2863,7 @@ p {
     font-size: 11px;
     color: #48555f;
 }
+
 .dropdown-menu.no-bullet {
     border-radius: 0;
     color: #48555f;
@@ -2878,6 +2879,7 @@ p {
 .dropdown-menu.no-bullet li a {
     width: 100%;
 }
+
 .custom-select-multibox {
     position: relative;
     cursor: pointer;
@@ -2917,4 +2919,39 @@ p {
 .custom-select-multibox .custom-options li.selected {
     background-color: #007bff;
     color: white;
+}
+
+/* 2 accessories per row */
+.accessory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 8px;
+}
+
+/* Accessory item styling */
+.accessory-item {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    /* name | qty | price | delete */
+    align-items: center;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    gap: 6px;
+    /* tight spacing */
+}
+
+/* Quantity box matches main cart */
+.accessory-item .number .input-group {
+    display: inline-flex;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    overflow: hidden;
+    width: fit-content;
+    flex-wrap: nowrap;
+}
+
+
+/* Keep delete icon small */
+.accessory-item .delete {
+    text-align: right;
 }
