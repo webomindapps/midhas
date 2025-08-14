@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\Orders;
+use App\Exports\OrderExport;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Http\Controllers\Controller;
 
 class OrderController extends Controller
 {
@@ -67,5 +69,17 @@ class OrderController extends Controller
         ]);
 
         return to_route('admin.orders.index')->with('success', 'Order updated successfully');
+    }
+
+    public function export(Request $request)
+    {
+        $from_date = $request->from_date;
+        $to_date = $request->to_date;
+        $query = Orders::query();
+        if ($from_date && $to_date) {
+            $query->whereBetween('modify_date', [$from_date, $to_date]);
+        }
+        $orders = $query->get();
+        return Excel::download(new OrderExport($orders), 'Orders.xlsx');
     }
 }

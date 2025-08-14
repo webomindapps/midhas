@@ -1,5 +1,6 @@
 <x-page-content title="Orders">
-   
+
+
     @php
 
         $columns = [
@@ -37,6 +38,30 @@
     @endphp
 
     <x-table :columns="$columns" :data="$orders" checkAll="{{ true }}" :bulk="route('admin.orders.destroy', ['order' => 'bulk'])" :route="route('admin.orders.index')">
+        <x-slot:filters>
+            <form action="{{ route('admin.orders.exports') }}" method="POST">
+                @csrf
+                <div class="row px-2">
+                    <div class="col-lg-3">
+                        <div class="cdate">
+                            <input type="date" class="form-control" name="from_date" id="from_date">
+                        </div>
+                    </div>
+                    <div class="col-lg-1 text-center my-auto">
+                        <span class="fw-semibold fs-6">To</span>
+                    </div>
+                    <div class="col-lg-3">
+                        <div class="cdate">
+                            <input type="date" class="form-control" name="to_date" id="to_date">
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <button type="submit" class="add-btn bg-success text-white">Export</button>
+                    </div>
+                </div>
+            </form>
+        </x-slot:filters>
+
         @foreach ($orders as $key => $item)
             @php
 
@@ -49,7 +74,8 @@
             @endphp
             <tr>
                 <td>
-                    <input type="checkbox" name="selected_items[]" class="single-item-check" value="{{ $item->id }}">
+                    <input type="checkbox" name="selected_items[]" class="single-item-check"
+                        value="{{ $item->id }}">
                 </td>
                 <td>{{ $key + 1 }}</td>
                 <td>{{ $item->name }}</td>

@@ -48,6 +48,7 @@ Route::middleware('auth:admin')->group(function () {
 
 
     ]);
+    Route::post('orders/exports', [OrderController::class, 'export'])->name('orders.exports');
     Route::post('order/{order}/cancel', CancelController::class)->name('order.cancel');
 
     Route::get('invoice/{order}/create', [InvoiceController::class, 'create'])->name('invoice.create');
