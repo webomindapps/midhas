@@ -101,7 +101,7 @@
                     </x-accordion.item>
                     <x-accordion.item id="accesories" title="Accessories">
                         <div class="row" id="admin-app-accessories">
-                            <accessories />
+                            <accessories :categories="{{ Midhas::getCategories() }}" />
                         </div>
                     </x-accordion.item>
 

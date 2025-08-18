@@ -14,6 +14,10 @@ class ProductAccessories extends Model
         'name',
         'product_id',
         'cart_item_id',
+        'accessory_name',
+        'accessory_category_id',
+        'accesory_product_id',
+        'sku',
         'price',
     ];
 
@@ -27,13 +31,13 @@ class ProductAccessories extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function product(): BelongsTo
+     public function product()
     {
-        return $this->belongsTo(Product::class, 'size_product_id');
+        return $this->belongsTo(Product::class, 'product_id');
     }
 
-    public function accessory()
+    public function accessoryproduct()
     {
-        return $this->hasMany(ProductAccessoryCart::class, 'accessory_id');
+        return $this->belongsTo(Product::class, 'accesory_product_id');
     }
 }

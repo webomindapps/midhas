@@ -171,7 +171,7 @@
                                 @if ($product->accessories && $product->accessories->count())
                                     <div class="col-md-6 mb-2">
                                         <label for="accessorySelect" class="form-label fw-bold">
-                                            Add Extra {{ $product->accessories->first()->name }}
+                                            Add Extra {{ $product->accessories->first()->accessory_name }}
                                         </label>
 
                                         <div class="custom-select-multibox form-select w-100" id="accessorySelect"
@@ -180,9 +180,9 @@
                                             <ul class="custom-options">
                                                 @foreach ($product->accessories as $accessory)
                                                     <li class="accessory-option" data-id="{{ $accessory->id }}"
-                                                        data-price="{{ $accessory->price }}">
-                                                        {{ $accessory->name }} +
-                                                        ${{ Midhas::formatPrice($accessory->price) }}
+                                                        data-price="{{ $accessory->accessoryproduct->currentPrice() }}">
+                                                        {{ $accessory->accessory_name }} +
+                                                        ${{ Midhas::formatPrice($accessory->accessoryproduct->currentPrice()) }}
                                                     </li>
                                                 @endforeach
                                             </ul>
@@ -195,8 +195,6 @@
                                             @endforeach
                                         </select>
                                     </div>
-
-
                                 @endif
                             </div>
                             @if ($product->isEnquiry())

@@ -120,6 +120,7 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request, string $id)
     {
+        // dd($request->all());
         DB::beginTransaction();
 
         try {
@@ -129,6 +130,7 @@ class ProductController extends Controller
             $data = $request->all();
 
             $data['slug'] = Str::slug($data['title'], '-');
+            $data['sku']=$request->sku;
 
             if ($request->hasFile('thumbnail')) {
                 $data['thumbnail'] =  Midhas::upload($request->thumbnail, $this->folder . '/thumbnails/');
@@ -522,16 +524,18 @@ class ProductController extends Controller
     }
     public function addAccessories($product, Request $request)
     {
-        $names = $request->accessories_name;
-        $prices = $request->accessories_price;
-        $ids = $request->accessories_ids;
+        $names       = $request->input('accessory_name');
+        $categoryIds = $request->input('accessory_category_id');
+        $productIds  = $request->input('accessory_product_id');
+        $ids         = $request->input('accessory_ids');
+        $skus        = $request->input('accessory_sku');
 
-        // Delete accessories
-        $deleted_ids = json_decode($request->deleted_product_accessories);
+        // Handle deleted accessories
+        $deleted_ids = json_decode($request->deleted_product_accessory_id, true);
         if (is_array($deleted_ids) && count($deleted_ids) > 0) {
-            foreach ($deleted_ids as $id) {
-                ProductAccessories::where('id', $id)->where('product_id', $product->id)->delete();
-            }
+            ProductAccessories::whereIn('id', $deleted_ids)
+                ->where('product_id', $product->id)
+                ->delete();
         }
 
         // Add or update accessories
@@ -539,14 +543,15 @@ class ProductController extends Controller
             foreach ($names as $key => $name) {
                 if (!empty($name)) {
                     $data = [
-                        'name' => $name,
-                        'price' => $prices[$key] ?? 0,
+                        'accessory_name'        => $name,
+                        'accessory_category_id' => $categoryIds[$key] ?? null,
+                        'accesory_product_id'  => $productIds[$key] ?? null, // ✅ fixed typo
+                        'sku'                   => $skus[$key] ?? null,
                     ];
 
                     $idExists = $ids && isset($ids[$key]) && !is_null($ids[$key]);
 
                     if ($idExists) {
-                        // Update existing accessory
                         ProductAccessories::where('id', $ids[$key])
                             ->where('product_id', $product->id)
                             ->update($data);

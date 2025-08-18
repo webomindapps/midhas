@@ -85,52 +85,6 @@
                                                 </a>
                                             </li>
                                         </ul>
-                                        @if ($item->addons && $item->addons->count())
-                                            <h6 class="mt-2 mb-2 fw-bold">Accessory</h6>
-                                            <ul class="list_styled ms-4 accessory-grid">
-                                                @foreach ($item->addons as $addon)
-                                                    <li class="accessory-item p-2 mb-2 rounded">
-                                                        <div class="accessory-name fw-semibold">
-                                                            {{ $addon->accessory_name }}
-                                                        </div>
-
-                                                        {{-- Quantity control --}}
-                                                        <div class="number">
-                                                            <div class="input-group">
-                                                                <input type="button" value="-"
-                                                                    data-field="quantity" class="qtybutton-minus"
-                                                                    id="qty-btn-minus" data-id="{{ $addon->id }}">
-                                                                <input type="text" step="1"
-                                                                    value="{{ $addon->accesory_qty ?? 1 }}"
-                                                                    name="quantity" class="quantity-field crtItmQty"
-                                                                    data-id="{{ $addon->id }}"
-                                                                    data-price="{{ $addon->accessory_price }}"readonly>
-                                                                {{-- Always the unit price --}}
-
-                                                                <input type="button" value="+"
-                                                                    data-field="quantity" class="qtybutton-plus"
-                                                                    id="qty-btn-plus" data-id="{{ $addon->id }}">
-                                                            </div>
-                                                        </div>
-
-                                                        {{-- Price --}}
-                                                        <div class="fw-bold price"
-                                                            id="addon-price-{{ $addon->id }}">
-                                                            ${{ number_format($addon->accessory_price, 2) }}
-                                                        </div>
-
-                                                        {{-- Delete --}}
-                                                        <div class="delete">
-                                                            <a href="{{ route('addons.delete', $addon->id) }}"
-                                                                onclick="return confirm('Remove this addon?')">
-                                                                <i class='bx bx-trash'
-                                                                    style="color: red; font-size: 18px; cursor: pointer;"></i>
-                                                            </a>
-                                                        </div>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                        @endif
                                     </div>
                                 @endforeach
                             @empty

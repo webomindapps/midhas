@@ -1,15 +1,15 @@
 <template>
-    <!-- <div class="col-lg-12 mt-2 mb-2" id="form-group-default-size">
-        <label for="product_size">Product Accessories</label>
-    </div> -->
-
+    <div class="col-lg-12 mt-2 mb-2" id="form-group-default-accessories">
+        <label for="accessory_name">Accessories</label>
+    </div>
     <div class="col-lg-12">
-        <h6>Add Accessories</h6>
+        <h6>Accessories</h6>
         <table class="table">
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Price</th>
+                    <th>Category</th>
+                    <th>Products</th>
                     <th>
                         <a class="manual-add" @click="addRow">
                             <i class="fal fa-plus"></i>
@@ -19,50 +19,144 @@
             </thead>
             <tbody>
                 <tr v-for="(pck, index) in packages" :key="index">
+                    <input type="hidden" name="accessory_ids[]" v-model="pck.id" />
+                    <input type="hidden" name="accessory_sku[]" v-model="pck.sku" />
+
                     <td>
-                        <input type="text" class="form-control" v-model="pck.name" @blur="autoFillPrice(index)" required/>
+                        <input type="text" name="accessory_name[]" v-model="pck.accessory_name" required />
+                    </td>
+                    <td class="width-50">
+                        <select @change="handleCategories(index)" name="accessory_category_id[]"
+                            v-model="pck.accessory_category_id">
+                            <option value="">Select</option>
+                            <option v-for="category in props.categories" :key="category.value" :value="category.value">
+                                {{ category.label }}
+                            </option>
+                        </select>
+                    </td>
+                    <td class="width-50">
+                        <select @change="handleSku(index)" name="accesory_product_id[]"
+                            v-model="pck.accesory_product_id" required>
+                            <option value="">Select</option>
+                            <option v-for="product in pck.products" :key="product.value" :value="product.value">
+                                {{ product.name }} ({{ product.label }})
+                            </option>
+                        </select>
                     </td>
                     <td>
-                        <input type="text" class="form-control" v-model="pck.price" required />
-                    </td>
-                    <td>
-                        <a class="manual-add text-danger" @click="deleteRow(index)">
+                        <a class="manual-add" @click="deleteRow(index)">
                             <i class="fal fa-trash"></i>
                         </a>
                     </td>
-
-                   
-                    <input type="hidden" name="accessories_name[]" :value="pck.name" />
-                    <input type="hidden" name="accessories_price[]" :value="pck.price" />
-                    <input type="hidden" name="accessories_ids[]" :value="pck.id ?? ''" />
-
                 </tr>
             </tbody>
+            <input type="hidden" name="deleted_product_accessory_id" v-model="deletedIds" />
         </table>
-
-        <input type="hidden" name="deleted_product_accessories" v-model="deletedIds" />
     </div>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { onMounted, reactive, ref } from "vue";
+import axios from "axios";
 
-const props = defineProps(['existing', 'size'])
+const props = defineProps(["categories", "existing"]);
 
-const packages = ref([])
-const deletedPackages = reactive([])
-const deletedIds = ref('')
-const defaultSize = ref('')
+const packages = ref([]);
+const deletedPackages = reactive([]);
+const deletedIds = ref("");
+let endpoint = window._url;
 
-// Stores known accessories { name, price }
-const knownAccessories = ref([])
-
-// Add row
+// -----------------------------
+// Add new row
+// -----------------------------
 const addRow = () => {
-    packages.value.push({ name: '', price: '' })
-}
+    packages.value.push({
+        id: "",
+        accessory_name: "",
+        accessory_category_id: "",
+        accesory_product_id: "",
+        sku: "",
+        products: [],
+        msrp: 0,
+        selling_price: 0,
+    });
+};
 
+// -----------------------------
+// Load existing accessories
+// -----------------------------
+onMounted(async () => {
+    if (props.existing && props.existing.length > 0) {
+        for (const item of props.existing) {
+            let index = packages.value.push({
+                id: item.id,
+                accessory_name: item.accessory_name,
+                accessory_category_id: item.accessory_category_id,
+                accesory_product_id: item.accesory_product_id,
+                products: [],
+                msrp: 0,
+                selling_price: 0,
+            }) - 1;
+
+            await handleCategories(index, item.accesory_product_id);
+        }
+    }
+});
+
+
+const handleCategories = async (index, selectedProductId = null) => {
+    let item = packages.value[index];
+    let url = endpoint + "/admin/getProducts";
+
+    if (!selectedProductId) {
+        item.accesory_product_id = "";
+        item.sku = "";
+        item.msrp = 0;
+        item.selling_price = 0;
+    }
+
+    try {
+        const res = await axios.get(url, {
+            params: { id: item.accessory_category_id },
+        });
+
+        item.products = res.data;
+
+        if (selectedProductId) {
+            let selectedProduct = item.products.find(
+                (p) => p.value.toString() === selectedProductId.toString()
+            );
+
+            if (selectedProduct) {
+                item.accesory_product_id = selectedProduct.value.toString();
+                item.sku = selectedProduct.sku || "";
+                item.msrp = selectedProduct.price;
+                item.selling_price = selectedProduct.price;
+            }
+        }
+    } catch (e) {
+        console.error("error", e);
+    }
+};
+
+
+const handleSku = (index) => {
+    let item = packages.value[index];
+
+    let product = item.products.find(
+        (p) => p.value.toString() === item.accesory_product_id.toString()
+    );
+
+    if (product) {
+        item.sku = product.sku || "";
+        item.selling_price = product.price;
+        item.msrp = product.price;
+    }
+};
+
+// -----------------------------
 // Delete row
+// -----------------------------
 const deleteRow = (index) => {
     if (confirm("Are you sure you want to delete this?")) {
         if (packages.value[index].id) {
@@ -71,44 +165,11 @@ const deleteRow = (index) => {
         }
         packages.value.splice(index, 1);
     }
-}
-
-// Auto-fill price if accessory name was used before
-const autoFillPrice = (index) => {
-    const name = packages.value[index].name.trim()
-    const match = knownAccessories.value.find(a => a.name === name)
-    if (match) {
-        packages.value[index].price = match.price
-    } else if (packages.value[index].price) {
-        // Save to known list
-        knownAccessories.value.push({
-            name,
-            price: packages.value[index].price
-        })
-    }
-}
-
-// Load existing data (edit mode)
-// Load existing data (edit mode)
-if (props.existing) {
-    defaultSize.value = props.size
-    props.existing.forEach((item) => {
-        packages.value.push({
-            id: item.id, // ✅ retain ID
-            name: item.name,
-            price: item.price
-        })
-        knownAccessories.value.push({
-            name: item.name,
-            price: item.price
-        })
-    })
-}
-
+};
 </script>
 
 <style scoped>
-.manual-add {
-    cursor: pointer;
+.width-50 {
+    width: 33%;
 }
 </style>

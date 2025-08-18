@@ -55,7 +55,6 @@ class CartController extends Controller
             $product_id = $request->product_id;
             $variant_id = $request->variant_id;
             $accessoryIds = $request->accessory_ids;
-            $accessory_price = $request->accessory_price;
             $qty = $request->qty;
 
 
@@ -92,7 +91,7 @@ class CartController extends Controller
                     'message' => 'Insufficient stock available.',
                 ], 200);
             }
-            $cart_item = $this->cartItemCreate($cart, $product_id, $qty, $variant_id, $accessory_price, $accessoryIds);
+            $cart_item = $this->cartItemCreate($cart, $product_id, $qty, $variant_id, $accessoryIds);
             // dd($cart_item);
             DB::commit();
 
@@ -112,7 +111,7 @@ class CartController extends Controller
         }
     }
 
-    public function cartItemCreate($cart, $product_id, $qty, $variant_id = null, $accessory_prices = [], $accessoryIds = [])
+    public function cartItemCreate($cart, $product_id, $qty, $variant_id = null, $accessoryIds = [])
     {
         $product = Product::findOrFail($product_id);
 
@@ -125,13 +124,6 @@ class CartController extends Controller
             $price = $variant->price;
         }
 
-        // Accessory total (for cart total later)
-        $accessory_total = 0;
-        if (is_array($accessory_prices)) {
-            $accessory_total = array_sum(array_map('floatval', $accessory_prices));
-        } elseif (!empty($accessory_prices)) {
-            $accessory_total = floatval($accessory_prices);
-        }
 
         // Item total = only product price × qty
         $item_total_amount = $price * $qty;
@@ -180,38 +172,40 @@ class CartController extends Controller
             $cart_item = $cart->items()->create($data);
         }
 
-        // Save accessories for the item
         if (!empty($accessoryIds)) {
-            ProductAccessoryCart::where('cart_item_id', $cart_item->id)->delete();
             foreach ($accessoryIds as $accessoryId) {
                 $accessory = ProductAccessories::find($accessoryId);
-                if ($accessory) {
-                    ProductAccessoryCart::create([
-                        'product_id'      => $product->id,
-                        'cart_item_id'    => $cart_item->id,
-                        'accessory_id'    => $accessory->id,
-                        'accessory_name'  => $accessory->name ?? null,
-                        'accessory_price' => $accessory->price ?? 0,
-                    ]);
+                if ($accessory && $accessory->accesory_product_id) {
+                    $accProduct = Product::find($accessory->accesory_product_id);
+                    if ($accProduct) {
+                        $accPrice = $accProduct->currentPrice();
+                        $accQty   = $qty; // same as parent qty, or 1
+
+                        $cart->items()->create([
+                            'product_id'   => $accProduct->id,
+                            'sku'          => $accProduct->sku,
+                            'name'         => $accProduct->title,
+                            'variant_id'   => null,
+                            'variant_name' => null,
+                            'quantity'     => $accQty,
+                            'price'        => $accPrice,
+                            'total_amount' => round($accPrice * $accQty, 2),
+                            'tax_percent'  => 0,
+                            'tax_amount'   => 0,
+                        ]);
+                    }
                 }
             }
         }
-
         $cart_items_total = $cart->items()->sum('total_amount');
         $cart_items_tax   = $cart->items()->sum('tax_amount');
 
-        $accessories_total = ProductAccessoryCart::whereIn(
-            'cart_item_id',
-            $cart->items()->pluck('id')
-        )->sum('accessory_price');
-
-        $cart_total_with_accessories = $cart_items_total + $accessories_total;
 
 
         $cart->update([
-            'total_amount' => $cart_total_with_accessories,
+            'total_amount' => $cart_items_total,
             'tax_amount'   => $cart_items_tax,
-            'grand_total'  => $cart_total_with_accessories + $cart_items_tax
+            'grand_total'  => $cart_items_total + $cart_items_tax
         ]);
 
         return $cart_item;
@@ -233,16 +227,6 @@ class CartController extends Controller
                 $tax_total += $item->tax_amount;
                 $grand_total += $item->total_amount + $item->tax_amount;
             }
-
-            // Get accessory total for the whole cart
-            $accessory_total = ProductAccessoryCart::whereIn(
-                'cart_item_id',
-                $cart->items()->pluck('id')
-            )->sum('accessory_price');
-
-            // Add accessories to totals
-            $total_amount += $accessory_total;
-            $grand_total += $accessory_total; // tax is separate unless you want tax on accessories
 
             $cart->update([
                 'items_qty'        => $item_qty,
@@ -310,7 +294,6 @@ class CartController extends Controller
     {
         $cart_item = CartItems::findOrFail($item_id);
         $cart_item->delete();
-        $cart_item->addons()->delete();
 
         $cart = Cart::find($cart_item->cart_id);
         $this->calculateTotal($cart->id);
@@ -380,57 +363,52 @@ class CartController extends Controller
     public function applyCoupon()
     {
         $code = request()->input('coupon');
-        // $code = $request->input('coupon_code'); 
         $customer = Auth::user();
-        // dd($code);
 
         if (!$customer) {
-            return null;
-        }
-        $cart = $customer->cart;
-
-        //check code exist or not
-        $checkIfExist = Discount::where('code', $code)->first();
-        // dd($checkIfExist);
-        if (is_null($checkIfExist)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Coupon code does not exist'
+                'error' => 'You must be logged in to apply a coupon.'
             ]);
         }
 
-        //check if code is expired or not 
-        if ($checkIfExist->expiry_date) {
+        $cart = $customer->cart;
+        $coupon = Discount::where('code', $code)->first();
 
-            $currentDate = Carbon::now();
-            $startDate = Carbon::parse($checkIfExist->start_date);
-            $couponDate = Carbon::parse($checkIfExist->expiry_date);
-
-            if (!$currentDate->gte($startDate) && !$currentDate->lte($couponDate)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Coupon code has expired'
-                ]);
-            }
+        if (!$coupon) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Coupon code does not exist.'
+            ]);
         }
 
-        //check for specific products
-        if ($checkIfExist->applicable_for == 2) {
-            $sku = explode(",", trim($checkIfExist->sku));
-            return $this->handleDiscountCartItem($cart, 'sku', $sku, $checkIfExist);
+        // Expiry check
+        $currentDate = Carbon::now();
+        if ($coupon->expiry_date > $currentDate) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Coupon code has expired.'
+            ]);
         }
 
-        $response = $this->applyDiscount($checkIfExist, $cart);
+        // If for specific products
+        if ($coupon->applicable_for == 2) {
+            $sku = explode(",", trim($coupon->sku));
+            return $this->handleDiscountCartItem($cart, 'sku', $sku, $coupon);
+        }
+
+        $response = $this->applyDiscount($coupon, $cart);
+
         return response()->json([
             'success' => $response['success'],
-            'message' => $response['message'],
-            'cart' => $customer->cart,
+            'cart' => $customer->cart->fresh(),
             'discountType' => $this->checkIfCouponApplied(),
             'data' => [
-                'name' => $checkIfExist->code
+                'name' => $coupon->code
             ]
         ]);
     }
+
 
     public function removeCoupon()
     {
@@ -477,47 +455,29 @@ class CartController extends Controller
     }
 
 
-    public function applyDiscount($discount, $type): array
+    public function applyDiscount($discount, $cart): array
     {
-        $discountValue = $discount->value;
-        // dd($discountValue);
-        $amount = $type->total_amount;
-        // dd($discount->type);
+        $amount = $cart->total_amount;
 
-        $discountAmount = 0;
+        $discountAmount = $discount->type == 2
+            ? ($discount->value * $amount / 100)
+            : $discount->value;
 
-        if ($discount->type == 2) {
-            $discountAmount = $discountValue * $amount / 100;
-        } else {
-            $discountAmount = $discountValue;
-        }
+        $grandTotal = max(0, $cart->grand_total - $discountAmount);
 
-
-        $subTotal = $amount;
-        $grandTotal = $type->grand_total - $discountAmount;
-
-        $type->update([
+        $cart->update([
             'discount_id' => $discount->id,
             'discount_code' => $discount->code,
             'discount_type' => $discount->type,
             'discount_value' => $discount->value,
             'discount_amount' => $discountAmount,
-            'total_amount' => $subTotal,
             'grand_total' => $grandTotal
         ]);
-        // dd($type);
-        if ($type->cart) {
-            $cart = $type->cart;
-            $cart->update([
-                'discount_amount' => $discountAmount,
-                'total_amount' => $cart->total_amount,
-                'grand_total' => $cart->grand_total - $discountAmount
-            ]);
-        }
 
         return [
             'success' => true,
-            'message' => 'Discount coupon has been added successfully'
+            'cart' => $cart->fresh(),
+            'data' => $discount
         ];
     }
 
