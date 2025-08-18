@@ -543,6 +543,7 @@ class ProductController extends Controller
             foreach ($names as $key => $name) {
                 if (!empty($name)) {
                     $data = [
+                        'product_id' => $product->id,
                         'accessory_name'        => $name,
                         'accessory_category_id' => $categoryIds[$key] ?? null,
                         'accesory_product_id'  => $productIds[$key] ?? null, // ✅ fixed typo

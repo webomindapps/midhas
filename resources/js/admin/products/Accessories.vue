@@ -1,9 +1,5 @@
 <template>
-    <div class="col-lg-12 mt-2 mb-2" id="form-group-default-accessories">
-        <label for="accessory_name">Accessories</label>
-    </div>
     <div class="col-lg-12">
-        <h6>Accessories</h6>
         <table class="table">
             <thead>
                 <tr>
@@ -35,7 +31,7 @@
                         </select>
                     </td>
                     <td class="width-50">
-                        <select @change="handleSku(index)" name="accesory_product_id[]"
+                        <select @change="handleSku(index)" name="accessory_product_id[]"
                             v-model="pck.accesory_product_id" required>
                             <option value="">Select</option>
                             <option v-for="product in pck.products" :key="product.value" :value="product.value">

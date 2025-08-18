@@ -176,7 +176,7 @@
 
                                         <div class="custom-select-multibox form-select w-100" id="accessorySelect"
                                             tabindex="0">
-                                            <span class="selected-placeholder">Select Accessory</span>
+                                            <span class="selected-placeholder">Select Accessories</span>
                                             <ul class="custom-options">
                                                 @foreach ($product->accessories as $accessory)
                                                     <li class="accessory-option" data-id="{{ $accessory->id }}"
