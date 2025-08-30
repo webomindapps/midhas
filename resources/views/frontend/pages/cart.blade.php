@@ -85,51 +85,6 @@
                                                 </a>
                                             </li>
                                         </ul>
-                                        @if ($item->addons && $item->addons->count())
-                                            <h6 class="mt-2 mb-2 fw-bold">Accessory</h6>
-                                            <ul class="list_styled ms-4 accessory-grid">
-                                                @foreach ($item->addons as $addon)
-                                                    <li class="accessory-item p-2 mb-2 rounded">
-
-                                                        {{-- Name --}}
-                                                        <div class="accessory-name fw-semibold">
-                                                            {{ $addon->accessory_name }}
-                                                        </div>
-
-                                                        {{-- Quantity control --}}
-                                                        <div class="number">
-                                                            <div class="input-group">
-                                                                <input type="button" value="-"
-                                                                    data-field="quantity" class="button-minus"
-                                                                    data-id="{{ $addon->id }}">
-                                                                <input type="text" step="1"
-                                                                    value="{{ $addon->quantity ?? 1 }}" name="quantity"
-                                                                    class="quantity-field crtItmQty"
-                                                                    data-id="{{ $addon->id }}"
-                                                                    data-price="{{ $addon->accessory_price }}">
-                                                                <input type="button" value="+"
-                                                                    data-field="quantity" class="button-plus"
-                                                                    data-id="{{ $addon->id }}">
-                                                            </div>
-                                                        </div>
-
-                                                        {{-- Price --}}
-                                                        <div class="fw-bold text-success price">
-                                                            ${{ number_format($addon->accessory_price, 2) }}
-                                                        </div>
-
-                                                        {{-- Delete --}}
-                                                        <div class="delete">
-                                                            <a href="#"
-                                                                onclick="return confirm('Remove this addon?')">
-                                                                <i class='bx bx-trash'
-                                                                    style="color: red; font-size: 18px; cursor: pointer;"></i>
-                                                            </a>
-                                                        </div>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                        @endif
                                     </div>
                                 @endforeach
                             @empty
@@ -276,6 +231,7 @@
                     }
                 }
             });
+
 
 
             $(document).on('change', '.crtItmQty', function() {
@@ -446,5 +402,42 @@
             }
         </script>
 
+        {{-- //calculation for addons --}}
+        <script>
+            $(document).on('click', '.qtybutton-plus, .qtybutton-minus', function() {
+                let $btn = $(this);
+                let $input = $btn.closest('.input-group').find('.quantity-field');
+                let quantity = parseInt($input.val());
+                let pricePerUnit = parseFloat($input.data('price'));
+                let addonId = $input.data('id');
+
+                // Adjust quantity
+                if ($btn.hasClass('qtybutton-plus')) {
+                    quantity++;
+                } else {
+                    if (quantity > 1) quantity--;
+                }
+                $input.val(quantity);
+
+                // Update via AJAX
+                $.ajax({
+                    url: '/update-addon-quantity',
+                    method: 'POST',
+                    data: {
+                        addon_id: addonId,
+                        quantity: quantity,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Update addon price
+                            $(`#addon-price-${addonId}`).text(`$${response.addon_total}`);
+                            // Update cart total
+                            calculate(response.cart_total);
+                        }
+                    }
+                });
+            });
+        </script>
     </x-slot:scripts>
 </x-frontend.page>

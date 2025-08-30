@@ -91,16 +91,13 @@ class LoginController extends Controller
             if ($customer->cart) {
                 foreach ($cart->items as $item) {
 
-                    $accessoryIds = $item->addons->pluck('accessory_id')->toArray();
-                    $accessoryPrices = $item->addons->pluck('accessory_price')->toArray();
 
                     app(CartController::class)->cartItemCreate(
                         $customer->cart,
                         $item->product_id,
                         $item->quantity,
                         $item->variant_id,
-                        $accessoryPrices,
-                        $accessoryIds
+                       
                     );
 
                     app(CartController::class)->destroy($item->id);

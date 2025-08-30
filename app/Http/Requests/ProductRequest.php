@@ -27,7 +27,6 @@ class ProductRequest extends FormRequest
         return [
             'product_type_id' => 'nullable',
             'title' => 'required',
-            'sku' => 'required|unique:products,sku,' . $id,
             'slug' => 'required|unique:products,slug,' . $id,
             'upc_code' => 'nullable',
             'brand_id' => 'nullable',

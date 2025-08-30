@@ -84,20 +84,15 @@ const addToCart = (id, qty, variant) => {
     const url = window.location.origin + "/add/cart";
 
     let accessoryIds = [];
-    let accessoryPrices = [];
 
     document.querySelectorAll('.accessory-option.selected').forEach(option => {
         let accId = option.getAttribute('data-id');
-        let accPrice = option.getAttribute('data-price');
-
-        if (accId && accPrice) {
+        if (accId) {
             accessoryIds.push(parseInt(accId));
-            accessoryPrices.push(parseFloat(accPrice));
         }
     });
 
     console.log("Accessory IDs:", accessoryIds);
-    console.log("Accessory Prices:", accessoryPrices);
 
     $.ajax({
         type: "POST",
@@ -106,7 +101,6 @@ const addToCart = (id, qty, variant) => {
             product_id: id,
             variant_id: variant,
             accessory_ids: accessoryIds,
-            accessory_price: accessoryPrices,
             qty: qty,
             _token: document.querySelector('meta[name="csrf-token"]').content,
         },

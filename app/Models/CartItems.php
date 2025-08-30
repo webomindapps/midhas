@@ -16,6 +16,7 @@ class CartItems extends Model
         'product_id',
         'variant_id',
         'variant_name',
+        'parent_item_id',
         'quantity',
         'sku',
         'name',
@@ -50,8 +51,4 @@ class CartItems extends Model
         return $this->hasOne(ProductVariant::class, 'id', 'variant_id');
     }
     // In CartItem.php
-    public function addons()
-    {
-        return $this->hasMany(ProductAccessoryCart::class, 'cart_item_id', 'id');
-    }
 }
