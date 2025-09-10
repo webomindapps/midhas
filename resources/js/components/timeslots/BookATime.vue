@@ -186,7 +186,7 @@
                         :class="{
                             disabled: selectedPrice == null,
                         }"
-                        href="https://www.furniturestore.to/staging/public/checkout"
+                        href="/checkout"
                         >Checkout</a
                     >
                 </div>
@@ -272,7 +272,7 @@ const handleSlot = (st, price) => {
         isShow.value = true;
 
         axios
-            .post("https://www.furniturestore.to/staging/public/update-delivery-locations", {
+            .post("/update-delivery-locations", {
                 type: deliveryType.value,
                 city: deliveryTypeLocation.value,
                 date: selectedDate.value,

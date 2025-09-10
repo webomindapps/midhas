@@ -130,7 +130,7 @@ class ProductController extends Controller
             $data = $request->all();
 
             $data['slug'] = Str::slug($data['title'], '-');
-            $data['sku']=$request->sku;
+            $data['sku'] = $request->sku;
 
             if ($request->hasFile('thumbnail')) {
                 $data['thumbnail'] =  Midhas::upload($request->thumbnail, $this->folder . '/thumbnails/');
@@ -177,6 +177,7 @@ class ProductController extends Controller
         foreach ($selectedItems as $item) {
             $product = $this->product->find($item);
             if ($type == 1) {
+                ProductAccessories::where('accesory_product_id', $product->id)->delete();
                 $product->delete();
             } else if ($type == 2) {
                 $product->update(['status' => $status]);

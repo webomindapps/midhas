@@ -98,7 +98,7 @@ class CategoryController extends Controller
         $category = $this->category->find($id);
 
         $data = $request->validated();
-        $data['slug'] = Str::slug($data['slug'] ? $data['slug'] : $data['name'], '-');
+        // $data['slug'] = Str::slug($data['slug'] ? $data['slug'] : $data['name'], '-');
         $category->update($data);
 
         //upload thumbnail

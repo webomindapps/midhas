@@ -73,7 +73,7 @@
                                     @else
                                         <ul class="no-bullet account__ul">
                                             <li class="account__ul--li">
-                                                <a href="{{route('customer.profile')}}" class="">
+                                                <a href="{{ route('customer.profile') }}" class="">
                                                     <i class='bx bxs-user'></i>
                                                     <span class="dropdown__text"> Profile </span>
                                                 </a>
@@ -163,20 +163,23 @@
                                                         </div>
                                                     @endforeach
 
+                                                    @php
+                                                        // Flatten all second-level subcategories (grandchildren)
+                                                        $secondLevel = $category->children
+                                                            ->flatMap(fn($child) => $child->children)
+                                                            ->take(3);
+                                                    @endphp
+
                                                     <div class="col-md-8">
                                                         <div class="d-flex image_nav_links">
-                                                            <a href="#">
-                                                                <img src="https://www.bigfurniturewarehouse.com/images/modules/promo_units/1726752394-26306500.png"
-                                                                    alt="" class="img-fluid">
-                                                            </a>
-                                                            <a href="#">
-                                                                <img src="https://www.bigfurniturewarehouse.com/images/modules/promo_units/1726752657-06734000.png"
-                                                                    alt="" class="img-fluid">
-                                                            </a>
-                                                            <a href="#">
-                                                                <img src="https://www.bigfurniturewarehouse.com/images/modules/promo_units/1726752672-06318800.png"
-                                                                    alt="" class="img-fluid">
-                                                            </a>
+                                                            @foreach ($secondLevel as $grandchild)
+                                                                <a
+                                                                    href="{{ route('productByCategory', $grandchild->slug) }}">
+                                                                    <img src="{{ $grandchild->image?->url ? asset($grandchild->image->url) : asset('images/default.png') }}"
+                                                                        alt="{{ $grandchild->name }}"
+                                                                        class="img-fluid">
+                                                                </a>
+                                                            @endforeach
                                                         </div>
                                                     </div>
                                                 </div>
@@ -188,7 +191,10 @@
 
                                 {{-- Static links --}}
                                 <li class="nav-item">
-                                    <a class="nav-link text_orange" href="#">New Arrivals</a>
+                                    <a class="nav-link text_orange"
+                                        href="{{ route('category-list', ['is_new' => 1]) }}">
+                                        New Arrivals
+                                    </a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link text-danger" href="#">* Sale *</a>

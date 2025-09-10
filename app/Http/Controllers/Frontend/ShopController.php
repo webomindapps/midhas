@@ -25,6 +25,7 @@ class ShopController extends Controller
         $categories = Category::with('children.children', 'image')
             ->where('status', 1)
             ->orderBy('position', 'asc')
+            ->where('show_in_nav', 1)
             ->whereNull('parent_id')
             ->get();
 
@@ -157,8 +158,8 @@ class ShopController extends Controller
                 array_push($recentIds, $product->id);
                 Session::put('recents', $recentIds);
                 $recentViewed = Product::whereIn('id', $recentIds)->where('id', '<>', $product->id)->get();
-                $sizes = $product->sizes; 
-                return view('frontend.pages.product-detail', compact('product', 'relatedProducts', 'recentViewed','sizes'));
+                $sizes = $product->sizes;
+                return view('frontend.pages.product-detail', compact('product', 'relatedProducts', 'recentViewed', 'sizes'));
             } else {
                 abort(404, 'Page not found');
             }
@@ -223,6 +224,7 @@ class ShopController extends Controller
 
     private function getCategoryFilters($category)
     {
+
         $products = $category->products()->pluck('products.id')->toArray();
         $ancestors = $category->parent()->pluck('id')->toArray();
         $filter = Filter::where('filter_for', 'List')
@@ -281,5 +283,103 @@ class ShopController extends Controller
 
 
         return view('frontend.pages.blog-list', compact('blogs', 'category', 'allCategories', 'recentPosts'));
+    }
+
+    public function categorylist(Request $request, $slug = null)
+    {
+        $sort = $request->sort ?? 'title';
+        $order = $request->order ?? 'asc';
+        $paginate = $request->paginate ?? 100;
+        $is_new = $request->is_new;
+        $all = $request->all;
+        $is_best_selling = $request->is_best_selling;
+        $brand = $request->brand;
+        $price = $request->price;
+        $specifications = json_decode($request->get('specifications'), true);
+
+        // Initialize query and variables
+        $query = Product::with('images')->where('status', true);
+        $category = null;
+        $sub_categories = collect();
+        $filters = collect();
+        $brands = collect();
+        $recentlyViewed = collect();
+
+        // ======== Category filter ========
+        if ($slug && !$is_new) {
+            $category = Category::where('slug', $slug)->first();
+
+            if ($category) {
+                $categoryChildren = $category->children()->pluck('id')->toArray();
+                $categories_id = array_merge([$category->id], $categoryChildren);
+
+                $query->whereHas('categories', function ($q) use ($categories_id) {
+                    $q->whereIn('category_id', $categories_id);
+                });
+
+                $sub_categories = $category->children()
+                    ->where('status', true)
+                    ->orderBy('name', 'asc')
+                    ->get();
+
+                if ($sub_categories->isEmpty() && $category->parent) {
+                    $sub_categories = $category->parent
+                        ->children()
+                        ->where('status', true)
+                        ->where('id', '!=', $category->id)
+                        ->orderBy('name', 'asc')
+                        ->get();
+                }
+
+                $filters = $this->getCategoryFilters($category);
+            }
+        }
+
+        // ======== Other filters ========
+        if ($is_new) {
+            $query->where('is_new', 1);
+        }
+
+        if ($is_best_selling) {
+            $query->where('is_best_selling', $is_best_selling);
+        }
+
+        if ($brand) {
+            $brandIds = explode(',', $brand);
+            $query->whereIn('brand_id', $brandIds);
+        }
+
+        if ($price) {
+            $range = explode('-', $price);
+            $query->whereBetween('selling_price', $range);
+        }
+
+        if (is_array($specifications)) {
+            foreach ($specifications as $filter) {
+                $filterConfig = FilterItem::find($filter['id']);
+                if ($filterConfig) {
+                    $query->whereIn($filterConfig->column_name, $filter['values']);
+                }
+            }
+        }
+
+        // ======== Sorting & pagination ========
+        $query->orderBy($sort, $order);
+        $products = $query->paginate($paginate)->appends(request()->query());
+
+        // ======== Recently Viewed ========
+        $recentIds = Session::get('recents', []);
+        $recentlyViewed = Product::whereIn('id', $recentIds)->get();
+        $brands = $this->getBrands($products);
+
+        // ======== Return view ========
+        return view('frontend.pages.category-lists', compact(
+            'products',
+            'sub_categories',
+            'category',
+            'recentlyViewed',
+            'filters',
+            'brands'
+        ));
     }
 }

@@ -2,9 +2,28 @@
 
     <section class="section breadcrumb pb-0 seo_content w-100">
         <div class="container text-start">
-            <ul class="list_styled d-flex breadcrumb mb-5">
-                <li><a href="{{ url('/') }}">Home<i class="fa-solid fa-chevron-right"></i></a></li>
-                <li><a href="{{ route('productByCategory', $category->slug) }}">{{ $category->name }}</a></li>
+           <ul class="list_styled d-flex breadcrumb">
+                <li><a href="{{ url('/') }}">Home <i class="fa-solid fa-chevron-right"></i></a></li>
+
+                @php
+                    $current = $category;
+                    $breadcrumbs = collect();
+                    while ($current) {
+                        $breadcrumbs->prepend($current);
+                        $current = $current->parent; // Assuming relationship 'parent' exists
+                    }
+                @endphp
+
+                @foreach ($breadcrumbs as $cat)
+                    <li>
+                        <a href="{{ route('productByCategory', $cat->slug) }}">
+                            {{ ucwords(strtolower($cat->name)) }}
+                            @if (!$loop->last)
+                                <i class="fa-solid fa-chevron-right"></i>
+                            @endif
+                        </a>
+                    </li>
+                @endforeach
             </ul>
         </div>
     </section>

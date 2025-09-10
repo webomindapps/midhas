@@ -27,6 +27,7 @@ class CategoryRequest extends FormRequest
             'parent_id' => 'nullable',
             'name' => 'required',
             'slug' => 'required|unique:categories,slug,' . $id,
+            'show_in_nav'=>'required',
             'thumbnail' => 'image',
             'position' => 'nullable|numeric',
             'status' => 'nullable'

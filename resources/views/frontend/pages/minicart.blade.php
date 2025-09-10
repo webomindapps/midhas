@@ -13,12 +13,22 @@
              @foreach ($cart->items as $item)
                  <div class="bag_items">
                      <div class="bag_prd_img">
-                         <img src="{{ asset($item->product->thumbnail) }}" alt="{{ $item->name }}" class="img-fluid">
+                         @if ($item->variant)
+                             <img src="{{ asset('storage/' . $item->variant->thumbnail) }}" alt="{{ $item->name }}"
+                                 class="img-fluid">
+                         @else
+                             <img src="{{ asset($item->product->thumbnail) }}" alt="{{ $item->name }}"
+                                 class="img-fluid">
+                         @endif
                      </div>
                      <div class="bag_prd_info text-start">
                          <div class="bag_prd_info_title">
-                             <a href="{{route('productByCategory',$item->product->slug)}}" class="d-inline-block pb-1">
+                             <a href="{{ route('productByCategory', $item->product->slug) }}"
+                                 class="d-inline-block pb-1">
                                  {{ $item->name }}
+                                 @if ($item->variant)
+                                     ({{ $item->variant->value }})
+                                 @endif
                              </a>
                              <p class="bag_prd_info_price mb-1">
                                  <b>${{ number_format($item->price, 2) }}</b>

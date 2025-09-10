@@ -1,4 +1,5 @@
 <template>
+    
     <div class="col-lg-12">
         <table class="table">
             <thead>

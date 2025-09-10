@@ -4,16 +4,22 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\OrderAddress;
+use App\Models\Product\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Session;
 
 class CustomerController extends Controller
 {
     public function viewprofile()
     {
+        $recentIds = Session::get('recents', []);
+        array_push($recentIds);
+        Session::put('recents', $recentIds);
+        $recentlyViewed = Product::whereIn('id', $recentIds)->get();
         $address = OrderAddress::where('customer_id', Auth::user()->id)->first();
-        return view('frontend.pages.profile.account-info', compact('address'));
+        return view('frontend.pages.profile.account-info', compact('address','recentlyViewed'));
     }
     public function details()
     {
@@ -90,9 +96,10 @@ class CustomerController extends Controller
 
         return redirect()->route('customer.address')->with('message', 'Address updated successfully!');
     }
-    public function deleteaddress($id){
+    public function deleteaddress($id)
+    {
         $address = OrderAddress::findOrFail($id);
         $address->delete();
-        return redirect()->route('customer.address')->with('message','address Deleted');
+        return redirect()->route('customer.address')->with('message', 'address Deleted');
     }
 }

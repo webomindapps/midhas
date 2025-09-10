@@ -9,10 +9,12 @@ use Illuminate\Support\Collection;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Cart;
+use App\Models\Product\Product;
 
 class Header extends Component
 {
     public Collection $categories;
+     public $isnew; 
 
     /**
      * Create a new component instance.
@@ -20,6 +22,10 @@ class Header extends Component
     public function __construct()
     {
         $this->categories = Midhas::getCategories('root', false);
+         $this->isnew = Product::with('images')
+            ->where('is_new', 1)
+            ->where('status', 1)
+            ->get(); // 👈 Assign to class property
     }
   
     /**
@@ -29,6 +35,7 @@ class Header extends Component
     {
         return view('frontend.layouts.header', [
             'categories' => $this->categories,
+            'isnew'=>$this->isnew,
         ]);
     }
 }

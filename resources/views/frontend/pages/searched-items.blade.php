@@ -25,7 +25,7 @@
                             </a>
                         </div>
                         <div class="col-lg-2 col-3 text-center">
-                            <div class="search-price">${{ number_format($product->msrp ?? 0, 2) }}</div>
+                            <div class="search-price">${{ number_format($product->currentprice() ?? 0, 2) }}</div>
                         </div>
                         {{-- <div class="col-lg-3 col-5 text-center">
                             <input type="number" name="product_quantity" value="1" style="width: 50px;">

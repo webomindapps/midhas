@@ -33,7 +33,7 @@ class Midhas extends Controller
 
     public function getCategories($type = null, $dropdown = true, $id = null)
     {
-        $query = Category::where('status', true);
+        $query = Category::where('status', true)->where('show_in_nav', 1);
 
         if ($id) {
             $query->where('id', '!=', $id);

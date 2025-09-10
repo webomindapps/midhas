@@ -18,6 +18,7 @@ class Category extends Model
         'name',
         'slug',
         'position',
+        'show_in_nav',
         'status'
     ];
 

@@ -91,6 +91,23 @@ class CartController extends Controller
                     'message' => 'Insufficient stock available.',
                 ], 200);
             }
+            if (!empty($accessoryIds)) {
+                foreach ($accessoryIds as $accessoryId) {
+                    $accessory = ProductAccessories::find($accessoryId);
+
+                    if ($accessory && $accessory->accesory_product_id) {
+                        $accProduct = Product::find($accessory->accesory_product_id);
+
+                        if (!$accProduct || $accProduct->total_stock < $qty) {
+                            return response()->json([
+                                'error' => true,
+                               
+                            ], 200);
+                        }
+                    }
+                }
+            }
+
             $cart_item = $this->cartItemCreate($cart, $product_id, $qty, $variant_id, $accessoryIds);
             // dd($cart_item);
             DB::commit();
@@ -115,7 +132,6 @@ class CartController extends Controller
     {
         $product = Product::findOrFail($product_id);
 
-        // Base product price (variant price if applicable)
         $price = $product->currentPrice();
         $variant = $product->variants()->find($variant_id);
         $variant_name = $variant?->value;
@@ -149,7 +165,7 @@ class CartController extends Controller
 
         if ($cart_item) {
             $data['variant_id'] = $variant_id;
-            $data['quantity'] = $cart_item->quantity + $qty;
+            $data['quantity'] = $qty;
             $data['price'] = $price;
             $data['total_amount'] = round($data['quantity'] * $price, 2); // only product price
 
@@ -181,22 +197,39 @@ class CartController extends Controller
                         $accPrice = $accProduct->currentPrice();
                         $accQty   = $qty; // same as parent qty, or 1
 
-                        $cart->items()->create([
-                            'product_id'   => $accProduct->id,
-                            'sku'          => $accProduct->sku,
-                            'name'         => $accProduct->title,
-                            'variant_id'   => null,
-                            'variant_name' => null,
-                            'quantity'     => $accQty,
-                            'price'        => $accPrice,
-                            'total_amount' => round($accPrice * $accQty, 2),
-                            'tax_percent'  => 0,
-                            'tax_amount'   => 0,
-                        ]);
+                        // ✅ Check if accessory already exists in cart
+                        $accItem = CartItems::where('cart_id', $cart->id)
+                            ->where('product_id', $accProduct->id)
+                            ->whereNull('variant_id')
+                            ->first();
+
+                        if ($accItem) {
+                            // Update existing accessory item
+                            $newQty = $accItem->quantity + $accQty;
+                            $accItem->update([
+                                'quantity'     => $newQty,
+                                'total_amount' => round($newQty * $accPrice, 2),
+                            ]);
+                        } else {
+                            // Create new accessory item
+                            $cart->items()->create([
+                                'product_id'   => $accProduct->id,
+                                'sku'          => $accProduct->sku,
+                                'name'         => $accProduct->title,
+                                'variant_id'   => null,
+                                'variant_name' => null,
+                                'quantity'     => $accQty,
+                                'price'        => $accPrice,
+                                'total_amount' => round($accPrice * $accQty, 2),
+                                'tax_percent'  => 0,
+                                'tax_amount'   => 0,
+                            ]);
+                        }
                     }
                 }
             }
         }
+
         $cart_items_total = $cart->items()->sum('total_amount');
         $cart_items_tax   = $cart->items()->sum('tax_amount');
 

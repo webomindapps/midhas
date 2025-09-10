@@ -21,6 +21,23 @@
 
                     <x-forms.input label="Upload Image" type="file" name="thumbnail" id="thumbnail" :required="false"
                         size="col-lg-4 mt-4" :value="old('thumbnail')" class="image-file" :image="true" />
+                    <div class="col-lg-4 mt-4">
+                        <label class="form-check-label d-block mb-2">Show Category In Nav Bar <span
+                                class="text-danger">*</span></label>
+
+                        <div class="form-check form-check-inline">
+                            <input type="radio" name="show_in_nav" id="show_in_nav_yes" value="1"
+                                class="form-check-input" {{ old('show_in_nav') == 1 ? 'checked' : '' }} required="true">
+                            <label class="form-check-label" for="show_in_nav_yes">Yes</label>
+                        </div>
+
+                        <div class="form-check form-check-inline">
+                            <input type="radio" name="show_in_nav" id="show_in_nav_no" value="0"
+                                class="form-check-input" {{ old('show_in_nav') == 0 ? 'checked' : '' }}>
+                            <label class="form-check-label" for="show_in_nav_no">No</label>
+                        </div>
+                    </div>
+
 
                     <div class="mt-4">
                         <x-accordion.item id="category" title="Select Category">

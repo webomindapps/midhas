@@ -19,6 +19,7 @@ use App\Http\Controllers\Frontend\TellaFriendController;
 use App\Http\Controllers\NewsletterController;
 
 Route::get('/', [ShopController::class, 'index'])->name('home');
+Route::get('category-list/{slug?}', [ShopController::class, 'categorylist'])->name('category-list');
 Route::post('serarch-products', [ShopController::class, 'searchProduct'])->name('search.products');
 
 //Guest login

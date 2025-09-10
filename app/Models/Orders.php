@@ -75,7 +75,7 @@ class Orders extends Model
 
     public function address($type): ?OrderAddress
     {
-        return OrderAddress::where('order_id', $this->order_id)->where('address_type', $type)->first();
+        return $this->addresses()->where('address_type', $type)->first();
     }
 
 
@@ -95,5 +95,4 @@ class Orders extends Model
     {
         return $this->hasOne(Shipment::class);
     }
-
 }

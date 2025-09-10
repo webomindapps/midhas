@@ -11,32 +11,23 @@
 
             <address class="text-muted" style="line-height: 1.7;">
                 <ul class="list-unstyled">
-                    <li> {{ $address->first_name . '.' . $address->last_name }}</li>
-                    <li>{{ $address->address_1 }}</li>
-                    <li>{{ $address->city }} </li>
-                    <li> {{ $address->postal_code }}</li>
-                    <li class="mt-3">{{ $address->province }}</li>
-                    <li>{{ $address->phone_number }}</li>
+                    <li>{{ trim(($address->first_name ?? '') . ' ' . ($address->last_name ?? '')) }}</li>
+                    <li>{{ $address->address_1 ?? '' }}</li>
+                    <li>{{ $address->city ?? '' }} </li>
+                    <li> {{ $address->postal_code ?? '' }}</li>
+                    <li class="mt-3">{{ $address->province ?? '' }}</li>
+                    <li>{{ $address->phone_number ?? '' }}</li>
                 </ul>
             </address>
         </div>
         <div class=" p-4 rounded mt-4 text-center">
             <h4 class="mb-3">Recently Viewed Items:</h4>
-            <div class="d-flex justify-content-center">
-                <div class="row">
-                    <div class="col-lg-3 col-md-3 col-6 mb-3">
-                        <img src="./images/offer-1.jpg" alt="Recently Viewed Item" width="100%">
+            <div class="row">
+                @foreach ($recentlyViewed as $recents)
+                    <div class="col-lg-3">
+                        <x-product-card :product="$recents" />
                     </div>
-                    <div class="col-lg-3 col-md-3 col-6 mb-3">
-                        <img src="./images/offer-1.jpg" alt="Recently Viewed Item" width="100%">
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-6 mb-3">
-                        <img src="./images/offer-1.jpg" alt="Recently Viewed Item" width="100%">
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-6 mb-3">
-                        <img src="./images/offer-1.jpg" alt="Recently Viewed Item" width="100%">
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </x-frontend.my-profile>

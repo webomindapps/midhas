@@ -14,10 +14,10 @@
                     <div class="col-3 ms-5 mb-4 position-relative">
                         <!-- Trash Button (styled) -->
                         <a href="{{ route('wishlist.destroy', $wishlist->id) }}"
-                            class=" wishlist wishlist-delete-btn position-absolute top-0 end-0 p-2 bg-danger text-white"
+                            class="btn btn-danger btn-sm wishlist wishlist-delete-btn position-absolute top-0 end-0 m-2 d-flex align-items-center justify-content-center" style="z-index: 1;"
                             title="Remove from wishlist"
                             onclick="return confirm('Are you sure to delete the item from Wishlist')">
-                            <i class="fas fa-trash"></i> <!-- You can also use '&times;' here -->
+                            <i class="fas fa-trash"></i>
                         </a>
 
                         <!-- Product Card -->

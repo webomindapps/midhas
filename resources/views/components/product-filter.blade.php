@@ -5,7 +5,7 @@
         <li class="list-group-item">
             <a class="btn btn-category">Your Selection</a>
             <div class="card card-body bg-white">
-                <p class="mb-0"><span class="fw-medium">Type :</span> {{ $currentCategory->name }}</p>
+                <p class="mb-0"><span class="fw-medium">Type :</span> {{ $currentCategory->name ?? ''}}</p>
             </div>
         </li>
 

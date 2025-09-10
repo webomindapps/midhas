@@ -10,7 +10,6 @@
 
                     let formattedPrice = '$' + parseFloat(price).toFixed(2);
 
-                    // ✅ Replace only the price value
                     $('.prd_price').text(formattedPrice);
                 });
             });
@@ -100,12 +99,12 @@
                             <p class="mb-0 prod_price text-uppercase text_inter">From
                                 <span id="dynamicPriceWrapper">
                                     @if ($product->currentPrice() == $product->msrp)
-                                        <div class="prd_price fw-bold text_hind mt-4 mb-4">
+                                        <div class="prd_price fw-bold text_hind mt-1 mb-4">
                                             <span
                                                 id="displayBasePrice">${{ Midhas::formatPrice($product->currentPrice()) }}</span>
                                         </div>
                                     @else
-                                        <div class="prd_price fw-bold text_hind mt-4 mb-4">
+                                        <div class="prd_price fw-bold text_hind mt-1 mb-4">
                                             <span class="scratch_price">
                                                 <s>${{ Midhas::formatPrice($product->msrp) }}</s>
                                             </span>
@@ -663,20 +662,24 @@
 
                 images.forEach((url) => {
                     galleryTopWrapper.append(`
-                <div class="swiper-slide">
-                    <div class="swiper-zoom-container">
-                        <img src="${url}" class="w-100 img-fluid" />
-                    </div>
-                </div>
-            `);
-                    galleryThumbsWrapper.append(`
-                <div class="swiper-slide">
+            <div class="swiper-slide">
+                <a href="${url}" data-pswp-width="1200" data-pswp-height="800">
                     <img src="${url}" class="w-100 img-fluid" />
-                </div>
-            `);
+                </a>
+            </div>
+        `);
+                    galleryThumbsWrapper.append(`
+            <div class="swiper-slide">
+                <img src="${url}" class="w-100 img-fluid" />
+            </div>
+        `);
                 });
 
                 initGallerySwiper();
+
+                if (window.lightbox) {
+                    window.lightbox.destroy();
+                }
             }
 
             function initGallerySwiper() {
@@ -776,10 +779,10 @@
                 const box = $('#accessorySelect');
                 const hiddenSelect = $('select[name="accessory_ids[]"]');
                 const placeholder = box.find('.selected-placeholder');
-                const basePrice = parseFloat($('#baseProductPrice').val()) || 0;
+                let basePrice = parseFloat($('#baseProductPrice').val()) || 0;
+                let variantPrice = 0; // separate variable
                 const priceDisplay = $('#displayBasePrice');
 
-                // Function to update total price and placeholder
                 function updateSelections() {
                     const selectedItems = box.find('li.selected');
                     const selectedIds = [];
@@ -793,38 +796,49 @@
                         selectedNames.push($(this).text().trim());
                     });
 
-                    // Update hidden select values
-                    hiddenSelect.find('option').prop('selected', false); // Reset all
+                    hiddenSelect.find('option').prop('selected', false);
                     selectedIds.forEach(id => {
                         hiddenSelect.find(`option[value="${id}"]`).prop('selected', true);
                     });
 
-                    // Update placeholder text
                     placeholder.text(selectedNames.length ? selectedNames.join(', ') : 'Select Accessory');
 
-                    // Update displayed total price
                     const totalPrice = basePrice + totalAccessoryPrice;
                     priceDisplay.text('$' + totalPrice.toFixed(2));
+                    let formattedPrice = '$' + parseFloat(totalPrice).toFixed(2);
+                    $('.prd_price').text(formattedPrice);
+
                 }
 
-                // Toggle dropdown open/close
                 box.on('click', function(e) {
                     $(this).toggleClass('open');
                 });
 
-                // Handle selection toggle
                 box.find('li').on('click', function(e) {
                     e.stopPropagation();
                     $(this).toggleClass('selected');
                     updateSelections();
                 });
 
-                // Close dropdown when clicking outside
                 $(document).on('click', function(e) {
                     if (!$(e.target).closest('.custom-select-multibox').length) {
                         box.removeClass('open');
                     }
                 });
+
+                $('.product_variant').on('click', function() {
+                    let newPrice = parseFloat($(this).data('variant-price')) || 0;
+
+                    $('#baseProductPrice').val(newPrice);
+
+                    basePrice = newPrice;
+
+                    console.log('Updated base price with variant:', newPrice);
+
+                    updateSelections();
+                });
+
+
             });
         </script>
     </x-slot:scripts>

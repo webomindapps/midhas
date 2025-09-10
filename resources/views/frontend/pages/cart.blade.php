@@ -34,14 +34,22 @@
                                     <div class="cart_products">
                                         <ul class="list_styled d-md-flex d-block gx-4">
                                             <li class="cart_prd d-flex gx-4">
-                                                <img src="{{ asset($item->product->thumbnail) }}"
-                                                    alt="{{ $item->name }}">
+                                                @if ($item->variant)
+                                                    <img src="{{ asset('storage/' . $item->variant->thumbnail) }}"
+                                                        alt="{{ $item->name }}">
+                                                @else
+                                                    <img src="{{ asset($item->product->thumbnail) }}"
+                                                        alt="{{ $item->name }}">
+                                                @endif
+
                                                 <div class="prd_name">
                                                     <h3 class="mt-0 fw-bold">
                                                         <a href="{{ route('productByCategory', $item->product->slug) }}"
                                                             class="text-decoration-none text-dark">
-                                                            {{ $item->name }}
-
+                                                            {{ $item->name }}<br/>
+                                                            @if ($item->variant)
+                                                            Color:    ({{ $item->variant->value }})
+                                                            @endif
                                                         </a>
                                                     </h3>
 
@@ -121,8 +129,7 @@
                                                 Applied Coupon:
                                                 <span class="coupon-applied" style="text-transform: uppercase;">
                                                     {{ $cart->discount_code }}
-                                                    <a href="javascript:void(0);"
-                                                        class="remove-coupon ms-1 text-danger"
+                                                    <a href="javascript:void(0);" class="remove-coupon ms-1 text-danger"
                                                         data-id="{{ $cart->id }}" data-type="Cart">
                                                         <i class='bx bx-x'></i>
                                                     </a>
