@@ -125,6 +125,7 @@ const handleCategories = (index) => {
         .catch((e) => {
             console.log("error", e);
         });
+        initProductSelect2();
 };
 
 const handleSku = (index) => {

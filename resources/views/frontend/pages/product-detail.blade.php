@@ -1,20 +1,4 @@
 <x-frontend.page>
-    @push('scripts')
-        <script>
-            $(document).ready(function() {
-                $('.color_selector .product_variant').on('click', function() {
-                    var variantId = $(this).data('variant-id');
-                    var price = $(this).data('variant-price');
-
-                    $('.addToCart').data('variant', variantId);
-
-                    let formattedPrice = '$' + parseFloat(price).toFixed(2);
-
-                    $('.prd_price').text(formattedPrice);
-                });
-            });
-        </script>
-    @endpush
     <section class="section breadcrumb pb-0 seo_content w-100">
         <div class="container text-start">
             <ul class="list_styled d-flex breadcrumb mb-5">
@@ -135,22 +119,37 @@
 
                                 <div class="color_selector d-flex justify-content-start">
                                     @foreach ($product->variants as $index => $variant)
-                                        <span class="product_variant"
-                                            style="--color:{{ $variant->value }}; background-color: {{ $variant->value }};"
-                                            data-variant-id="{{ $variant->id }}"
-                                            data-variant-price="{{ $variant->price }}"
-                                            data-slide-index="{{ $index }}"
-                                            data-images='@json([asset('storage/' . $variant->thumbnail)])'>
-                                        </span>
+                                        @if ($variant->variant?->name == 'Color')
+                                            <span class="product_variant"
+                                                style="--color:{{ $variant->value }}; background-color: {{ $variant->value }};"
+                                                data-variant-id="{{ $variant->id }}"
+                                                data-variant-price="{{ $variant->price }}"
+                                                data-slide-index="{{ $index }}"
+                                                data-images='@json([asset('storage/' . $variant->thumbnail)])'>
+                                            </span>
+                                        @endif
                                     @endforeach
 
                                 </div>
 
                             </div>
-                            <div class="row mt-4 mb-4">
+                            <div class="row mt-4 mb-4 g-2">
+                                <div class="col-12">
+                                    <p class="d-block w-100 col-12">Size: </p>
+                                </div>
                                 {{-- Size Dropdown --}}
                                 @if ($sizes && $sizes->count())
-                                    <div class="col-md-6 mb-2">
+                                    @foreach ($sizes as $size)
+                                        <span onclick="redirectToProduct(this)"
+                                            data-url="{{ route('productByCategory', $size->product?->slug) }}"
+                                            class="vrnt-z col-3 text-center p-2 border mx-1 rounded {{ $size->product?->id === $product->id ? 'active' : '' }}">
+                                            <strong><i
+                                                    class="active_icon {{ $size->product?->id === $product->id ? 'fas fa-check' : '' }}"></i>
+                                                {{ $size->size }}</strong><br>
+                                            ${{ Midhas::formatPrice($size->product?->currentPrice()) }}
+                                        </span>
+                                    @endforeach
+                                    {{-- <div class="col-md-6 mb-2">
                                         <label for="sizeSelect" class="form-label fw-bold">Choose Size</label>
                                         <select class="form-select w-100" id="sizeSelect"
                                             onchange="redirectToProduct(this)">
@@ -163,7 +162,7 @@
                                                 </option>
                                             @endforeach
                                         </select>
-                                    </div>
+                                    </div> --}}
                                 @endif
 
                                 {{-- Accessory Dropdown --}}
@@ -196,6 +195,21 @@
                                     </div>
                                 @endif
                             </div>
+                            {{-- <div class="row mt-2 mb-4 color_selector g-2">
+                                <p class="d-block w-100 col-12">Size: </p>
+                                @foreach ($product->variants as $index => $variant)
+                                    @if ($variant->variant?->name == 'Size')
+                                        <span class="product_variant vrnt-z col-3 text-center p-2 border mx-1 rounded"
+                                            data-variant-id="{{ $variant->id }}"
+                                            data-variant-price="{{ $variant->price }}"
+                                            data-slide-index="{{ $index }}"
+                                            data-images='@json([asset('storage/' . $variant->thumbnail)])'>
+                                            <strong><i class="active_icon"></i> {{ $variant->value }}</strong><br>
+                                            ${{ Midhas::formatPrice($variant->price) }}
+                                        </span>
+                                    @endif
+                                @endforeach
+                            </div> --}}
                             @if ($product->isEnquiry())
                                 <div class=" d-block text-center text-uppercase fw-bold">
                                     <a class=" add_wishlist bg-danger text-white d-block w-100" data-bs-toggle="modal"
@@ -319,9 +333,9 @@
                             </div>
                             <div class="d-block w-100 more_actions">
                                 {{-- Brand --}}
-                                <a href="{{ route('productByCategory', ['any' => $product->categories->first()->slug]) }}?brand={{ $product->brand->id }}"
+                                <a href="{{ route('productByCategory', ['any' => $product->categories->first()->slug]) }}?brand={{ $product->brand?->id }}"
                                     class="btn d-block w-100 text-uppercase">
-                                    View all {{ $product->brand->name }}
+                                    View all {{ $product->brand?->name }}
                                 </a>
 
                                 {{-- Main Category --}}
@@ -509,7 +523,8 @@
                             contenteditable="false" style="cursor: pointer;">
                             <img src="{{ asset('frontend/images/pdf-icon.webp') }}" border="0" alt="PDF"
                                 style="height:15px; width:15px">
-                            {{ $manual->name }} </a>
+                            {{ $manual->name }}
+                        </a>
                     @endforeach
                 </div>
                 <div class="tab-pane fade" id="pills-payment" role="tabpanel" aria-labelledby="pills-payment-tab">
@@ -621,11 +636,15 @@
             color: white;
             font-size: 20px;
         }
+
+        .vrnt-z.active {
+            background: #f0ece8;
+        }
     </style>
     <x-slot:scripts>
         <script>
             function redirectToProduct(select) {
-                const url = select.value;
+                const url = select.getAttribute('data-url');
                 if (url) {
                     window.location.href = url;
                 }
@@ -637,16 +656,44 @@
             $(function() {
                 initGallerySwiper();
 
-                $('.color_selector').each(function(index, element) {
-                    $(element).find('span').click(function() {
-                        $(element).find('span').removeClass('active');
-                        $(this).addClass('active');
+                // $('.color_selector').each(function(index, element) {
+                //     $('.product_variant').removeClass('active');
+                //     $(element).find('span').click(function() {
+                //         $(element).find('span').removeClass('active');
+                //         $(element).find('.active_icon').removeClass('fas fa-check');
+                //         $(this).addClass('active');
+                //         $(this).find('.active_icon').addClass('fas fa-check');
+                //         const images = $(this).data('images');
+                //         if (images && Array.isArray(images)) {
+                //             updateVariantGallery(images);
+                //         }
+                //     });
+                // });
+                $('.color_selector .product_variant').click(function() {
+                    var variantId = $(this).data('variant-id');
+                    var price = $(this).data('variant-price');
 
-                        const images = $(this).data('images');
-                        if (images && Array.isArray(images)) {
-                            updateVariantGallery(images);
-                        }
-                    });
+                    $('.addToCart').data('variant', variantId);
+
+                    let formattedPrice = '$' + parseFloat(price).toFixed(2);
+
+                    $('.prd_price').text(formattedPrice);
+
+                    // Remove active & icons from ALL containers
+                    $('.color_selector .product_variant').removeClass('active');
+
+                    // Add active to the clicked one
+                    $(this).addClass('active');
+
+                    // Update images
+                    const images = $(this).data('images');
+                    if (images && Array.isArray(images)) {
+                        updateVariantGallery(images);
+                    }
+                });
+                $('.color_selector .vrnt-z').click(function() {
+                    $('.color_selector .active_icon').removeClass('fas fa-check');
+                    $(this).find('.active_icon').addClass('fas fa-check');
                 });
             });
 

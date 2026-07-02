@@ -48,7 +48,7 @@
                                                             class="text-decoration-none text-dark">
                                                             {{ $item->name }}<br/>
                                                             @if ($item->variant)
-                                                            Color:    ({{ $item->variant->value }})
+                                                            {{$item->variant?->variant?->name}}:    ({{ $item->variant->value }})
                                                             @endif
                                                         </a>
                                                     </h3>

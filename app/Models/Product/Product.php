@@ -199,7 +199,7 @@ class Product extends Model
     }
     public function sizes(): HasMany
     {
-        return $this->hasMany(ProductSize::class);
+        return $this->hasMany(ProductSize::class)->orderBy('id', 'desc');
     }
     public function accessories(): HasMany
     {

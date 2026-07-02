@@ -9,8 +9,9 @@
         <div class="section py-4">
             <div class="container d-flex align-items-center justify-content-between">
                 <div class="col-md-5 text-start search_action">
-                    <a href="" class="text-uppercase fw-bold d-sm-block d-none"><i
-                            class="fa-regular fa-envelope me-2"></i> info@midhafurniture.com</a>
+                    <a href="" class="text-uppercase fw-bold d-sm-block d-none">
+                        <i class="fa-regular fa-envelope me-2"></i> info@midhafurniture.com
+                    </a>
                     <div class="collapse show" id="search_collapse">
                         <form class="d-flex mt-2 w-75" aria-labelledby="form-title">
                             <!-- Form Title (for accessibility) -->
@@ -44,7 +45,8 @@
                     </a>
                     <a class="btn btn-search_toggle collapsed d-sm-none d-block position-absolute top-50 end-0 translate-middle-y"
                         data-bs-toggle="collapse" href="#search_collapse" role="button" aria-expanded="false"
-                        aria-controls="search_collapse"> <i class="fa-solid fa-magnifying-glass"></i> </a>
+                        aria-controls="search_collapse"> <i class="fa-solid fa-magnifying-glass"></i>
+                    </a>
                 </div>
                 <div class="col-md-5 right_side_action">
                     <div class="d-flex text-center justify-content-end align-items-center">
@@ -151,12 +153,14 @@
                                                                         <span>{{ $subCategory->name }}</span>
                                                                     </li>
                                                                     @foreach ($subCategory->children as $child)
-                                                                        <li><a
-                                                                                href="{{ route('productByCategory', $child->slug) }}">{{ $child->name }}</a>
+                                                                        <li>
+                                                                            <a href="{{ route('productByCategory', $child->slug) }}">{{ $child->name }}</a>
                                                                         </li>
                                                                     @endforeach
-                                                                    <li><a href="#">All
-                                                                            <span>{{ $subCategory->name }}</span></a>
+                                                                    <li>
+                                                                        <a href="#">All
+                                                                            <span>{{ $subCategory->name }}</span>
+                                                                        </a>
                                                                     </li>
                                                                 </ul>
                                                             @endforeach
@@ -173,11 +177,8 @@
                                                     <div class="col-md-8">
                                                         <div class="d-flex image_nav_links">
                                                             @foreach ($secondLevel as $grandchild)
-                                                                <a
-                                                                    href="{{ route('productByCategory', $grandchild->slug) }}">
-                                                                    <img src="{{ $grandchild->image?->url ? asset($grandchild->image->url) : asset('images/default.png') }}"
-                                                                        alt="{{ $grandchild->name }}"
-                                                                        class="img-fluid">
+                                                                <a href="{{ route('productByCategory', $grandchild->slug) }}">
+                                                                    <img src="{{ $grandchild->image?->url ? asset($grandchild->image->url) : asset('images/default.png') }}" alt="{{ $grandchild->name }}" class="img-fluid">
                                                                 </a>
                                                             @endforeach
                                                         </div>

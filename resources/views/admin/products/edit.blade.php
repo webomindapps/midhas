@@ -174,6 +174,7 @@
     </div>
 
     <x-slot:scripts>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script>
             $(document).on('click', '.prd-Image-delete', function() {
                 if (confirm('Are you sure you want to delete this?')) {
@@ -196,6 +197,22 @@
                 }
 
             })
+            function initSelect2() {
+                console.log("initiated",$('select[name="tv_size_product_id[]"]'));
+                
+                $('select[name="tv_size_product_id[]"]').select2({
+                    placeholder: "Search product",
+                    width: "100%",
+                    allowClear: true
+                });
+            }
+
+            $(document).ready(function () {
+                initSelect2();
+            });
+            $(document).on('click', '.manual-add', function() {
+                initSelect2();
+            });
         </script>
     </x-slot:scripts>
 

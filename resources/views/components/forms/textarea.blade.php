@@ -6,7 +6,7 @@
     </label>
     <textarea rows="{{ $attributes->get('rows') }}" cols="{{ $attributes->get('cols') }}" id="{{ $attributes->get('id') }}"
         name="{{ $attributes->get('name') }}" placeholder="{{ $attributes->get('placeholder') }}"
-        @if ($attributes->get('required')) required @endif>
+        @if ($attributes->get('required')) required @endif pattern=".*\S.*">
 @if ($attributes->get('editor'))
 {!! $attributes->get('value') !!}
 @else

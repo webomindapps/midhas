@@ -12,7 +12,7 @@
                 </div>
             @endif
             <form method="POST" class="formSubmit" action="{{ route('admin.products.store') }}"
-                enctype="multipart/form-data">
+                enctype="multipart/form-data" id="createProd">
                 @csrf
                 <div class="row mb-4">
 
@@ -39,6 +39,9 @@
                 <x-accordion.group>
                     <x-accordion.item id="category" title="Category">
                         <div class="row">
+                            <div class="mb-2" id="cat-error" style="color:red; display:none;">
+                                * Please select at least one category.
+                            </div>
                             <x-admin.category />
 
                         </div>
@@ -74,7 +77,7 @@
                     <x-accordion.item id="upload-images" title="Upload Images">
                         <div class="row">
                             <x-forms.input label="Product Thumbnail" type="file" name="thumbnail" id="thumbnail"
-                                :required="false" size="col-lg-6 mt-4" :value="old('thumbnail')" class="image-file"
+                                :required="true" size="col-lg-6 mt-4" :value="old('thumbnail')" class="image-file"
                                 :image="true" />
 
                             <x-forms.input label="Product Images" type="file" name="product_images[]"
@@ -122,15 +125,14 @@
                             <x-tabs.content id="descriptions" is_active="{{ true }}">
                                 <div class="row">
                                     <x-forms.textarea label="Product Details" name="product_details" id="editor-1"
-                                        required size="col-lg-12" :editor="true" :value="old('product_details', $product->product_details ?? '')" />
+                                        required size="col-lg-12" :editor="true" :value="old('product_details', $product->product_details ?? '')" :required="true" />
 
                                     <x-forms.textarea label="Product Description" name="product_description"
                                         id="editor-3" required size="col-lg-12 mb-2" :editor="true"
-                                        :value="old('product_description', $product->product_description ?? '')" />
+                                        :value="old('product_description', $product->product_description ?? '')" :required="true" />
 
                                     <x-forms.textarea label="Payment & Security" name="payment_security"
-                                        id="editor-2" :editor="true"  size="col-lg-12"
-                                        :value="old('payment_security', $product->payment_security ?? '')" />
+                                        id="editor-2" :editor="true" size="col-lg-12" :value="old('payment_security', $product->payment_security ?? '')" :required="true" />
                                 </div>
                             </x-tabs.content>
 
@@ -158,4 +160,18 @@
             </form>
         </div>
     </div>
+    @push('scripts')
+        {{-- <script>
+            $('#createProd').on('submit', function(e) {
+                let checked = $('.category:checked').length;
+
+                if (checked === 0) {
+                    e.preventDefault(); // Stop submit
+                    $('#cat-error').show(); // Show error
+                } else {
+                    $('#cat-error').hide(); // Hide error if fixed
+                }
+            });
+        </script> --}}
+    @endpush
 </x-page-content>

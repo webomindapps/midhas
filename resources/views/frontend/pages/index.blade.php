@@ -67,6 +67,37 @@
                     }
 
                 });
+                const swiper2 = new Swiper('.nav_ban', {
+                    loop: false, // Enable loop
+                    slidesPerView: 1, // Default slides per view
+                    spaceBetween: 10, // Space between slides
+
+                    // Breakpoints configuration
+                    breakpoints: {
+                        // When window width is >= 640px
+                        768: {
+                            slidesPerView: 2,
+                            spaceBetween: 5
+                        },
+                        // When window width is >= 768px
+                        991: {
+                            slidesPerView: 2,
+                            spaceBetween: 5
+                        },
+                        // When window width is >= 1024px
+                        1280: {
+                            slidesPerView: 2,
+                            spaceBetween: 5
+                        }
+                    },
+
+                    // Pagination
+                    pagination: {
+                        el: '.swiper-pagination', // Target pagination element
+                        clickable: true, // Allow clicking on the pagination bullets
+                    }
+
+                });
 
                 //        --------------------------------------------------------------
                 // Initialize Swiper
